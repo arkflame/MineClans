@@ -1,4 +1,10 @@
-messages:
-  from-command: "&eHello world from Command."
-  from-listener: "&aHello world from Listener."
-  from-task: "&dHello world from Task."
+factions:
+  usage: "&cUsage: /factions <create|disband> <factionName>"
+  create:
+    usage: "&cUsage: /factions create <factionName>"
+    success: "&aFaction %faction% created successfully!"
+    error: "&cAn error occurred while creating the faction."
+  disband:
+    usage: "&cUsage: /factions disband <factionName>"
+    success: "&aFaction %faction% disbanded successfully!"
+    error: "&cAn error occurred while disbanded the faction."
