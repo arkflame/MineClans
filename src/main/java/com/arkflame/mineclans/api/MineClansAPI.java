@@ -33,7 +33,7 @@ public class MineClansAPI {
     public FactionPlayer getFactionPlayer(Player player) {
         return null;
     }
-    
+
     public FactionPlayer getFactionPlayer(UUID uuid) {
         return null;
     }
@@ -45,17 +45,69 @@ public class MineClansAPI {
     public void leave(Player player) {
         
     }
-    
+
     public void join(Player player, String factionName) {
         
     }
-    
-    public void invite(Player player, String toInvite) {
-        
+
+    public InviteResult invite(Player player, String toInvite) {
+        FactionPlayer factionPlayer = MineClans.getInstance().getFactionPlayerManager().getOrLoad(player.getUniqueId());
+        Faction faction = factionPlayer.getFaction();
+
+        if (faction == null) {
+            return new InviteResult(InviteResult.InviteResultState.NO_FACTION);
+        }
+
+        if (!faction.getOwner().equals(factionPlayer.getPlayerId())) {
+            return new InviteResult(InviteResult.InviteResultState.NOT_OWNER);
+        }
+
+        FactionPlayer targetPlayer = MineClans.getInstance().getFactionPlayerManager().loadFactionPlayerFromDatabase(toInvite);
+
+        if (targetPlayer == null) {
+            return new InviteResult(InviteResult.InviteResultState.PLAYER_NOT_FOUND);
+        }
+
+        UUID targetPlayerId = targetPlayer.getPlayerId();
+
+        if (faction.getMembers().contains(targetPlayerId)) {
+            return new InviteResult(InviteResult.InviteResultState.MEMBER_EXISTS);
+        }
+
+        if (faction.getInvited().contains(targetPlayerId)) {
+            return new InviteResult(InviteResult.InviteResultState.ALREADY_INVITED);
+        }
+
+        faction.invitePlayer(targetPlayerId);
+        return new InviteResult(InviteResult.InviteResultState.SUCCESS, targetPlayer);
     }
-    
-    public void uninvite(Player player, String toUninvite) {
+
+    public UninviteResult uninvite(Player player, String toUninvite) {
+        FactionPlayer factionPlayer = MineClans.getInstance().getFactionPlayerManager().getOrLoad(player.getUniqueId());
+        Faction faction = factionPlayer.getFaction();
+
+        if (faction == null) {
+            return new UninviteResult(UninviteResult.UninviteResultState.NO_FACTION);
+        }
+
+        if (!faction.getOwner().equals(factionPlayer.getPlayerId())) {
+            return new UninviteResult(UninviteResult.UninviteResultState.NOT_OWNER);
+        }
         
+        FactionPlayer targetPlayer = MineClans.getInstance().getFactionPlayerManager().loadFactionPlayerFromDatabase(toUninvite);
+
+        if (targetPlayer == null) {
+            return new UninviteResult(UninviteResult.UninviteResultState.PLAYER_NOT_FOUND);
+        }
+
+        UUID targetPlayerId = targetPlayer.getPlayerId();
+
+        if (!faction.getInvited().contains(targetPlayerId)) {
+            return new UninviteResult(UninviteResult.UninviteResultState.NOT_INVITED);
+        }
+
+        faction.uninvitePlayer(targetPlayerId);
+        return new UninviteResult(UninviteResult.UninviteResultState.SUCCESS);
     }
     
     public CreateResult create(Player player, String factionName) {

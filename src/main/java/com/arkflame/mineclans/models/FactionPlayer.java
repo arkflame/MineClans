@@ -3,6 +3,9 @@ package com.arkflame.mineclans.models;
 import java.util.Date;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
 import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.enums.Rank;
 
@@ -98,5 +101,9 @@ public class FactionPlayer {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Player getPlayer() {
+        return Bukkit.getPlayer(playerId);
     }
 }

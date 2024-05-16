@@ -72,6 +72,7 @@ public class FactionManager {
         if (faction != null) {
             faction.addMember(playerId);
             MineClans.getInstance().getMySQLProvider().getMemberDAO().addMember(faction.getId(), playerId);
+            saveFactionToDatabase(faction);
         }
     }
 
@@ -81,6 +82,7 @@ public class FactionManager {
         if (faction != null) {
             faction.removeMember(playerId);
             MineClans.getInstance().getMySQLProvider().getMemberDAO().removeMember(faction.getId(), playerId);
+            saveFactionToDatabase(faction);
         }
     }
 

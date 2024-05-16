@@ -2,6 +2,7 @@ package com.arkflame.mineclans.listeners;
 
 import java.util.UUID;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -18,11 +19,13 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(final PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        UUID id = player.getUniqueId();
+
         MineClans.runAsync(() -> {
-            UUID id = event.getPlayer().getUniqueId();
             factionPlayerManager.updateJoinDate(id);
             factionPlayerManager.updateLastActive(id);
-            factionPlayerManager.updateName(id, event.getPlayer().getName());
+            factionPlayerManager.updateName(id, player.getName());
         });
     }
 }

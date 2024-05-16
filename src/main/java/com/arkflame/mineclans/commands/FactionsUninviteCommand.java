@@ -3,20 +3,20 @@ package com.arkflame.mineclans.commands;
 import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.MineClans;
-import com.arkflame.mineclans.api.InviteResult;
-import com.arkflame.mineclans.api.InviteResult.InviteResultState;
+import com.arkflame.mineclans.api.UninviteResult;
+import com.arkflame.mineclans.api.UninviteResult.UninviteResultState;
 import com.arkflame.mineclans.modernlib.commands.ModernArguments;
 
-public class FactionsInviteCommand {
+public class FactionsUninviteCommand {
     public static void onCommand(Player player, ModernArguments args) {
         if (!args.hasArg(1)) {
-            player.sendMessage("Usage: /factions invite <player>");
+            player.sendMessage("Usage: /factions uninvite <player>");
             return;
         }
 
         String targetPlayerName = args.getText(1);
-        InviteResult inviteResult = MineClans.getInstance().getAPI().invite(player, targetPlayerName);
-        InviteResultState state = inviteResult.getState();
+        UninviteResult uninviteResult = MineClans.getInstance().getAPI().uninvite(player, targetPlayerName);
+        UninviteResultState state = uninviteResult.getState();
 
         switch (state) {
             case NO_FACTION:
@@ -25,15 +25,11 @@ public class FactionsInviteCommand {
             case NOT_OWNER:
                 player.sendMessage("You are not the owner.");
                 break;
-            case MEMBER_EXISTS:
-                player.sendMessage("Player is already a member.");
-                break;
-            case ALREADY_INVITED:
-                player.sendMessage("Player is already invited.");
+            case NOT_INVITED:
+                player.sendMessage("Player is not invited.");
                 break;
             case SUCCESS:
-                player.sendMessage("Player invited successfully.");
-                inviteResult.getPlayer().getPlayer().sendMessage("You have been invited to join a faction.");
+                player.sendMessage("Player uninvited successfully.");
                 break;
             case PLAYER_NOT_FOUND:
                 player.sendMessage("Player not found.");

@@ -18,17 +18,21 @@ public class MemberDAO {
 
     public void createTable() {
         mySQLProvider.executeUpdateQuery("CREATE TABLE IF NOT EXISTS members (" +
-                "faction_id VARCHAR(36) PRIMARY KEY," +
-                "member_id VARCHAR(36) NOT NULL)");
+                "faction_id VARCHAR(36) NOT NULL," +
+                "member_id VARCHAR(36) NOT NULL," +
+                "PRIMARY KEY (faction_id, member_id))");
     }
 
     public void addMember(UUID factionId, UUID memberId) {
-        mySQLProvider.executeUpdateQuery("INSERT INTO members (faction_id, member_id) VALUES (?, ?)", factionId.toString(),
-                memberId.toString());
+        String query = "INSERT INTO members (faction_id, member_id) VALUES (?, ?) " +
+                "ON DUPLICATE KEY UPDATE member_id = VALUES(member_id)";
+        mySQLProvider.executeUpdateQuery(query, factionId.toString(), memberId.toString());
     }
 
     public void removeMember(UUID factionId, UUID memberId) {
-        mySQLProvider.executeUpdateQuery("DELETE FROM members WHERE faction_id = ? AND member_id = ?", factionId.toString(),
+        mySQLProvider.executeUpdateQuery(
+                "DELETE FROM members WHERE faction_id = ? AND member_id = ?",
+                factionId.toString(),
                 memberId.toString());
     }
 

@@ -155,20 +155,11 @@ public class Faction {
     }
 
     public void addMember(UUID member) {
-        if (this.invited.contains(member)) {
-            this.members.add(member);
-            this.invited.remove(member);
-        } else {
-            throw new IllegalArgumentException("Member not invited");
-        }
+        this.members.add(member);
     }
 
     public void removeMember(UUID member) {
-        if (this.members.contains(member)) {
-            this.members.remove(member);
-        } else {
-            throw new IllegalArgumentException("Member not in faction");
-        }
+        this.members.remove(member);
     }
 
     public void setMembers(Collection<UUID> members) {

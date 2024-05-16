@@ -57,6 +57,19 @@ public class FactionPlayerDAO {
         return player;
     }
 
+    public FactionPlayer getPlayerByName(String name) {
+        FactionPlayer player = null;
+        try (ResultSet resultSet = mySQLProvider.executeSelectQuery("SELECT * FROM faction_players WHERE name = ?",
+                name)) {
+            if (resultSet != null && resultSet.next()) {
+                player = extractPlayerFromResultSet(resultSet);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return player;
+    }
+
     private FactionPlayer extractPlayerFromResultSet(ResultSet resultSet) throws SQLException {
         FactionPlayer player = new FactionPlayer(UUID.fromString(resultSet.getString("player_id")));
         player.setFaction(MineClans.getInstance().getFactionManager().getFaction(resultSet.getString("faction_name")));

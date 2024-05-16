@@ -27,8 +27,8 @@ public class FactionsJoinCommand {
 
         if (faction != null) {
             if (faction.getInvited().contains(player.getUniqueId())) {
-                faction.addMember(player.getUniqueId());
                 MineClans.getInstance().getFactionPlayerManager().updateFaction(player.getUniqueId(), faction);
+                MineClans.getInstance().getFactionManager().addPlayerToFaction(factionName, player.getUniqueId());
                 player.sendMessage("You have joined the faction " + faction.getName() + ".");
             } else {
                 player.sendMessage("You are not invited to this faction.");

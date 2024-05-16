@@ -53,8 +53,12 @@ public class FactionPlayerManager {
     }
 
     // Placeholder method to load faction player from database
-    private FactionPlayer loadFactionPlayerFromDatabase(UUID playerId) {
+    public FactionPlayer loadFactionPlayerFromDatabase(UUID playerId) {
         return MineClans.getInstance().getMySQLProvider().getFactionPlayerDAO().getPlayerById(playerId);
+    }
+
+    public FactionPlayer loadFactionPlayerFromDatabase(String name) {
+        return MineClans.getInstance().getMySQLProvider().getFactionPlayerDAO().getPlayerByName(name);
     }
 
     public void updateJoinDate(UUID playerId) {
@@ -107,6 +111,7 @@ public class FactionPlayerManager {
         if (factionPlayer != null) {
             Faction faction = factionPlayer.getFaction();
             faction.setRank(playerId, rank);
+            save(factionPlayer);
         }
     }
 
@@ -114,6 +119,7 @@ public class FactionPlayerManager {
         FactionPlayer factionPlayer = getOrLoad(playerId);
         if (factionPlayer != null) {
             factionPlayer.setName(name);
+            save(factionPlayer);
         }
     }
 }
