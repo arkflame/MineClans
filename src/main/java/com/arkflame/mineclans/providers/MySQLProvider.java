@@ -43,6 +43,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.providers.daos.FactionDAO;
@@ -76,12 +77,19 @@ public class MySQLProvider {
         invitedDAO = new InvitedDAO(this);
         relationsDAO = new RelationsDAO(this);
         factionPlayerDAO = new FactionPlayerDAO(this);
-        
+
         // Generate hikari config
-        generateHikariConfig(password, password, password);
+        generateHikariConfig(url, username, password);
 
         // Initialize
         initialize();
+    }
+
+    public void close() {
+        if (dataSource != null) {
+            dataSource.close();
+            dataSource = null;
+        }
     }
 
     public void generateHikariConfig(String url, String username, String password) {
@@ -142,7 +150,7 @@ public class MySQLProvider {
                 PreparedStatement statement = connection.prepareStatement(query)) {
             // Set parameters
             for (int i = 0; i < params.length; i++) {
-                statement.setObject(i + 1, params[i]);
+                statement.setObject(i + 1, params[i] instanceof UUID ? params[i].toString() : params[i]);
             }
             // Execute query
             statement.executeUpdate();

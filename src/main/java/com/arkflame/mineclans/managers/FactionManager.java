@@ -17,6 +17,9 @@ public class FactionManager {
 
     // Get faction from cache or load from database
     public Faction getFaction(String name) {
+        if (name == null) {
+            return null;
+        }
         // Check cache first
         Faction faction = factionCache.get(name);
         if (faction != null) {
@@ -53,6 +56,7 @@ public class FactionManager {
         Faction newFaction = new Faction(UUID.randomUUID(), playerId, factionName, factionName);
         factionCache.put(factionName, newFaction);
         saveFactionToDatabase(newFaction); // Save the new faction to the database
+        invitePlayerToFaction(factionName, playerId);
         addPlayerToFaction(factionName, playerId);
         return newFaction;
     }

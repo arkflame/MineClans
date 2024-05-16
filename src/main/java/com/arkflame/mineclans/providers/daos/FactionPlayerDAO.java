@@ -34,7 +34,7 @@ public class FactionPlayerDAO {
                         + "ON DUPLICATE KEY UPDATE "
                         + "faction_name = VALUES(faction_name), join_date = VALUES(join_date), last_active = VALUES(last_active), "
                         + "kills = VALUES(kills), deaths = VALUES(deaths)",
-                player.getPlayerId(), player.getFaction().getName(), player.getJoinDate(), player.getLastActive(),
+                player.getPlayerId(), player.getFactionName() == null ? "" : player.getFactionName(), player.getJoinDate(), player.getLastActive(),
                 player.getKills(), player.getDeaths());
     }
 

@@ -22,7 +22,7 @@ public class FactionDAO {
                 "faction_id UUID PRIMARY KEY," +
                 "owner_id UUID NOT NULL," +
                 "display_name VARCHAR(255) NOT NULL," +
-                "name VARCHAR(255) NOT NULL)");
+                "name VARCHAR(255) UNIQUE)");
     }
 
     public void removeFactionByName(String name) {
@@ -47,10 +47,10 @@ public class FactionDAO {
     }
 
     public void disbandFaction(Faction faction) {
-        removeFaction(faction.getId());
         mySQLProvider.getMemberDAO().removeMembers(faction.getId());
         mySQLProvider.getInvitedDAO().removeInvitedMembers(faction.getId());
         mySQLProvider.getRelationsDAO().removeRelationsById(faction.getId());
+        removeFaction(faction.getId());
     }
 
     private Faction extractFactionFromResultSet(ResultSet resultSet) throws SQLException {

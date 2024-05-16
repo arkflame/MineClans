@@ -1,6 +1,7 @@
 package com.arkflame.mineclans;
 
 import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -21,6 +22,8 @@ public class MineClans extends JavaPlugin {
     private FactionPlayerManager factionPlayerManager;
 
     private MySQLProvider mySQLProvider;
+
+    private FactionsCommand factionsCommand;
 
     public ConfigWrapper getCfg() {
         return config;
@@ -67,7 +70,17 @@ public class MineClans extends JavaPlugin {
         pluginManager.registerEvents(new MenuListener(), this);
 
         // Register Commands
-        new FactionsCommand().register(this);
+        factionsCommand = new FactionsCommand();
+        factionsCommand.register(this);
+    }
+
+    @Override
+    public void onDisable() {
+        HandlerList.unregisterAll(this);
+
+        factionsCommand.unregisterBukkitCommand();
+
+        mySQLProvider.close();
     }
 
     private static MineClans instance;

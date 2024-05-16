@@ -16,6 +16,9 @@ public class FactionPlayerManager {
 
     // Get or load a FactionPlayer by UUID
     public FactionPlayer getOrLoad(UUID playerId) {
+        if (playerId == null) {
+            return null;
+        }
         // Check cache first
         FactionPlayer factionPlayer = factionPlayerCache.get(playerId);
         if (factionPlayer != null) {

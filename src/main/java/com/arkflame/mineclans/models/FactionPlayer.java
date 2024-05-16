@@ -16,7 +16,7 @@ public class FactionPlayer {
 
     public FactionPlayer(UUID playerId) {
         this.playerId = playerId;
-        this.factionName = null;
+        this.factionName = "";
         this.joinDate = null;
         this.lastActive = null;
         this.kills = 0;
@@ -28,11 +28,22 @@ public class FactionPlayer {
     }
 
     public Faction getFaction() {
+        if (factionName == null || factionName.isEmpty()) {
+            return null;
+        }
         return MineClans.getInstance().getFactionManager().getFaction(factionName);
     }
 
+    public String getFactionName() {
+        return factionName;
+    }
+
     public void setFaction(Faction faction) {
-        this.factionName = faction.getName();
+        if (faction == null) {
+            this.factionName = null;
+        } else {
+            this.factionName = faction.getName();
+        }
     }
 
     public Rank getRank() {
