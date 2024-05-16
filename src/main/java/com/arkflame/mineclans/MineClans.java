@@ -5,6 +5,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.arkflame.mineclans.api.MineClansAPI;
 import com.arkflame.mineclans.commands.FactionsCommand;
 import com.arkflame.mineclans.listeners.PlayerJoinListener;
 import com.arkflame.mineclans.listeners.PlayerQuitListener;
@@ -26,6 +27,8 @@ public class MineClans extends JavaPlugin {
 
     private FactionsCommand factionsCommand;
 
+    private MineClansAPI api;
+
     public ConfigWrapper getCfg() {
         return config;
     }
@@ -46,10 +49,17 @@ public class MineClans extends JavaPlugin {
         return mySQLProvider;
     }
 
+    public MineClansAPI getAPI() {
+        return api;
+    }
+
     @Override
     public void onEnable() {
         // Set static instance
         setInstance(this);
+
+        // Initialize API
+        api = new MineClansAPI();
 
         // Save default config
         config = new ConfigWrapper(this, "config.yml").saveDefault().load();

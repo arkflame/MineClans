@@ -23,6 +23,7 @@ public class FactionsLeaveCommand {
         }
 
         MineClans.getInstance().getFactionManager().removePlayerFromFaction(faction.getName(), factionPlayer.getPlayerId());
+        MineClans.getInstance().getFactionPlayerManager().updateFaction(factionPlayer.getPlayerId(), faction);
         player.sendMessage("You left your faction.");
     }
 }
