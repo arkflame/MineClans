@@ -1,4 +1,4 @@
-package com.arkflame.modernlib.tasks;
+package com.arkflame.mineclans.modernlib.tasks;
 
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;

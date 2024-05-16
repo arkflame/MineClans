@@ -1,4 +1,4 @@
-package com.arkflame.modernlib.menus.items;
+package com.arkflame.mineclans.modernlib.menus.items;
 
 import java.util.Arrays;
 import java.util.List;
@@ -7,8 +7,8 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.arkflame.modernlib.menus.Menu;
-import com.arkflame.modernlib.utils.ChatColors;
+import com.arkflame.mineclans.modernlib.menus.Menu;
+import com.arkflame.mineclans.modernlib.utils.ChatColors;
 
 public class MenuItem extends ItemStack {
     private Menu menu;

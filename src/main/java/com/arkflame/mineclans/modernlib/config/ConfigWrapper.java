@@ -1,4 +1,4 @@
-package com.arkflame.modernlib.config;
+package com.arkflame.mineclans.modernlib.config;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
-import com.arkflame.modernlib.utils.ChatColors;
+import com.arkflame.mineclans.modernlib.utils.ChatColors;
 
 import java.nio.file.Files;
 

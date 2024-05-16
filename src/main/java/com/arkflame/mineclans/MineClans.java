@@ -10,9 +10,9 @@ import com.arkflame.mineclans.listeners.PlayerJoinListener;
 import com.arkflame.mineclans.listeners.PlayerQuitListener;
 import com.arkflame.mineclans.managers.FactionManager;
 import com.arkflame.mineclans.managers.FactionPlayerManager;
+import com.arkflame.mineclans.modernlib.config.ConfigWrapper;
+import com.arkflame.mineclans.modernlib.menus.listeners.MenuListener;
 import com.arkflame.mineclans.providers.MySQLProvider;
-import com.arkflame.modernlib.config.ConfigWrapper;
-import com.arkflame.modernlib.menus.listeners.MenuListener;
 
 public class MineClans extends JavaPlugin {
     private ConfigWrapper config;

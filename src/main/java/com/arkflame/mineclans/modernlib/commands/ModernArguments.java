@@ -1,4 +1,4 @@
-package com.arkflame.modernlib.commands;
+package com.arkflame.mineclans.modernlib.commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

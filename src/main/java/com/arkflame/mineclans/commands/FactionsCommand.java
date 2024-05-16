@@ -3,11 +3,11 @@ package com.arkflame.mineclans.commands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.arkflame.modernlib.commands.ModernArguments;
-import com.arkflame.modernlib.commands.ModernCommand;
 import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.models.FactionPlayer;
+import com.arkflame.mineclans.modernlib.commands.ModernArguments;
+import com.arkflame.mineclans.modernlib.commands.ModernCommand;
 
 public class FactionsCommand extends ModernCommand {
     public FactionsCommand() {

@@ -1,4 +1,4 @@
-package com.arkflame.modernlib.commands;
+package com.arkflame.mineclans.modernlib.commands;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

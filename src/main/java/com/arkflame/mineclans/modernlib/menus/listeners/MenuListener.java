@@ -1,4 +1,4 @@
-package com.arkflame.modernlib.menus.listeners;
+package com.arkflame.mineclans.modernlib.menus.listeners;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -7,8 +7,8 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-import com.arkflame.modernlib.menus.Menu;
-import com.arkflame.modernlib.menus.items.MenuItem;
+import com.arkflame.mineclans.modernlib.menus.Menu;
+import com.arkflame.mineclans.modernlib.menus.items.MenuItem;
 
 public class MenuListener implements Listener {
     @EventHandler(ignoreCancelled = true)

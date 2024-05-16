@@ -1,4 +1,4 @@
-package com.arkflame.modernlib.menus;
+package com.arkflame.mineclans.modernlib.menus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,8 +9,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-import com.arkflame.modernlib.menus.items.MenuItem;
-import com.arkflame.modernlib.utils.ChatColors;
+import com.arkflame.mineclans.modernlib.menus.items.MenuItem;
+import com.arkflame.mineclans.modernlib.utils.ChatColors;
 
 public class Menu implements InventoryHolder {
     private Inventory inventory;

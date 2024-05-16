@@ -1,4 +1,4 @@
-package com.arkflame.modernlib.utils;
+package com.arkflame.mineclans.modernlib.utils;
 
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
