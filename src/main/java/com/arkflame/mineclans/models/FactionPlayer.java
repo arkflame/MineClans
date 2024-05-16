@@ -9,6 +9,7 @@ import com.arkflame.mineclans.enums.Rank;
 public class FactionPlayer {
     private UUID playerId;
     private String factionName;
+    private String name;
     private Date joinDate;
     private Date lastActive;
     private int kills;
@@ -16,7 +17,8 @@ public class FactionPlayer {
 
     public FactionPlayer(UUID playerId) {
         this.playerId = playerId;
-        this.factionName = "";
+        this.name = null;
+        this.factionName = null;
         this.joinDate = null;
         this.lastActive = null;
         this.kills = 0;
@@ -88,5 +90,13 @@ public class FactionPlayer {
 
     public void setDeaths(int deaths) {
         this.deaths = deaths;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

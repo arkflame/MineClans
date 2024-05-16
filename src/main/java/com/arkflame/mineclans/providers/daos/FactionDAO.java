@@ -22,7 +22,10 @@ public class FactionDAO {
                 "faction_id UUID PRIMARY KEY," +
                 "owner_id UUID NOT NULL," +
                 "display_name VARCHAR(255) NOT NULL," +
-                "name VARCHAR(255) UNIQUE)");
+                "home VARCHAR(255)," +
+                "name VARCHAR(255) UNIQUE," +
+                "balance INT," +
+                "friendly_fire BOOLEAN)");
     }
 
     public void removeFactionByName(String name) {
@@ -31,19 +34,28 @@ public class FactionDAO {
     }
 
     public void insertOrUpdateFaction(Faction faction) {
-        String query = "INSERT INTO factions (faction_id, owner_id, display_name, name) " +
-                "VALUES (?, ?, ?, ?) " +
+        String query = "INSERT INTO factions (faction_id, owner_id, display_name, home, name, balance, friendly_fire) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?) " +
                 "ON DUPLICATE KEY UPDATE " +
                 "owner_id = VALUES(owner_id), " +
                 "display_name = VALUES(display_name), " +
-                "name = VALUES(name)";
-        mySQLProvider.executeUpdateQuery(query, faction.getId(), faction.getOwner(), faction.getDisplayName(),
-                faction.getName());
+                "home = VALUES(home), " +
+                "name = VALUES(name), " +
+                "balance = VALUES(balance), " +
+                "friendly_fire = VALUES(friendly_fire)";
+        mySQLProvider.executeUpdateQuery(query, 
+                faction.getId(), 
+                faction.getOwner(), 
+                faction.getDisplayName(),
+                faction.getHomeString(),
+                faction.getName(),
+                faction.getBalance(),
+                faction.isFriendlyFire());
     }
 
     public void removeFaction(UUID factionId) {
         String query = "DELETE FROM factions WHERE faction_id = ?";
-        mySQLProvider.executeUpdateQuery(query, factionId.toString());
+        mySQLProvider.executeUpdateQuery(query, factionId);
     }
 
     public void disbandFaction(Faction faction) {

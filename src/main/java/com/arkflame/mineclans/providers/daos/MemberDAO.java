@@ -23,13 +23,13 @@ public class MemberDAO {
     }
 
     public void addMember(UUID factionId, UUID memberId) {
-        mySQLProvider.executeUpdateQuery("INSERT INTO members (faction_id, member_id) VALUES (?, ?)", factionId,
-                memberId);
+        mySQLProvider.executeUpdateQuery("INSERT INTO members (faction_id, member_id) VALUES (?, ?)", factionId.toString(),
+                memberId.toString());
     }
 
     public void removeMember(UUID factionId, UUID memberId) {
-        mySQLProvider.executeUpdateQuery("DELETE FROM members WHERE faction_id = ? AND member_id = ?", factionId,
-                memberId);
+        mySQLProvider.executeUpdateQuery("DELETE FROM members WHERE faction_id = ? AND member_id = ?", factionId.toString(),
+                memberId.toString());
     }
 
     public void removeMembers(UUID factionId) {
@@ -40,7 +40,7 @@ public class MemberDAO {
     public Collection<UUID> getMembers(UUID factionId) {
         Collection<UUID> members = ConcurrentHashMap.newKeySet();
         String query = "SELECT member_id FROM members WHERE faction_id = ?";
-        try (ResultSet resultSet = mySQLProvider.executeSelectQuery(query, factionId)) {
+        try (ResultSet resultSet = mySQLProvider.executeSelectQuery(query, factionId.toString())) {
             if (resultSet != null) {
                 while (resultSet.next()) {
                     UUID memberId = UUID.fromString(resultSet.getString("member_id"));

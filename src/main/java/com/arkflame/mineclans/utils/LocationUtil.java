@@ -6,6 +6,9 @@ import org.bukkit.Location;
 public class LocationUtil {
 
     public static Location parseLocation(String locationString) {
+        if (locationString == null) {
+            return null;
+        }
         // Assuming the location string is in the format "world,x,y,z,yaw,pitch"
         String[] parts = locationString.split(",");
         if (parts.length != 6) {
@@ -23,6 +26,9 @@ public class LocationUtil {
     }
 
     public static String locationToString(Location location) {
+        if (location == null) {
+            return null;
+        }
         // Convert location to a string in the format "world,x,y,z,yaw,pitch"
         StringBuilder builder = new StringBuilder();
         builder.append(location.getWorld().getName()).append(",");

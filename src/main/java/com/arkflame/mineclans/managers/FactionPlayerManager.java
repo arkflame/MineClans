@@ -58,7 +58,7 @@ public class FactionPlayerManager {
     }
 
     public void updateJoinDate(UUID playerId) {
-        FactionPlayer factionPlayer = factionPlayerCache.get(playerId);
+        FactionPlayer factionPlayer = getOrLoad(playerId);
         if (factionPlayer != null && factionPlayer.getJoinDate() == null) {
             factionPlayer.setJoinDate(new Date());
             save(factionPlayer); // Save to database after update
@@ -67,7 +67,7 @@ public class FactionPlayerManager {
 
     // Update a FactionPlayer's last active time
     public void updateLastActive(UUID playerId) {
-        FactionPlayer factionPlayer = factionPlayerCache.get(playerId);
+        FactionPlayer factionPlayer = getOrLoad(playerId);
         if (factionPlayer != null) {
             factionPlayer.setLastActive(new Date());
             save(factionPlayer); // Save to database after update
@@ -76,7 +76,7 @@ public class FactionPlayerManager {
 
     // Add a kill to a FactionPlayer
     public void addKill(UUID playerId) {
-        FactionPlayer factionPlayer = factionPlayerCache.get(playerId);
+        FactionPlayer factionPlayer = getOrLoad(playerId);
         if (factionPlayer != null) {
             factionPlayer.setKills(factionPlayer.getKills() + 1);
             save(factionPlayer); // Save to database after update
@@ -85,7 +85,7 @@ public class FactionPlayerManager {
 
     // Add a death to a FactionPlayer
     public void addDeath(UUID playerId) {
-        FactionPlayer factionPlayer = factionPlayerCache.get(playerId);
+        FactionPlayer factionPlayer = getOrLoad(playerId);
         if (factionPlayer != null) {
             factionPlayer.setDeaths(factionPlayer.getDeaths() + 1);
             save(factionPlayer); // Save to database after update
@@ -94,7 +94,7 @@ public class FactionPlayerManager {
 
     // Update a FactionPlayer's faction
     public void updateFaction(UUID playerId, Faction faction) {
-        FactionPlayer factionPlayer = factionPlayerCache.get(playerId);
+        FactionPlayer factionPlayer = getOrLoad(playerId);
         if (factionPlayer != null) {
             factionPlayer.setFaction(faction);
             save(factionPlayer); // Save to database after update
@@ -103,10 +103,17 @@ public class FactionPlayerManager {
 
     // Update a FactionPlayer's rank
     public void updateRank(UUID playerId, Rank rank) {
-        FactionPlayer factionPlayer = factionPlayerCache.get(playerId);
+        FactionPlayer factionPlayer = getOrLoad(playerId);
         if (factionPlayer != null) {
             Faction faction = factionPlayer.getFaction();
             faction.setRank(playerId, rank);
+        }
+    }
+
+    public void updateName(UUID playerId, String name) {
+        FactionPlayer factionPlayer = getOrLoad(playerId);
+        if (factionPlayer != null) {
+            factionPlayer.setName(name);
         }
     }
 }

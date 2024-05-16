@@ -23,25 +23,31 @@ public class FactionPlayerDAO {
                 + "last_active TIMESTAMP,"
                 + "kills INT DEFAULT 0,"
                 + "deaths INT DEFAULT 0,"
+                + "name VARCHAR(255),"
                 + "FOREIGN KEY (faction_name) REFERENCES factions(name) ON DELETE SET NULL"
                 + ")");
     }
 
     public void insertOrUpdatePlayer(FactionPlayer player) {
         mySQLProvider.executeUpdateQuery(
-                "INSERT INTO faction_players (player_id, faction_name, join_date, last_active, kills, deaths) "
-                        + "VALUES (?, ?, ?, ?, ?, ?) "
+                "INSERT INTO faction_players (player_id, faction_name, join_date, last_active, kills, deaths, name) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?) "
                         + "ON DUPLICATE KEY UPDATE "
                         + "faction_name = VALUES(faction_name), join_date = VALUES(join_date), last_active = VALUES(last_active), "
-                        + "kills = VALUES(kills), deaths = VALUES(deaths)",
-                player.getPlayerId(), player.getFactionName() == null ? "" : player.getFactionName(), player.getJoinDate(), player.getLastActive(),
-                player.getKills(), player.getDeaths());
+                        + "kills = VALUES(kills), deaths = VALUES(deaths), name = VALUES(name)",
+                player.getPlayerId(), 
+                player.getFactionName(),
+                player.getJoinDate(), 
+                player.getLastActive(),
+                player.getKills(), 
+                player.getDeaths(),
+                player.getName());
     }
 
     public FactionPlayer getPlayerById(UUID playerId) {
         FactionPlayer player = null;
         try (ResultSet resultSet = mySQLProvider.executeSelectQuery("SELECT * FROM faction_players WHERE player_id = ?",
-                playerId)) {
+                playerId.toString())) {
             if (resultSet != null && resultSet.next()) {
                 player = extractPlayerFromResultSet(resultSet);
             }
@@ -58,6 +64,7 @@ public class FactionPlayerDAO {
         player.setLastActive(resultSet.getTimestamp("last_active"));
         player.setKills(resultSet.getInt("kills"));
         player.setDeaths(resultSet.getInt("deaths"));
+        player.setName(resultSet.getString("name"));
         return player;
     }
 

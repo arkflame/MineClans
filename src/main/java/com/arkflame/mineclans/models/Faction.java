@@ -1,12 +1,16 @@
 package com.arkflame.mineclans.models;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.enums.Rank;
+import com.arkflame.mineclans.utils.LocationUtil;
 
 import java.util.Map;
 
@@ -220,5 +224,20 @@ public class Faction {
         for (Relation relation : relationsByFactionId) {
             this.relations.put(relation.getTargetFactionId(), relation);
         }
+    }
+
+    public String getHomeString() {
+        return LocationUtil.locationToString(home);
+    }
+
+    public Collection<UUID> getOnlineMembers() {
+        Collection<UUID> onlineMembers = new ArrayList<>();
+        for (UUID memberId : members) {
+            Player player = Bukkit.getPlayer(memberId);
+            if (player != null && player.isOnline()) {
+                onlineMembers.add(memberId);
+            }
+        }
+        return onlineMembers;
     }
 }

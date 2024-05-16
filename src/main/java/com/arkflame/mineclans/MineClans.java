@@ -12,6 +12,7 @@ import com.arkflame.mineclans.managers.FactionManager;
 import com.arkflame.mineclans.managers.FactionPlayerManager;
 import com.arkflame.mineclans.modernlib.config.ConfigWrapper;
 import com.arkflame.mineclans.modernlib.menus.listeners.MenuListener;
+import com.arkflame.mineclans.placeholders.FactionsPlaceholder;
 import com.arkflame.mineclans.providers.MySQLProvider;
 
 public class MineClans extends JavaPlugin {
@@ -72,6 +73,11 @@ public class MineClans extends JavaPlugin {
         // Register Commands
         factionsCommand = new FactionsCommand();
         factionsCommand.register(this);
+        
+        // Register the placeholder
+        if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new FactionsPlaceholder(this).register();
+        }
     }
 
     @Override

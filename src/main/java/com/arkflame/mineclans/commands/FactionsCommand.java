@@ -1,5 +1,7 @@
 package com.arkflame.mineclans.commands;
 
+import java.util.UUID;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -26,7 +28,7 @@ public class FactionsCommand extends ModernCommand {
             return;
         }
 
-        MineClans.getInstance().runAsync(() -> {
+        MineClans.runAsync(() -> {
             Player player = (Player) sender;
             String subcommand = args.getText(0);
             switch (subcommand.toLowerCase()) {
@@ -36,10 +38,33 @@ public class FactionsCommand extends ModernCommand {
                 case "disband":
                     disbandFaction(player, args);
                     break;
+                case "who":
+                    showFactionMembers(player);
+                    break;
                 default:
                     sender.sendMessage(MineClans.getInstance().getMsg().getText("factions.usage"));
             }
         });
+    }
+
+    private void showFactionMembers(Player player) {
+        FactionPlayer factionPlayer = MineClans.getInstance().getFactionPlayerManager().getOrLoad(player.getUniqueId());
+        Faction faction = factionPlayer.getFaction();
+        if (faction == null) {
+            player.sendMessage("You are not in a faction.");
+            return;
+        }
+        StringBuilder message = new StringBuilder("Information of " + faction.getName() + ": ");
+        message.append("\nID: " + faction.getId());
+        message.append("\nOwner: " + faction.getOwner());
+        message.append("\nMembers:");
+        for (UUID memberId : faction.getMembers()) {
+            FactionPlayer member = MineClans.getInstance().getFactionPlayerManager().getOrLoad(memberId);
+            if (member != null) {
+                message.append("\n" + memberId.toString()).append(",");
+            }
+        }
+        player.sendMessage(message.toString());
     }
 
     private void createFaction(Player player, ModernArguments args) {
@@ -73,7 +98,7 @@ public class FactionsCommand extends ModernCommand {
             player.sendMessage("You have no faction.");
             return;
         }
-        if (faction.getOwner() != factionPlayer.getPlayerId()) {
+        if (!faction.getOwner().equals(factionPlayer.getPlayerId())) {
             player.sendMessage("You are not the owner.");
             return;
         }

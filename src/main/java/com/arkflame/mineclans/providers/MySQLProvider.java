@@ -167,7 +167,7 @@ public class MySQLProvider {
         PreparedStatement statement = connection.prepareStatement(query);
         // Set parameters
         for (int i = 0; i < params.length; i++) {
-            statement.setObject(i + 1, params[i]);
+            statement.setObject(i + 1, params[i] instanceof UUID ? params[i].toString() : params[i]);
         }
         // Execute query and return result set
         return statement.executeQuery();

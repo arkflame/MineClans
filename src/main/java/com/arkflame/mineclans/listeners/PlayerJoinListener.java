@@ -22,6 +22,7 @@ public class PlayerJoinListener implements Listener {
             UUID id = event.getPlayer().getUniqueId();
             factionPlayerManager.updateJoinDate(id);
             factionPlayerManager.updateLastActive(id);
+            factionPlayerManager.updateName(id, event.getPlayer().getName());
         });
     }
 }
