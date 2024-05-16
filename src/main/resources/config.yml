@@ -1,1 +1,5 @@
-task-repeat-every: 10
+mysql:
+  enabled: true
+  url: jdbc:mysql://localhost:3306/database
+  username: root
+  password: password

@@ -1,14 +1,14 @@
-package com.arkflame.example.commands;
+package com.arkflame.mineclans.commands;
 
 import org.bukkit.command.CommandSender;
 
-import com.arkflame.example.ExamplePlugin;
+import com.arkflame.mineclans.MineClans;
 import com.arkflame.modernlib.commands.ModernArguments;
 import com.arkflame.modernlib.commands.ModernCommand;
 
-public class ExampleCommand extends ModernCommand {
-    public ExampleCommand() {
-        super("example");
+public class FactionsCommand extends ModernCommand {
+    public FactionsCommand() {
+        super("factions");
     }
 
     @Override
@@ -30,6 +30,6 @@ public class ExampleCommand extends ModernCommand {
             sender.sendMessage("Usage: /" + label + " [text] [number]");
         }
 
-        sender.sendMessage(ExamplePlugin.getInstance().getMsg().getText("messages.from-command"));
+        sender.sendMessage(MineClans.getInstance().getMsg().getText("messages.from-command"));
     }
 }

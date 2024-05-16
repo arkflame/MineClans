@@ -14,7 +14,7 @@
 
     <properties>
         <author>ArkFlame Development</author>
-        <mainClass>com.arkflame.example.ExamplePlugin</mainClass>
+        <mainClass>com.arkflame.mineclans.ExamplePlugin</mainClass>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -33,6 +33,11 @@
             <artifactId>spigot-api</artifactId>
             <version>1.20.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>3.4.5</version>
         </dependency>
     </dependencies>
 
