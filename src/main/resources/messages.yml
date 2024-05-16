@@ -1,0 +1,4 @@
+messages:
+  from-command: "&eHello world from Command."
+  from-listener: "&aHello world from Listener."
+  from-task: "&dHello world from Task."
