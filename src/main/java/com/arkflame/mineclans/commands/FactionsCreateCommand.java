@@ -26,6 +26,9 @@ public class FactionsCreateCommand {
             case SUCCESS:
                 player.sendMessage("Created faction.");
                 break;
+            case ERROR:
+                player.sendMessage("You entered an invalid name.");
+                break;
             default:
                 break;
         }
