@@ -71,6 +71,12 @@ public class FactionsCommand extends ModernCommand {
                 case "friendlyfire":
                     FactionsFriendlyFireCommand.onCommand(player, args);
                     break;
+                case "home":
+                    FactionsHomeCommand.onCommand(player);
+                    break;
+                case "sethome":
+                    FactionsSetHomeCommand.onCommand(player);
+                    break;
                 default:
                     sender.sendMessage(MineClans.getInstance().getMsg().getText("factions.usage"));
             }

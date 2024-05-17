@@ -3,15 +3,18 @@ package com.arkflame.mineclans.api;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.api.CreateResult.CreateResultState;
 import com.arkflame.mineclans.api.DisbandResult.DisbandResultState;
+import com.arkflame.mineclans.api.HomeResult.HomeResultState;
 import com.arkflame.mineclans.api.JoinResult.JoinResultState;
 import com.arkflame.mineclans.api.LeaveResult.LeaveResultState;
 import com.arkflame.mineclans.api.RenameDisplayResult.RenameDisplayResultState;
 import com.arkflame.mineclans.api.RenameResult.RenameResultState;
+import com.arkflame.mineclans.api.SetHomeResult.SetHomeResultState;
 import com.arkflame.mineclans.enums.Rank;
 import com.arkflame.mineclans.managers.FactionManager;
 import com.arkflame.mineclans.managers.FactionPlayerManager;
@@ -182,14 +185,18 @@ public class MineClansAPI {
             return new CreateResult(CreateResultState.FACTION_EXISTS, null);
         }
 
-        // Create the faction
-        faction = factionManager.createFaction(player, factionName);
+        try {
+            // Create the faction
+            faction = factionManager.createFaction(player, factionName);
 
-        // Update player's faction
-        factionPlayerManager.updateFaction(factionPlayer.getPlayerId(), faction);
+            // Update player's faction
+            factionPlayerManager.updateFaction(factionPlayer.getPlayerId(), faction);
 
-        // Update Rank
-        factionPlayerManager.updateRank(factionPlayer.getPlayerId(), Rank.LEADER);
+            // Update Rank
+            factionPlayerManager.updateRank(factionPlayer.getPlayerId(), Rank.LEADER);
+        } catch (IllegalArgumentException ex) {
+            return new CreateResult(CreateResultState.ERROR, faction);
+        }
 
         return new CreateResult(CreateResultState.SUCCESS, faction);
     }
@@ -253,7 +260,11 @@ public class MineClansAPI {
                         .getOrLoad(player.getUniqueId());
                 Faction playerFaction = factionPlayer.getFaction();
                 if (playerFaction != null) {
-                    factionManager.updateFactionName(playerFaction.getName(), newName);
+                    try {
+                        factionManager.updateFactionName(playerFaction.getName(), newName);
+                    } catch (IllegalArgumentException ex) {
+                        return new RenameResult(playerFaction, RenameResultState.ERROR);
+                    }
                     return new RenameResult(playerFaction, RenameResultState.SUCCESS);
                 } else {
                     return new RenameResult(null, RenameResultState.NOT_IN_FACTION);
@@ -272,7 +283,11 @@ public class MineClansAPI {
                     .getOrLoad(player.getUniqueId());
             Faction playerFaction = factionPlayer.getFaction();
             if (playerFaction != null) {
-                factionManager.updateFactionDisplayName(playerFaction.getName(), displayName);
+                try {
+                    factionManager.updateFactionDisplayName(playerFaction.getName(), displayName);
+                } catch (IllegalArgumentException ex) {
+                    return new RenameDisplayResult(playerFaction, RenameDisplayResultState.ERROR);
+                }
                 return new RenameDisplayResult(playerFaction, RenameDisplayResultState.SUCCESS);
             } else {
                 return new RenameDisplayResult(null, RenameDisplayResultState.NOT_IN_FACTION);
@@ -322,13 +337,37 @@ public class MineClansAPI {
         }
 
         Faction faction = factionPlayer.getFaction();
-        boolean friendlyFire = faction.isFriendlyFire();
-        faction.setFriendlyFire(!friendlyFire);
+        boolean friendlyFire = !faction.isFriendlyFire();
+        factionManager.updateFriendlyFire(faction.getName(), friendlyFire);
 
         // Save changes to the database or wherever necessary
 
-        return new FriendlyFireResult(friendlyFire ?
-                FriendlyFireResult.FriendlyFireResultState.DISABLED :
-                FriendlyFireResult.FriendlyFireResultState.ENABLED);
+        return new FriendlyFireResult(friendlyFire ? FriendlyFireResult.FriendlyFireResultState.ENABLED
+                : FriendlyFireResult.FriendlyFireResultState.DISABLED);
+    }
+
+    public SetHomeResult setHome(Player player, Location homeLocation) {
+        FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
+        if (factionPlayer == null || factionPlayer.getFaction() == null) {
+            return new SetHomeResult(SetHomeResultState.NOT_IN_FACTION);
+        }
+
+        String factionName = factionPlayer.getFaction().getName();
+        factionManager.updateHome(factionName, homeLocation);
+        return new SetHomeResult(SetHomeResultState.SUCCESS);
+    }
+
+    public HomeResult getHome(Player player) {
+        FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
+        if (factionPlayer == null || factionPlayer.getFaction() == null) {
+            return new HomeResult(HomeResultState.NOT_IN_FACTION);
+        }
+
+        Location homeLocation = factionPlayer.getFaction().getHome();
+        if (homeLocation == null) {
+            return new HomeResult(HomeResultState.NO_HOME_SET);
+        }
+
+        return new HomeResult(HomeResultState.SUCCESS, homeLocation);
     }
 }

@@ -24,6 +24,9 @@ public class FactionsRenameCommand {
             case NULL_NAME:
                 player.sendMessage("You have to enter a name.");
                 break;
+            case ERROR:
+                player.sendMessage("The name is not valid.");
+                break;
             default:
                 break;
         }

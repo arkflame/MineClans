@@ -23,6 +23,6 @@ public class RenameDisplayResult {
         SUCCESS,
         NOT_IN_FACTION,
         DIFFERENT_NAME, 
-        NULL_NAME
+        NULL_NAME, ERROR
     }
 }

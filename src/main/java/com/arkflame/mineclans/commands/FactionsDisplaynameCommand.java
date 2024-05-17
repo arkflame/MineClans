@@ -25,6 +25,9 @@ public class FactionsDisplaynameCommand {
             case NULL_NAME:
                 player.sendMessage("You have to enter a name.");
                 break;
+            case ERROR:
+                player.sendMessage("The displayname is not valid.");
+                break;
             default:
                 break;
         }

@@ -229,4 +229,20 @@ public class FactionManager {
             saveFactionToDatabase(faction);
         }
     }
+
+    public void updateFriendlyFire(String factionName, boolean friendlyFire) {
+        Faction faction = getFaction(factionName);
+        if (faction != null) {
+            faction.setFriendlyFire(friendlyFire);
+            saveFactionToDatabase(faction);
+        }
+    }
+
+    public void updateHome(String factionName, Location homeLocation) {
+        Faction faction = getFaction(factionName);
+        if (faction != null) {
+            faction.setHome(homeLocation);
+            saveFactionToDatabase(faction);
+        }
+    }
 }
