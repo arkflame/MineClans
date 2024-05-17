@@ -12,8 +12,10 @@ import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.models.Relation;
 
 public class FactionManager {
-    // Cache for factions
-    private Map<String, Faction> factionCache = new ConcurrentHashMap<>();
+    // Cache for factions by Name
+    private Map<String, Faction> factionCacheByName = new ConcurrentHashMap<>();
+    // Cache for factions by ID
+    private Map<UUID, Faction> factionCacheByID = new ConcurrentHashMap<>();
 
     // Get faction from cache or load from database
     public Faction getFaction(String name) {
@@ -21,7 +23,7 @@ public class FactionManager {
             return null;
         }
         // Check cache first
-        Faction faction = factionCache.get(name);
+        Faction faction = factionCacheByName.get(name);
         if (faction != null) {
             return faction;
         }
@@ -29,14 +31,38 @@ public class FactionManager {
         // If not in cache, load from database
         faction = loadFactionFromDatabase(name);
         if (faction != null) {
-            factionCache.put(name, faction);
+            factionCacheByName.put(name, faction);
+            factionCacheByID.put(faction.getId(), faction);
         }
         return faction;
     }
 
-    // Placeholder method to load faction from database
+    // Get faction from cache or load from database
+    public Faction getFaction(UUID id) {
+        if (id == null) {
+            return null;
+        }
+        // Check cache first
+        Faction faction = factionCacheByID.get(id);
+        if (faction != null) {
+            return faction;
+        }
+
+        // If not in cache, load from database
+        faction = loadFactionFromDatabase(id);
+        if (faction != null) {
+            factionCacheByName.put(faction.getName(), faction);
+            factionCacheByID.put(faction.getId(), faction);
+        }
+        return faction;
+    }
+
     private Faction loadFactionFromDatabase(String name) {
         return MineClans.getInstance().getMySQLProvider().getFactionDAO().getFactionByName(name);
+    }
+
+    private Faction loadFactionFromDatabase(UUID id) {
+        return MineClans.getInstance().getMySQLProvider().getFactionDAO().getFactionById(id);
     }
 
     // Save a faction to the database
@@ -54,16 +80,15 @@ public class FactionManager {
     public Faction createFaction(Player player, String factionName) {
         UUID playerId = player.getUniqueId();
         Faction newFaction = new Faction(UUID.randomUUID(), playerId, factionName, factionName);
-        factionCache.put(factionName, newFaction);
+        factionCacheByName.put(factionName, newFaction);
         saveFactionToDatabase(newFaction); // Save the new faction to the database
-        invitePlayerToFaction(factionName, playerId);
         addPlayerToFaction(factionName, playerId);
         return newFaction;
     }
 
     // Clear all factions from cache
     public void clearFactions() {
-        factionCache.clear();
+        factionCacheByName.clear();
     }
 
     // Add a player to a faction
@@ -109,7 +134,7 @@ public class FactionManager {
         Faction faction = getFaction(factionName);
         if (faction != null) {
             faction.disbandFaction();
-            factionCache.remove(factionName);
+            factionCacheByName.remove(factionName);
             removeFactionFromDatabase(faction);
         }
     }
@@ -180,6 +205,20 @@ public class FactionManager {
         if (faction != null) {
             faction.setOwner(ownerId);
             saveFactionToDatabase(faction);
+        }
+    }
+
+    public void updateFactionName(String factionName, String newName) {
+        Faction faction = getFaction(factionName);
+        if (faction != null) {
+            Faction existingFaction = getFaction(newName);
+            if (existingFaction == null) {
+                faction.setName(newName);
+                faction.setDisplayName(newName);
+                factionCacheByName.remove(factionName);
+                factionCacheByName.put(newName, faction);
+                saveFactionToDatabase(faction);
+            }
         }
     }
 }

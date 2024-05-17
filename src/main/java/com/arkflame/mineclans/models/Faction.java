@@ -12,6 +12,8 @@ import org.bukkit.entity.Player;
 import com.arkflame.mineclans.enums.Rank;
 import com.arkflame.mineclans.utils.LocationUtil;
 
+import net.md_5.bungee.api.ChatColor;
+
 import java.util.Map;
 
 public class Faction {
@@ -55,8 +57,8 @@ public class Faction {
     public Faction(UUID id, UUID owner, String name, String displayName) {
         this.id = id;
         this.owner = owner;
-        this.name = name;
-        this.displayName = displayName;
+        setName(name);
+        setDisplayName(displayName);
     }
 
     public Collection<UUID> getMembers() {
@@ -96,6 +98,13 @@ public class Faction {
     }
 
     public void setDisplayName(String displayName) {
+        if (displayName.length() < 3 || displayName.length() > 32) {
+            throw new IllegalArgumentException("Invalid faction name");
+        }
+        String strippedName = ChatColor.stripColor(displayName);
+        if (strippedName.length() < 3 || strippedName.length() > 12 || !strippedName.matches("[a-zA-Z0-9]*")) {
+            throw new IllegalArgumentException("Invalid faction name");
+        }
         this.displayName = displayName;
     }
 

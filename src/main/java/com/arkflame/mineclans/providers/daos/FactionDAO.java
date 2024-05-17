@@ -20,23 +20,23 @@ public class FactionDAO {
     }
 
     public void createTable() {
-        mySQLProvider.executeUpdateQuery("CREATE TABLE IF NOT EXISTS factions (" +
+        mySQLProvider.executeUpdateQuery("CREATE TABLE IF NOT EXISTS mineclans_factions (" +
                 "faction_id UUID PRIMARY KEY," +
                 "owner_id UUID NOT NULL," +
-                "display_name VARCHAR(255) NOT NULL," +
+                "display_name VARCHAR(64) NOT NULL," +
                 "home VARCHAR(255)," +
-                "name VARCHAR(255) UNIQUE," +
+                "name VARCHAR(16) UNIQUE," +
                 "balance INT," +
                 "friendly_fire BOOLEAN)");
     }
 
     public void removeFactionByName(String name) {
-        String query = "DELETE FROM factions WHERE name = ?";
+        String query = "DELETE FROM mineclans_factions WHERE name = ?";
         mySQLProvider.executeUpdateQuery(query, name);
     }
 
     public void insertOrUpdateFaction(Faction faction) {
-        String query = "INSERT INTO factions (faction_id, owner_id, display_name, home, name, balance, friendly_fire) "
+        String query = "INSERT INTO mineclans_factions (faction_id, owner_id, display_name, home, name, balance, friendly_fire) "
                 +
                 "VALUES (?, ?, ?, ?, ?, ?, ?) " +
                 "ON DUPLICATE KEY UPDATE " +
@@ -57,7 +57,7 @@ public class FactionDAO {
     }
 
     public void removeFaction(UUID factionId) {
-        String query = "DELETE FROM factions WHERE faction_id = ?";
+        String query = "DELETE FROM mineclans_factions WHERE faction_id = ?";
         mySQLProvider.executeUpdateQuery(query, factionId);
     }
 
@@ -99,7 +99,7 @@ public class FactionDAO {
 
     public Faction getFactionById(UUID factionId) {
         AtomicReference<Faction> faction = new AtomicReference<>(null);
-        String factionQuery = "SELECT faction_id, name, owner_id, display_name, home, balance, friendly_fire FROM factions WHERE faction_id = ?";
+        String factionQuery = "SELECT faction_id, name, owner_id, display_name, home, balance, friendly_fire FROM mineclans_factions WHERE faction_id = ?";
         mySQLProvider.executeSelectQuery(factionQuery, new ResultSetProcessor() {
             public void run(ResultSet resultSet) throws SQLException {
                 faction.set(extractFactionFromResultSet(resultSet));
@@ -110,7 +110,7 @@ public class FactionDAO {
 
     public Faction getFactionByName(String name) {
         AtomicReference<Faction> faction = new AtomicReference<>(null);
-        String query = "SELECT faction_id, name, owner_id, display_name, home, balance, friendly_fire FROM factions WHERE name = ?";
+        String query = "SELECT faction_id, name, owner_id, display_name, home, balance, friendly_fire FROM mineclans_factions WHERE name = ?";
         mySQLProvider.executeSelectQuery(query, new ResultSetProcessor() {
             public void run(ResultSet resultSet) throws SQLException {
                 faction.set(extractFactionFromResultSet(resultSet));

@@ -1,5 +1,6 @@
 package com.arkflame.mineclans.placeholders;
 
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -59,6 +60,10 @@ public class FactionsPlaceholder extends PlaceholderExpansion {
         switch (identifier) {
             case "name":
                 return faction.getName();
+            case "displayname":
+                return faction.getDisplayName();
+            case "prefix":
+                return ChatColor.GREEN + "**" + faction.getDisplayName() + " ";
             case "online":
                 return String.valueOf(faction.getOnlineMembers().size());
             case "owner":

@@ -49,6 +49,9 @@ public class FactionsCommand extends ModernCommand {
                 case "transfer":
                     FactionsTransferCommand.onCommand(player, args);
                     break;
+                case "rename":
+                    FactionsRenameCommand.onCommand(player, args);
+                    break;
                 default:
                     sender.sendMessage(MineClans.getInstance().getMsg().getText("factions.usage"));
             }

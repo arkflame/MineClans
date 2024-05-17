@@ -19,33 +19,33 @@ public class MemberDAO {
     }
 
     public void createTable() {
-        mySQLProvider.executeUpdateQuery("CREATE TABLE IF NOT EXISTS members (" +
-                "faction_id VARCHAR(36) NOT NULL," +
-                "member_id VARCHAR(36) NOT NULL," +
+        mySQLProvider.executeUpdateQuery("CREATE TABLE IF NOT EXISTS mineclans_members (" +
+                "faction_id UUID NOT NULL," +
+                "member_id UUID NOT NULL," +
                 "PRIMARY KEY (faction_id, member_id))");
     }
 
     public void addMember(UUID factionId, UUID memberId) {
-        String query = "INSERT INTO members (faction_id, member_id) VALUES (?, ?) " +
+        String query = "INSERT INTO mineclans_members (faction_id, member_id) VALUES (?, ?) " +
                 "ON DUPLICATE KEY UPDATE member_id = VALUES(member_id)";
         mySQLProvider.executeUpdateQuery(query, factionId.toString(), memberId.toString());
     }
 
     public void removeMember(UUID factionId, UUID memberId) {
         mySQLProvider.executeUpdateQuery(
-                "DELETE FROM members WHERE faction_id = ? AND member_id = ?",
+                "DELETE FROM mineclans_members WHERE faction_id = ? AND member_id = ?",
                 factionId.toString(),
                 memberId.toString());
     }
 
     public void removeMembers(UUID factionId) {
-        String query = "DELETE FROM members WHERE faction_id = ?";
+        String query = "DELETE FROM mineclans_members WHERE faction_id = ?";
         mySQLProvider.executeUpdateQuery(query, factionId.toString());
     }
 
     public Collection<UUID> getMembers(UUID factionId) {
         Collection<UUID> members = ConcurrentHashMap.newKeySet();
-        String query = "SELECT member_id FROM members WHERE faction_id = ?";
+        String query = "SELECT member_id FROM mineclans_members WHERE faction_id = ?";
         mySQLProvider.executeSelectQuery(query, new ResultSetProcessor() {
             @Override
             public void run(ResultSet resultSet) throws SQLException {
@@ -64,7 +64,7 @@ public class MemberDAO {
         AtomicReference<Faction> faction = new AtomicReference<>(null);
         // Step 1: Query the members table to find the faction ID associated with the
         // member name
-        String memberIdQuery = "SELECT faction_id FROM members WHERE member_name = ?";
+        String memberIdQuery = "SELECT faction_id FROM mineclans_members WHERE member_name = ?";
         mySQLProvider.executeSelectQuery(memberIdQuery, new ResultSetProcessor() {
             @Override
             public void run(ResultSet resultSet) throws SQLException {

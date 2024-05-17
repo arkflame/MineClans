@@ -9,6 +9,7 @@ import com.arkflame.mineclans.api.CreateResult.CreateResultState;
 import com.arkflame.mineclans.api.DisbandResult.DisbandResultState;
 import com.arkflame.mineclans.api.JoinResult.JoinResultState;
 import com.arkflame.mineclans.api.LeaveResult.LeaveResultState;
+import com.arkflame.mineclans.api.RenameResult.RenameResultState;
 import com.arkflame.mineclans.enums.Rank;
 import com.arkflame.mineclans.managers.FactionManager;
 import com.arkflame.mineclans.managers.FactionPlayerManager;
@@ -89,6 +90,8 @@ public class MineClansAPI {
             if (faction.getInvited().contains(player.getUniqueId())) {
                 factionPlayerManager.updateFaction(player.getUniqueId(), faction);
                 factionManager.addPlayerToFaction(factionName, player.getUniqueId());
+                factionPlayerManager.updateRank(player.getUniqueId(), Rank.MEMBER);
+                factionManager.uninvitePlayerFromFaction(factionName, player.getUniqueId());
                 return new JoinResult(JoinResultState.SUCCESS, faction, factionPlayer);
             } else {
                 return new JoinResult(JoinResultState.NOT_INVITED, faction, factionPlayer);
@@ -126,7 +129,7 @@ public class MineClansAPI {
             return new InviteResult(InviteResult.InviteResultState.ALREADY_INVITED);
         }
 
-        faction.invitePlayer(targetPlayerId);
+        factionManager.invitePlayerToFaction(faction.getName(), targetPlayerId);
         return new InviteResult(InviteResult.InviteResultState.SUCCESS, targetPlayer);
     }
 
@@ -198,8 +201,12 @@ public class MineClansAPI {
         if (!faction.getOwner().equals(factionPlayer.getPlayerId())) {
             return new DisbandResult(DisbandResultState.NOT_OWNER);
         }
-        factionManager.disbandFaction(faction.getName());
         factionPlayerManager.updateFaction(factionPlayer.getPlayerId(), null);
+        for (UUID uuid : faction.getMembers()) {
+            factionPlayerManager.updateFaction(uuid, null);
+            factionPlayerManager.updateRank(uuid, Rank.MEMBER);
+        }
+        factionManager.disbandFaction(faction.getName());
         return new DisbandResult(DisbandResultState.SUCCESS);
     }
 
@@ -207,32 +214,53 @@ public class MineClansAPI {
         if (newOwnerName == null) {
             return new TransferResult(TransferResult.TransferResultState.NULL_NAME, null);
         }
-    
+
         FactionPlayer factionPlayer = factionPlayerManager.getOrLoad(player.getUniqueId());
         Faction faction = factionPlayer.getFaction();
-    
+
         if (faction == null) {
             return new TransferResult(TransferResult.TransferResultState.NO_FACTION, null);
         }
-    
+
         UUID oldOwnerId = factionPlayer.getPlayerId();
 
         if (!faction.getOwner().equals(oldOwnerId)) {
             return new TransferResult(TransferResult.TransferResultState.NOT_OWNER, faction);
         }
-    
+
         FactionPlayer newOwnerPlayer = factionPlayerManager.loadFactionPlayerFromDatabase(newOwnerName);
-    
+
         if (newOwnerPlayer == null || !faction.getMembers().contains(newOwnerPlayer.getPlayerId())) {
             return new TransferResult(TransferResult.TransferResultState.MEMBER_NOT_FOUND, faction);
         }
-    
+
         UUID newOwnerId = newOwnerPlayer.getPlayerId();
-    
+
         factionManager.updateFactionOwner(faction.getName(), newOwnerId);
         factionPlayerManager.updateRank(newOwnerId, Rank.LEADER);
         factionPlayerManager.updateRank(oldOwnerId, Rank.MEMBER);
-    
+
         return new TransferResult(TransferResult.TransferResultState.SUCCESS, faction);
+    }
+
+    public RenameResult rename(Player player, String newName) {
+        if (newName != null) {
+            Faction faction = MineClans.getInstance().getFactionManager().getFaction(newName);
+            if (faction == null) {
+                FactionPlayer factionPlayer = MineClans.getInstance().getFactionPlayerManager()
+                        .getOrLoad(player.getUniqueId());
+                Faction playerFaction = factionPlayer.getFaction();
+                if (playerFaction != null) {
+                    factionManager.updateFactionName(playerFaction.getName(), newName);
+                    return new RenameResult(playerFaction, RenameResultState.SUCCESS);
+                } else {
+                    return new RenameResult(null, RenameResultState.NOT_IN_FACTION);
+                }
+            } else {
+                return new RenameResult(null, RenameResultState.ALREADY_EXISTS);
+            }
+        } else {
+            return new RenameResult(null, RenameResultState.NULL_NAME);
+        }
     }
 }

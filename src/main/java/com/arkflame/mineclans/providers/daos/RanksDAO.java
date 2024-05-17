@@ -19,19 +19,19 @@ public class RanksDAO {
     }
 
     public void createTable() {
-        mySQLProvider.executeUpdateQuery("CREATE TABLE IF NOT EXISTS ranks (" +
+        mySQLProvider.executeUpdateQuery("CREATE TABLE IF NOT EXISTS mineclans_ranks (" +
                 "player_id VARCHAR(36) PRIMARY KEY," +
                 "rank VARCHAR(255) NOT NULL)");
     }
 
     public void setRank(UUID playerId, Rank rank) {
-        mySQLProvider.executeUpdateQuery("INSERT INTO ranks (player_id, rank) VALUES (?, ?) " +
+        mySQLProvider.executeUpdateQuery("INSERT INTO mineclans_ranks (player_id, rank) VALUES (?, ?) " +
                 "ON DUPLICATE KEY UPDATE rank = VALUES(rank)", playerId.toString(), rank.toString());
     }
 
     public Rank getRank(UUID playerId) {
         AtomicReference<Rank> rank = new AtomicReference<>(null);
-        String query = "SELECT rank FROM ranks WHERE player_id = ?";
+        String query = "SELECT rank FROM mineclans_ranks WHERE player_id = ?";
         mySQLProvider.executeSelectQuery(query, new ResultSetProcessor() {
             @Override
             public void run(ResultSet resultSet) throws SQLException {
@@ -46,7 +46,7 @@ public class RanksDAO {
 
     public Map<UUID, Rank> getAllRanks() {
         Map<UUID, Rank> ranks = new ConcurrentHashMap<>();
-        String query = "SELECT player_id, rank FROM ranks";
+        String query = "SELECT player_id, rank FROM mineclans_ranks";
         mySQLProvider.executeSelectQuery(query, new ResultSetProcessor() {
             @Override
             public void run(ResultSet resultSet) throws SQLException {

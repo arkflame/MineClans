@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.models.FactionPlayer;
 import com.arkflame.mineclans.providers.MySQLProvider;
 import com.arkflame.mineclans.providers.ResultSetProcessor;
@@ -18,27 +17,27 @@ public class FactionPlayerDAO {
     }
 
     public void createTable() {
-        mySQLProvider.executeUpdateQuery("CREATE TABLE IF NOT EXISTS faction_players ("
+        mySQLProvider.executeUpdateQuery("CREATE TABLE IF NOT EXISTS mineclans_players ("
                 + "player_id UUID NOT NULL PRIMARY KEY,"
-                + "faction_name VARCHAR(255),"
+                + "faction_id UUID,"
                 + "join_date TIMESTAMP,"
                 + "last_active TIMESTAMP,"
                 + "kills INT DEFAULT 0,"
                 + "deaths INT DEFAULT 0,"
-                + "name VARCHAR(255),"
-                + "FOREIGN KEY (faction_name) REFERENCES factions(name) ON DELETE SET NULL"
+                + "name VARCHAR(16),"
+                + "FOREIGN KEY (faction_id) REFERENCES mineclans_factions(faction_id) ON DELETE SET NULL"
                 + ")");
     }
 
     public void insertOrUpdatePlayer(FactionPlayer player) {
         mySQLProvider.executeUpdateQuery(
-                "INSERT INTO faction_players (player_id, faction_name, join_date, last_active, kills, deaths, name) "
+                "INSERT INTO mineclans_players (player_id, faction_id, join_date, last_active, kills, deaths, name) "
                         + "VALUES (?, ?, ?, ?, ?, ?, ?) "
                         + "ON DUPLICATE KEY UPDATE "
-                        + "faction_name = VALUES(faction_name), join_date = VALUES(join_date), last_active = VALUES(last_active), "
+                        + "faction_id = VALUES(faction_id), join_date = VALUES(join_date), last_active = VALUES(last_active), "
                         + "kills = VALUES(kills), deaths = VALUES(deaths), name = VALUES(name)",
                 player.getPlayerId(),
-                player.getFactionName(),
+                player.getFactionId(),
                 player.getJoinDate(),
                 player.getLastActive(),
                 player.getKills(),
@@ -48,7 +47,7 @@ public class FactionPlayerDAO {
 
     public FactionPlayer getPlayerById(UUID playerId) {
         AtomicReference<FactionPlayer> player = new AtomicReference<>(null);
-        mySQLProvider.executeSelectQuery("SELECT * FROM faction_players WHERE player_id = ?",
+        mySQLProvider.executeSelectQuery("SELECT * FROM mineclans_players WHERE player_id = ?",
                 new ResultSetProcessor() {
                     @Override
                     public void run(ResultSet resultSet) throws SQLException {
@@ -62,7 +61,7 @@ public class FactionPlayerDAO {
 
     public FactionPlayer getPlayerByName(String name) {
         AtomicReference<FactionPlayer> player = new AtomicReference<>(null);
-        mySQLProvider.executeSelectQuery("SELECT * FROM faction_players WHERE name = ?",
+        mySQLProvider.executeSelectQuery("SELECT * FROM mineclans_players WHERE name = ?",
                 new ResultSetProcessor() {
                     public void run(ResultSet resultSet) throws SQLException {
                         if (resultSet != null && resultSet.next()) {
@@ -76,7 +75,7 @@ public class FactionPlayerDAO {
 
     private FactionPlayer extractPlayerFromResultSet(ResultSet resultSet) throws SQLException {
         FactionPlayer player = new FactionPlayer(UUID.fromString(resultSet.getString("player_id")));
-        player.setFaction(MineClans.getInstance().getFactionManager().getFaction(resultSet.getString("faction_name")));
+        player.setFactionId(resultSet.getString("faction_id"));
         player.setJoinDate(resultSet.getTimestamp("join_date"));
         player.setLastActive(resultSet.getTimestamp("last_active"));
         player.setKills(resultSet.getInt("kills"));
@@ -86,6 +85,6 @@ public class FactionPlayerDAO {
     }
 
     public void deletePlayer(UUID playerId) {
-        mySQLProvider.executeUpdateQuery("DELETE FROM faction_players WHERE player_id = ?", playerId);
+        mySQLProvider.executeUpdateQuery("DELETE FROM mineclans_players WHERE player_id = ?", playerId);
     }
 }

@@ -11,7 +11,7 @@ import com.arkflame.mineclans.enums.Rank;
 
 public class FactionPlayer {
     private UUID playerId;
-    private String factionName;
+    private UUID factionId;
     private String name;
     private Date joinDate;
     private Date lastActive;
@@ -21,7 +21,7 @@ public class FactionPlayer {
     public FactionPlayer(UUID playerId) {
         this.playerId = playerId;
         this.name = null;
-        this.factionName = null;
+        this.factionId = null;
         this.joinDate = null;
         this.lastActive = null;
         this.kills = 0;
@@ -33,22 +33,34 @@ public class FactionPlayer {
     }
 
     public Faction getFaction() {
-        if (factionName == null || factionName.isEmpty()) {
+        if (factionId == null) {
             return null;
         }
-        return MineClans.getInstance().getFactionManager().getFaction(factionName);
-    }
-
-    public String getFactionName() {
-        return factionName;
+        return MineClans.getInstance().getFactionManager().getFaction(factionId);
     }
 
     public void setFaction(Faction faction) {
         if (faction == null) {
-            this.factionName = null;
+            this.factionId = null;
         } else {
-            this.factionName = faction.getName();
+            this.factionId = faction.getId();
         }
+    }
+
+    public UUID getFactionId() {
+        return factionId;
+    }
+
+    public void setFactionId(UUID factionId) {
+        this.factionId = factionId;
+    }
+
+    public void setFactionId(String factionId) {
+        if (factionId == null) {
+            this.factionId = null;
+            return;
+        }
+        setFactionId(UUID.fromString(factionId));
     }
 
     public Rank getRank() {

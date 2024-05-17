@@ -17,24 +17,24 @@ public class InvitedDAO {
     }
 
     public void createTable() {
-        mySQLProvider.executeUpdateQuery("CREATE TABLE IF NOT EXISTS invited (" +
-                "faction_id VARCHAR(36) PRIMARY KEY," +
-                "member_id VARCHAR(36) NOT NULL)");
+        mySQLProvider.executeUpdateQuery("CREATE TABLE IF NOT EXISTS mineclans_invited (" +
+                "faction_id UUID PRIMARY KEY," +
+                "member_id UUID NOT NULL)");
     }
 
     public void addInvitedMember(UUID factionId, UUID memberId) {
-        mySQLProvider.executeUpdateQuery("INSERT INTO invited (faction_id, member_id) VALUES (?, ?)", factionId,
+        mySQLProvider.executeUpdateQuery("INSERT INTO mineclans_invited (faction_id, member_id) VALUES (?, ?)", factionId,
                 memberId);
     }
 
     public void removeInvitedMember(UUID factionId, UUID memberId) {
-        mySQLProvider.executeUpdateQuery("DELETE FROM invited WHERE faction_id = ? AND member_id = ?", factionId,
+        mySQLProvider.executeUpdateQuery("DELETE FROM mineclans_invited WHERE faction_id = ? AND member_id = ?", factionId,
                 memberId);
     }
 
     public Collection<UUID> getInvitedMembers(UUID factionId) {
         Collection<UUID> invitedMembers = ConcurrentHashMap.newKeySet();
-        String query = "SELECT member_id FROM invited WHERE faction_id = ?";
+        String query = "SELECT member_id FROM mineclans_invited WHERE faction_id = ?";
         mySQLProvider.executeSelectQuery(query, new ResultSetProcessor() {
             @Override
             public void run(ResultSet resultSet) throws SQLException {
@@ -49,7 +49,7 @@ public class InvitedDAO {
     }
 
     public void removeInvitedMembers(UUID factionId) {
-        String query = "DELETE FROM invited WHERE faction_id = ?";
+        String query = "DELETE FROM mineclans_invited WHERE faction_id = ?";
         mySQLProvider.executeUpdateQuery(query, factionId.toString());
     }
 }
