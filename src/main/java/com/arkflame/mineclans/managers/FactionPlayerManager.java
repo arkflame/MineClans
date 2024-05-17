@@ -25,6 +25,10 @@ public class FactionPlayerManager {
         // Check cache first
         FactionPlayer factionPlayer = factionPlayerCacheById.get(playerId);
         if (factionPlayer != null) {
+            if (factionPlayer.getName() != null && !factionPlayerCacheByName.containsKey(factionPlayer.getName())) {
+                factionPlayerCacheByName.put(factionPlayer.getName(), factionPlayer);
+            }
+
             return factionPlayer;
         }
 
@@ -51,6 +55,10 @@ public class FactionPlayerManager {
         // Check cache first
         FactionPlayer factionPlayer = factionPlayerCacheByName.get(playerName);
         if (factionPlayer != null) {
+            if (factionPlayer.getPlayerId() != null && !factionPlayerCacheById.containsKey(factionPlayer.getPlayerId())) {
+                factionPlayerCacheById.put(factionPlayer.getPlayerId(), factionPlayer);
+            }
+
             return factionPlayer;
         }
 
