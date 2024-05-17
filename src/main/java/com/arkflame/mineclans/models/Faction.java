@@ -10,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.enums.Rank;
+import com.arkflame.mineclans.utils.FactionNamingUtil;
 import com.arkflame.mineclans.utils.LocationUtil;
 
 import net.md_5.bungee.api.ChatColor;
@@ -105,9 +106,6 @@ public class Faction {
         if (displayName.length() < 3 || displayName.length() > 32) {
             throw new IllegalArgumentException("Invalid faction name");
         }
-        if (strippedName.length() < 3 || strippedName.length() > 12 || !strippedName.matches("[a-zA-Z0-9]*")) {
-            throw new IllegalArgumentException("Invalid faction name");
-        }
         this.displayName = displayName;
     }
 
@@ -116,9 +114,7 @@ public class Faction {
     }
 
     public void setName(String name) {
-        if (name.length() < 3 || name.length() > 12 || !name.matches("[a-zA-Z0-9]*")) {
-            throw new IllegalArgumentException("Invalid faction name");
-        }
+        FactionNamingUtil.checkName(name);
         this.name = name;
     }
 
