@@ -136,11 +136,6 @@ public class MineClansAPI {
         }
 
         FactionPlayer factionPlayer = factionPlayerManager.getOrLoad(player.getUniqueId());
-
-        if (factionPlayer == null) {
-            return new UninviteResult(UninviteResult.UninviteResultState.DATA_NOT_LOADED);
-        }
-
         Faction faction = factionPlayer.getFaction();
 
         if (faction == null) {
@@ -206,5 +201,36 @@ public class MineClansAPI {
         factionManager.disbandFaction(faction.getName());
         factionPlayerManager.updateFaction(factionPlayer.getPlayerId(), null);
         return new DisbandResult(DisbandResultState.SUCCESS);
+    }
+
+    public TransferResult transfer(Player player, String newOwnerName) {
+        if (newOwnerName == null) {
+            return new TransferResult(TransferResult.TransferResultState.NULL_NAME, null);
+        }
+    
+        FactionPlayer factionPlayer = factionPlayerManager.getOrLoad(player.getUniqueId());
+        Faction faction = factionPlayer.getFaction();
+    
+        if (faction == null) {
+            return new TransferResult(TransferResult.TransferResultState.NO_FACTION, null);
+        }
+    
+        if (!faction.getOwner().equals(factionPlayer.getPlayerId())) {
+            return new TransferResult(TransferResult.TransferResultState.NOT_OWNER, faction);
+        }
+    
+        FactionPlayer newOwnerPlayer = factionPlayerManager.loadFactionPlayerFromDatabase(newOwnerName);
+    
+        if (newOwnerPlayer == null || !faction.getMembers().contains(newOwnerPlayer.getPlayerId())) {
+            return new TransferResult(TransferResult.TransferResultState.MEMBER_NOT_FOUND, faction);
+        }
+    
+        UUID newOwnerId = newOwnerPlayer.getPlayerId();
+    
+        factionManager.updateFactionOwner(faction.getName(), newOwnerId);
+        factionPlayerManager.updateRank(newOwnerId, Rank.LEADER);
+        factionPlayerManager.updateRank(factionPlayer.getPlayerId(), Rank.MEMBER);
+    
+        return new TransferResult(TransferResult.TransferResultState.SUCCESS, faction);
     }
 }

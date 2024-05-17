@@ -174,4 +174,12 @@ public class FactionManager {
             MineClans.getInstance().getMySQLProvider().getInvitedDAO().removeInvitedMember(faction.getId(), playerId);
         }
     }
+
+    public void updateFactionOwner(String factionName, UUID ownerId) {
+        Faction faction = getFaction(factionName);
+        if (faction != null) {
+            faction.setOwner(ownerId);
+            saveFactionToDatabase(faction);
+        }
+    }
 }

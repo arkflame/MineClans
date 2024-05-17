@@ -46,6 +46,9 @@ public class FactionsCommand extends ModernCommand {
                 case "leave":
                     FactionsLeaveCommand.onCommand(player, args);
                     break;
+                case "transfer":
+                    FactionsTransferCommand.onCommand(player, args);
+                    break;
                 default:
                     sender.sendMessage(MineClans.getInstance().getMsg().getText("factions.usage"));
             }
