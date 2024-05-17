@@ -3,38 +3,32 @@ package com.arkflame.mineclans.commands;
 import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.MineClans;
-import com.arkflame.mineclans.models.Faction;
-import com.arkflame.mineclans.models.FactionPlayer;
+import com.arkflame.mineclans.api.JoinResult;
 import com.arkflame.mineclans.modernlib.commands.ModernArguments;
 
 public class FactionsJoinCommand {
     public static void onCommand(Player player, ModernArguments args) {
-        if (!args.hasArg(1)) {
-            player.sendMessage("Usage: /factions join <faction>");
-            return;
-        }
-
-        FactionPlayer factionPlayer = MineClans.getInstance().getFactionPlayerManager().getOrLoad(player.getUniqueId());
-        Faction faction = factionPlayer.getFaction();
-
-        if (faction != null) {
-            player.sendMessage("You are already in a faction.");
-            return;
-        }
-
         String factionName = args.getText(1);
-        faction = MineClans.getInstance().getFactionManager().getFaction(factionName);
+        JoinResult joinResult = MineClans.getInstance().getAPI().join(player, factionName);
 
-        if (faction != null) {
-            if (faction.getInvited().contains(player.getUniqueId())) {
-                MineClans.getInstance().getFactionPlayerManager().updateFaction(player.getUniqueId(), faction);
-                MineClans.getInstance().getFactionManager().addPlayerToFaction(factionName, player.getUniqueId());
-                player.sendMessage("You have joined the faction " + faction.getName() + ".");
-            } else {
+        switch (joinResult.getState()) {
+            case ALREADY_HAVE_FACTION:
+                player.sendMessage("You are already in a faction.");
+                break;
+            case NOT_INVITED:
                 player.sendMessage("You are not invited to this faction.");
-            }
-        } else {
-            player.sendMessage("No faction with this name.");
+                break;
+            case NO_FACTION:
+                player.sendMessage("No faction with this name.");
+                break;
+            case NULL_NAME:
+                player.sendMessage("Usage: /factions join <faction>");
+                break;
+            case SUCCESS:
+                player.sendMessage("You have joined the faction " + factionName + ".");
+                break;
+            default:
+                break;
         }
     }
 }

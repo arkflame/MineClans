@@ -18,6 +18,8 @@ public class UninviteResult {
         NO_FACTION,
         NOT_OWNER,
         NOT_INVITED, 
-        PLAYER_NOT_FOUND,
+        PLAYER_NOT_FOUND, 
+        NULL_NAME, 
+        DATA_NOT_LOADED,
     }
 }

@@ -20,14 +20,17 @@ public class MineClans extends JavaPlugin {
     private ConfigWrapper config;
     private ConfigWrapper messages;
 
+    // Providers
+    private MySQLProvider mySQLProvider;
+
+    // Managers
     private FactionManager factionManager;
     private FactionPlayerManager factionPlayerManager;
 
-    private MySQLProvider mySQLProvider;
+    // API
+    private MineClansAPI api;
 
     private FactionsCommand factionsCommand;
-
-    private MineClansAPI api;
 
     public ConfigWrapper getCfg() {
         return config;
@@ -37,16 +40,16 @@ public class MineClans extends JavaPlugin {
         return messages;
     }
 
+    public MySQLProvider getMySQLProvider() {
+        return mySQLProvider;
+    }
+    
     public FactionManager getFactionManager() {
         return factionManager;
     }
 
     public FactionPlayerManager getFactionPlayerManager() {
         return factionPlayerManager;
-    }
-
-    public MySQLProvider getMySQLProvider() {
-        return mySQLProvider;
     }
 
     public MineClansAPI getAPI() {
@@ -58,21 +61,21 @@ public class MineClans extends JavaPlugin {
         // Set static instance
         setInstance(this);
 
-        // Initialize API
-        api = new MineClansAPI();
-
         // Save default config
         config = new ConfigWrapper(this, "config.yml").saveDefault().load();
         messages = new ConfigWrapper(this, "messages.yml").saveDefault().load();
-
-        factionManager = new FactionManager();
-        factionPlayerManager = new FactionPlayerManager();
 
         mySQLProvider = new MySQLProvider(
                 config.getBoolean("mysql.enabled"),
                 config.getString("mysql.url"),
                 config.getString("mysql.username"),
                 config.getString("mysql.password"));
+
+        factionManager = new FactionManager();
+        factionPlayerManager = new FactionPlayerManager();
+
+        // Initialize API
+        api = new MineClansAPI(factionManager, factionPlayerManager);
 
         // Register Listeners
         PluginManager pluginManager = getServer().getPluginManager();

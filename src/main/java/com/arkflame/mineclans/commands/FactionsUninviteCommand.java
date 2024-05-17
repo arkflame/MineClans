@@ -9,16 +9,17 @@ import com.arkflame.mineclans.modernlib.commands.ModernArguments;
 
 public class FactionsUninviteCommand {
     public static void onCommand(Player player, ModernArguments args) {
-        if (!args.hasArg(1)) {
-            player.sendMessage("Usage: /factions uninvite <player>");
-            return;
-        }
-
         String targetPlayerName = args.getText(1);
         UninviteResult uninviteResult = MineClans.getInstance().getAPI().uninvite(player, targetPlayerName);
         UninviteResultState state = uninviteResult.getState();
 
         switch (state) {
+            case NULL_NAME:   
+                player.sendMessage("Usage: /factions uninvite <player>");
+                break;
+            case DATA_NOT_LOADED:
+                player.sendMessage("Your data is not loaded.");
+                break;
             case NO_FACTION:
                 player.sendMessage("You have no faction.");
                 break;
