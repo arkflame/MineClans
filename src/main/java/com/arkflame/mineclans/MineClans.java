@@ -88,7 +88,7 @@ public class MineClans extends JavaPlugin {
         factionsCommand.register(this);
         
         // Register the placeholder
-        if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+        if (pluginManager.getPlugin("PlaceholderAPI") != null) {
             new FactionsPlaceholder(this).register();
         }
     }
