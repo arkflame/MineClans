@@ -58,6 +58,12 @@ public class FactionsCommand extends ModernCommand {
                 case "list":
                     FactionsListCommand.onCommand(player);
                     break;
+                case "chat":
+                    FactionsChatCommand.onCommand(player);
+                    break;
+                case "tl":
+                    FactionsTellLocationCommand.onCommand(player, args);
+                    break;
                 default:
                     sender.sendMessage(MineClans.getInstance().getMsg().getText("factions.usage"));
             }

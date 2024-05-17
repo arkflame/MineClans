@@ -17,6 +17,7 @@ public class FactionPlayer {
     private Date lastActive;
     private int kills;
     private int deaths;
+    private boolean chat;
 
     public FactionPlayer(UUID playerId) {
         this.playerId = playerId;
@@ -117,5 +118,13 @@ public class FactionPlayer {
 
     public Player getPlayer() {
         return Bukkit.getPlayer(playerId);
+    }
+
+    public void toggleChat() {
+        this.chat = !chat;
+    }
+
+    public boolean isChatEnabled() {
+        return chat;
     }
 }

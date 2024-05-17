@@ -2,6 +2,7 @@ package com.arkflame.mineclans.api;
 
 import java.util.UUID;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.MineClans;
@@ -279,5 +280,38 @@ public class MineClansAPI {
         } else {
             return new RenameDisplayResult(null, RenameDisplayResultState.NULL_NAME);
         }
+    }
+
+    public ToggleChatResult toggleChat(Player player) {
+        FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
+        if (factionPlayer == null || factionPlayer.getFaction() == null) {
+            return new ToggleChatResult(ToggleChatResult.ToggleChatState.NOT_IN_FACTION);
+        }
+
+        factionPlayer.toggleChat();
+        if (factionPlayer.isChatEnabled()) {
+            return new ToggleChatResult(ToggleChatResult.ToggleChatState.ENABLED);
+        } else {
+            return new ToggleChatResult(ToggleChatResult.ToggleChatState.DISABLED);
+        }
+    }
+
+    public FactionChatResult sendFactionMessage(Player player, String message) {
+        FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
+        if (factionPlayer == null || factionPlayer.getFaction() == null) {
+            return new FactionChatResult(FactionChatResult.FactionChatState.NOT_IN_FACTION, message, null,
+                    factionPlayer);
+        }
+
+        Faction faction = factionPlayer.getFaction();
+        String formattedMessage = ChatColor.YELLOW + "[Faction] " + ChatColor.RESET + player.getName() + ": " + message;
+        faction.getMembers().forEach(memberId -> {
+            Player member = MineClans.getInstance().getServer().getPlayer(memberId);
+            if (member != null && member.isOnline()) {
+                member.sendMessage(formattedMessage);
+            }
+        });
+
+        return new FactionChatResult(FactionChatResult.FactionChatState.SUCCESS, message, faction, factionPlayer);
     }
 }

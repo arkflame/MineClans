@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.arkflame.mineclans.api.MineClansAPI;
 import com.arkflame.mineclans.commands.FactionsCommand;
+import com.arkflame.mineclans.listeners.ChatListener;
 import com.arkflame.mineclans.listeners.PlayerJoinListener;
 import com.arkflame.mineclans.listeners.PlayerQuitListener;
 import com.arkflame.mineclans.managers.FactionManager;
@@ -79,6 +80,7 @@ public class MineClans extends JavaPlugin {
 
         // Register Listeners
         PluginManager pluginManager = getServer().getPluginManager();
+        pluginManager.registerEvents(new ChatListener(), this);
         pluginManager.registerEvents(new PlayerJoinListener(factionPlayerManager), this);
         pluginManager.registerEvents(new PlayerQuitListener(factionPlayerManager), this);
         pluginManager.registerEvents(new MenuListener(), this);
