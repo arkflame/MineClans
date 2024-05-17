@@ -35,6 +35,7 @@ public class FactionsCommand extends ModernCommand {
                     FactionsDisbandCommand.onCommand(player, args);
                     break;
                 case "who":
+                case "show":
                     FactionsWhoCommand.onCommand(player, args);
                     break;
                 case "invite":
@@ -59,10 +60,16 @@ public class FactionsCommand extends ModernCommand {
                     FactionsListCommand.onCommand(player);
                     break;
                 case "chat":
+                case "c":
                     FactionsChatCommand.onCommand(player);
                     break;
                 case "tl":
+                case "telllocation":
                     FactionsTellLocationCommand.onCommand(player, args);
+                    break;
+                case "ff":
+                case "friendlyfire":
+                    FactionsFriendlyFireCommand.onCommand(player, args);
                     break;
                 default:
                     sender.sendMessage(MineClans.getInstance().getMsg().getText("factions.usage"));

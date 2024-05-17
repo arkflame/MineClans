@@ -52,7 +52,7 @@ public class MineClansAPI {
 
     public FactionPlayer getFactionPlayer(String name) {
         if (name != null) {
-            return factionPlayerManager.loadFactionPlayerFromDatabase(name);
+            return factionPlayerManager.getOrLoad(name);
         }
         return null;
     }
@@ -115,7 +115,7 @@ public class MineClansAPI {
             return new InviteResult(InviteResult.InviteResultState.NOT_OWNER);
         }
 
-        FactionPlayer targetPlayer = factionPlayerManager.loadFactionPlayerFromDatabase(toInvite);
+        FactionPlayer targetPlayer = factionPlayerManager.getOrLoad(toInvite);
 
         if (targetPlayer == null) {
             return new InviteResult(InviteResult.InviteResultState.PLAYER_NOT_FOUND);
@@ -151,7 +151,7 @@ public class MineClansAPI {
             return new UninviteResult(UninviteResult.UninviteResultState.NOT_OWNER);
         }
 
-        FactionPlayer targetPlayer = factionPlayerManager.loadFactionPlayerFromDatabase(toUninvite);
+        FactionPlayer targetPlayer = factionPlayerManager.getOrLoad(toUninvite);
 
         if (targetPlayer == null) {
             return new UninviteResult(UninviteResult.UninviteResultState.PLAYER_NOT_FOUND);
@@ -230,7 +230,7 @@ public class MineClansAPI {
             return new TransferResult(TransferResult.TransferResultState.NOT_OWNER, faction);
         }
 
-        FactionPlayer newOwnerPlayer = factionPlayerManager.loadFactionPlayerFromDatabase(newOwnerName);
+        FactionPlayer newOwnerPlayer = factionPlayerManager.getOrLoad(newOwnerName);
 
         if (newOwnerPlayer == null || !faction.getMembers().contains(newOwnerPlayer.getPlayerId())) {
             return new TransferResult(TransferResult.TransferResultState.MEMBER_NOT_FOUND, faction);
@@ -313,5 +313,22 @@ public class MineClansAPI {
         });
 
         return new FactionChatResult(FactionChatResult.FactionChatState.SUCCESS, message, faction, factionPlayer);
+    }
+
+    public FriendlyFireResult toggleFriendlyFire(Player player) {
+        FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
+        if (factionPlayer == null || factionPlayer.getFaction() == null) {
+            return new FriendlyFireResult(FriendlyFireResult.FriendlyFireResultState.NOT_IN_FACTION);
+        }
+
+        Faction faction = factionPlayer.getFaction();
+        boolean friendlyFire = faction.isFriendlyFire();
+        faction.setFriendlyFire(!friendlyFire);
+
+        // Save changes to the database or wherever necessary
+
+        return new FriendlyFireResult(friendlyFire ?
+                FriendlyFireResult.FriendlyFireResultState.DISABLED :
+                FriendlyFireResult.FriendlyFireResultState.ENABLED);
     }
 }
