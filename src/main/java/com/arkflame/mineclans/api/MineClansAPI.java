@@ -9,6 +9,7 @@ import com.arkflame.mineclans.api.CreateResult.CreateResultState;
 import com.arkflame.mineclans.api.DisbandResult.DisbandResultState;
 import com.arkflame.mineclans.api.JoinResult.JoinResultState;
 import com.arkflame.mineclans.api.LeaveResult.LeaveResultState;
+import com.arkflame.mineclans.api.RenameDisplayResult.RenameDisplayResultState;
 import com.arkflame.mineclans.api.RenameResult.RenameResultState;
 import com.arkflame.mineclans.enums.Rank;
 import com.arkflame.mineclans.managers.FactionManager;
@@ -261,6 +262,22 @@ public class MineClansAPI {
             }
         } else {
             return new RenameResult(null, RenameResultState.NULL_NAME);
+        }
+    }
+
+    public RenameDisplayResult renameDisplay(Player player, String displayName) {
+        if (displayName != null) {
+            FactionPlayer factionPlayer = MineClans.getInstance().getFactionPlayerManager()
+                    .getOrLoad(player.getUniqueId());
+            Faction playerFaction = factionPlayer.getFaction();
+            if (playerFaction != null) {
+                factionManager.updateFactionDisplayName(playerFaction.getName(), displayName);
+                return new RenameDisplayResult(playerFaction, RenameDisplayResultState.SUCCESS);
+            } else {
+                return new RenameDisplayResult(null, RenameDisplayResultState.NOT_IN_FACTION);
+            }
+        } else {
+            return new RenameDisplayResult(null, RenameDisplayResultState.NULL_NAME);
         }
     }
 }

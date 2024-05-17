@@ -63,7 +63,7 @@ public class FactionsPlaceholder extends PlaceholderExpansion {
             case "displayname":
                 return faction.getDisplayName();
             case "prefix":
-                return ChatColor.GREEN + "**" + faction.getDisplayName() + " ";
+                return ChatColor.GREEN + "**" + faction.getDisplayName() + ChatColor.RESET + " ";
             case "online":
                 return String.valueOf(faction.getOnlineMembers().size());
             case "owner":

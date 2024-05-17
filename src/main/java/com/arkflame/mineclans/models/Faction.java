@@ -98,10 +98,13 @@ public class Faction {
     }
 
     public void setDisplayName(String displayName) {
+        String strippedName = ChatColor.stripColor(displayName).toLowerCase().trim();
+        if (!strippedName.equals(name.toLowerCase())) {
+            throw new IllegalArgumentException("Invalid faction displayname: " + strippedName + " - " + name.toLowerCase());
+        }
         if (displayName.length() < 3 || displayName.length() > 32) {
             throw new IllegalArgumentException("Invalid faction name");
         }
-        String strippedName = ChatColor.stripColor(displayName);
         if (strippedName.length() < 3 || strippedName.length() > 12 || !strippedName.matches("[a-zA-Z0-9]*")) {
             throw new IllegalArgumentException("Invalid faction name");
         }

@@ -81,7 +81,7 @@ public class FactionDAO {
             String name = resultSet.getString("name");
 
             // Create a Faction object and set additional properties
-            Faction faction = new Faction(id, ownerId, displayName, name);
+            Faction faction = new Faction(id, ownerId, name, displayName);
             faction.setHome(home);
             faction.setBalance(balance);
             faction.setFriendlyFire(friendlyFire);

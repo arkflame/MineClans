@@ -221,4 +221,12 @@ public class FactionManager {
             }
         }
     }
+
+    public void updateFactionDisplayName(String factionName, String displayName) {
+        Faction faction = getFaction(factionName);
+        if (faction != null) {
+            faction.setDisplayName(displayName);
+            saveFactionToDatabase(faction);
+        }
+    }
 }
