@@ -45,6 +45,10 @@ public class MineClansAPI {
         return factionManager.getFaction(name);
     }
 
+    public Faction getFaction(UUID id) {
+        return factionManager.getFaction(id);
+    }
+
     public FactionPlayer getFactionPlayer(Player player) {
         return factionPlayerManager.getOrLoad(player.getUniqueId());
     }

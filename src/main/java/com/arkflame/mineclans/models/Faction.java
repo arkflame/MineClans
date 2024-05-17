@@ -8,6 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 
 import com.arkflame.mineclans.enums.Rank;
 import com.arkflame.mineclans.utils.FactionNamingUtil;
@@ -17,7 +19,7 @@ import net.md_5.bungee.api.ChatColor;
 
 import java.util.Map;
 
-public class Faction {
+public class Faction implements InventoryHolder {
     // The ID
     private final UUID id;
 
@@ -53,6 +55,9 @@ public class Faction {
 
     // Ranks
     private Map<UUID, Rank> ranks = new ConcurrentHashMap<>(); // UUID -> rank
+
+    // Chest Inventory
+    private Inventory chestInventory;
 
     // Constructor
     public Faction(UUID id, UUID owner, String name, String displayName) {
@@ -242,5 +247,22 @@ public class Faction {
 
     public void setRanks(Map<UUID, Rank> ranks) {
         this.ranks = ranks;
+    }
+
+    public Inventory getChest() {
+        if (chestInventory == null) {
+            chestInventory = Bukkit.createInventory(this, 27, "Faction Chest NULL");
+        }
+
+        return chestInventory;
+    }
+
+    public void setChest(Inventory chestInventory) {
+        this.chestInventory = chestInventory;
+    }
+
+    @Override
+    public Inventory getInventory() {
+        return chestInventory;
     }
 }

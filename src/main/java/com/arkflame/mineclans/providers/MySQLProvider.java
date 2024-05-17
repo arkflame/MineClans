@@ -46,6 +46,7 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 import com.arkflame.mineclans.MineClans;
+import com.arkflame.mineclans.providers.daos.ChestDAO;
 import com.arkflame.mineclans.providers.daos.FactionDAO;
 import com.arkflame.mineclans.providers.daos.FactionPlayerDAO;
 import com.arkflame.mineclans.providers.daos.InvitedDAO;
@@ -59,6 +60,7 @@ public class MySQLProvider {
     private HikariConfig config;
     private HikariDataSource dataSource = null;
 
+    private ChestDAO chestDAO;
     private FactionDAO factionDAO;
     private FactionPlayerDAO factionPlayerDAO;
     private InvitedDAO invitedDAO;
@@ -74,6 +76,7 @@ public class MySQLProvider {
             MineClans.getInstance().getLogger().info("Using external database for protections.");
         }
 
+        chestDAO = new ChestDAO(this);
         factionDAO = new FactionDAO(this);
         factionPlayerDAO = new FactionPlayerDAO(this);
         invitedDAO = new InvitedDAO(this);
@@ -108,6 +111,10 @@ public class MySQLProvider {
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
     }
 
+    public ChestDAO getChestDAO() {
+        return chestDAO;
+    }
+
     public FactionDAO getFactionDAO() {
         return factionDAO;
     }
@@ -133,6 +140,7 @@ public class MySQLProvider {
     }
 
     public void createTables() {
+        chestDAO.createTable();
         memberDAO.createTable();
         factionDAO.createTable();
         invitedDAO.createTable();

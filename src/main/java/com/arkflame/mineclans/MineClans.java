@@ -1,7 +1,11 @@
 package com.arkflame.mineclans;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -9,14 +13,17 @@ import com.arkflame.mineclans.api.MineClansAPI;
 import com.arkflame.mineclans.commands.FactionsCommand;
 import com.arkflame.mineclans.listeners.ChatListener;
 import com.arkflame.mineclans.listeners.FactionFriendlyFireListener;
+import com.arkflame.mineclans.listeners.InventoryClickListener;
 import com.arkflame.mineclans.listeners.PlayerJoinListener;
 import com.arkflame.mineclans.listeners.PlayerQuitListener;
 import com.arkflame.mineclans.managers.FactionManager;
 import com.arkflame.mineclans.managers.FactionPlayerManager;
+import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.modernlib.config.ConfigWrapper;
 import com.arkflame.mineclans.modernlib.menus.listeners.MenuListener;
 import com.arkflame.mineclans.placeholders.FactionsPlaceholder;
 import com.arkflame.mineclans.providers.MySQLProvider;
+import com.arkflame.mineclans.tasks.InventorySaveTask;
 
 public class MineClans extends JavaPlugin {
     private ConfigWrapper config;
@@ -28,6 +35,8 @@ public class MineClans extends JavaPlugin {
     // Managers
     private FactionManager factionManager;
     private FactionPlayerManager factionPlayerManager;
+
+    private InventorySaveTask inventorySaveTask;
 
     // API
     private MineClansAPI api;
@@ -45,7 +54,7 @@ public class MineClans extends JavaPlugin {
     public MySQLProvider getMySQLProvider() {
         return mySQLProvider;
     }
-    
+
     public FactionManager getFactionManager() {
         return factionManager;
     }
@@ -56,6 +65,10 @@ public class MineClans extends JavaPlugin {
 
     public MineClansAPI getAPI() {
         return api;
+    }
+
+    public InventorySaveTask getInventorySaveTask() {
+        return inventorySaveTask;
     }
 
     @Override
@@ -83,6 +96,7 @@ public class MineClans extends JavaPlugin {
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new ChatListener(), this);
         pluginManager.registerEvents(new FactionFriendlyFireListener(), this);
+        pluginManager.registerEvents(new InventoryClickListener(), this);
         pluginManager.registerEvents(new PlayerJoinListener(factionPlayerManager), this);
         pluginManager.registerEvents(new PlayerQuitListener(factionPlayerManager), this);
         pluginManager.registerEvents(new MenuListener(), this);
@@ -90,11 +104,15 @@ public class MineClans extends JavaPlugin {
         // Register Commands
         factionsCommand = new FactionsCommand();
         factionsCommand.register(this);
-        
+
         // Register the placeholder
         if (pluginManager.getPlugin("PlaceholderAPI") != null) {
             new FactionsPlaceholder(this).register();
         }
+
+        // Register tasks
+        inventorySaveTask = new InventorySaveTask();
+        inventorySaveTask.register();
     }
 
     @Override
@@ -104,6 +122,22 @@ public class MineClans extends JavaPlugin {
         factionsCommand.unregisterBukkitCommand();
 
         mySQLProvider.close();
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            InventoryView view = player.getOpenInventory();
+
+            if (view != null) {
+                Inventory inventory = view.getTopInventory();
+
+                if (inventory != null) {
+                    InventoryHolder inventoryHolder = inventory.getHolder();
+
+                    if (inventoryHolder instanceof Faction) {
+                        player.closeInventory();
+                    }
+                }
+            }
+        }
     }
 
     private static MineClans instance;

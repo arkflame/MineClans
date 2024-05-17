@@ -92,6 +92,9 @@ public class FactionDAO {
             faction.setRelations(mySQLProvider.getRelationsDAO().getRelationsByFactionId(id));
             faction.setRanks(mySQLProvider.getRanksDAO().getAllRanks());
 
+            // Load Chest
+            faction.setChest(mySQLProvider.getChestDAO().loadFactionChest(faction));
+
             return faction;
         }
         return null;
