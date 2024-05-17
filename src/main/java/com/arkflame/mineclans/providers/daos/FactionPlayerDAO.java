@@ -3,10 +3,12 @@ package com.arkflame.mineclans.providers.daos;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.models.FactionPlayer;
 import com.arkflame.mineclans.providers.MySQLProvider;
+import com.arkflame.mineclans.providers.ResultSetProcessor;
 
 public class FactionPlayerDAO {
     private MySQLProvider mySQLProvider;
@@ -35,39 +37,41 @@ public class FactionPlayerDAO {
                         + "ON DUPLICATE KEY UPDATE "
                         + "faction_name = VALUES(faction_name), join_date = VALUES(join_date), last_active = VALUES(last_active), "
                         + "kills = VALUES(kills), deaths = VALUES(deaths), name = VALUES(name)",
-                player.getPlayerId(), 
+                player.getPlayerId(),
                 player.getFactionName(),
-                player.getJoinDate(), 
+                player.getJoinDate(),
                 player.getLastActive(),
-                player.getKills(), 
+                player.getKills(),
                 player.getDeaths(),
                 player.getName());
     }
 
     public FactionPlayer getPlayerById(UUID playerId) {
-        FactionPlayer player = null;
-        try (ResultSet resultSet = mySQLProvider.executeSelectQuery("SELECT * FROM faction_players WHERE player_id = ?",
-                playerId.toString())) {
-            if (resultSet != null && resultSet.next()) {
-                player = extractPlayerFromResultSet(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return player;
+        AtomicReference<FactionPlayer> player = new AtomicReference<>(null);
+        mySQLProvider.executeSelectQuery("SELECT * FROM faction_players WHERE player_id = ?",
+                new ResultSetProcessor() {
+                    @Override
+                    public void run(ResultSet resultSet) throws SQLException {
+                        if (resultSet != null && resultSet.next()) {
+                            player.set(extractPlayerFromResultSet(resultSet));
+                        }
+                    }
+                }, playerId.toString());
+        return player.get();
     }
 
     public FactionPlayer getPlayerByName(String name) {
-        FactionPlayer player = null;
-        try (ResultSet resultSet = mySQLProvider.executeSelectQuery("SELECT * FROM faction_players WHERE name = ?",
-                name)) {
-            if (resultSet != null && resultSet.next()) {
-                player = extractPlayerFromResultSet(resultSet);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return player;
+        AtomicReference<FactionPlayer> player = new AtomicReference<>(null);
+        mySQLProvider.executeSelectQuery("SELECT * FROM faction_players WHERE name = ?",
+                new ResultSetProcessor() {
+                    public void run(ResultSet resultSet) throws SQLException {
+                        if (resultSet != null && resultSet.next()) {
+                            player.set(extractPlayerFromResultSet(resultSet));
+                        }
+                    };
+                },
+                name);
+        return player.get();
     }
 
     private FactionPlayer extractPlayerFromResultSet(ResultSet resultSet) throws SQLException {

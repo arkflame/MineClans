@@ -3,11 +3,13 @@ package com.arkflame.mineclans.providers.daos;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.bukkit.Location;
 
 import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.providers.MySQLProvider;
+import com.arkflame.mineclans.providers.ResultSetProcessor;
 import com.arkflame.mineclans.utils.LocationUtil;
 
 public class FactionDAO {
@@ -34,7 +36,8 @@ public class FactionDAO {
     }
 
     public void insertOrUpdateFaction(Faction faction) {
-        String query = "INSERT INTO factions (faction_id, owner_id, display_name, home, name, balance, friendly_fire) " +
+        String query = "INSERT INTO factions (faction_id, owner_id, display_name, home, name, balance, friendly_fire) "
+                +
                 "VALUES (?, ?, ?, ?, ?, ?, ?) " +
                 "ON DUPLICATE KEY UPDATE " +
                 "owner_id = VALUES(owner_id), " +
@@ -43,9 +46,9 @@ public class FactionDAO {
                 "name = VALUES(name), " +
                 "balance = VALUES(balance), " +
                 "friendly_fire = VALUES(friendly_fire)";
-        mySQLProvider.executeUpdateQuery(query, 
-                faction.getId(), 
-                faction.getOwner(), 
+        mySQLProvider.executeUpdateQuery(query,
+                faction.getId(),
+                faction.getOwner(),
                 faction.getDisplayName(),
                 faction.getHomeString(),
                 faction.getName(),
@@ -94,24 +97,24 @@ public class FactionDAO {
     }
 
     public Faction getFactionById(UUID factionId) {
-        Faction faction = null;
+        AtomicReference<Faction> faction = new AtomicReference<>(null);
         String factionQuery = "SELECT faction_id, name, owner_id, display_name, home, balance, friendly_fire FROM factions WHERE faction_id = ?";
-        try (ResultSet factionResultSet = mySQLProvider.executeSelectQuery(factionQuery, factionId.toString())) {
-            faction = extractFactionFromResultSet(factionResultSet);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return faction;
+        mySQLProvider.executeSelectQuery(factionQuery, new ResultSetProcessor() {
+            public void run(ResultSet resultSet) throws SQLException {
+                faction.set(extractFactionFromResultSet(resultSet));
+            };
+        }, factionId.toString());
+        return faction.get();
     }
 
     public Faction getFactionByName(String name) {
-        Faction faction = null;
+        AtomicReference<Faction> faction = new AtomicReference<>(null);
         String query = "SELECT faction_id, name, owner_id, display_name, home, balance, friendly_fire FROM factions WHERE name = ?";
-        try (ResultSet resultSet = mySQLProvider.executeSelectQuery(query, name)) {
-            faction = extractFactionFromResultSet(resultSet);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return faction;
+        mySQLProvider.executeSelectQuery(query, new ResultSetProcessor() {
+            public void run(ResultSet resultSet) throws SQLException {
+                faction.set(extractFactionFromResultSet(resultSet));
+            };
+        }, name);
+        return faction.get();
     }
 }

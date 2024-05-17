@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.arkflame.mineclans.providers.MySQLProvider;
+import com.arkflame.mineclans.providers.ResultSetProcessor;
 
 public class InvitedDAO {
     private MySQLProvider mySQLProvider;
@@ -34,15 +35,16 @@ public class InvitedDAO {
     public Collection<UUID> getInvitedMembers(UUID factionId) {
         Collection<UUID> invitedMembers = ConcurrentHashMap.newKeySet();
         String query = "SELECT member_id FROM invited WHERE faction_id = ?";
-        try (ResultSet resultSet = mySQLProvider.executeSelectQuery(query, factionId)) {
-            if (resultSet != null) {
-                while (resultSet.next()) {
-                    invitedMembers.add(UUID.fromString(resultSet.getString("member_id")));
+        mySQLProvider.executeSelectQuery(query, new ResultSetProcessor() {
+            @Override
+            public void run(ResultSet resultSet) throws SQLException {
+                if (resultSet != null) {
+                    while (resultSet.next()) {
+                        invitedMembers.add(UUID.fromString(resultSet.getString("member_id")));
+                    }
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        }, factionId);
         return invitedMembers;
     }
 

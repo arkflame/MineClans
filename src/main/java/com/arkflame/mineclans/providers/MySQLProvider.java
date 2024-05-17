@@ -103,7 +103,7 @@ public class MySQLProvider {
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-    }    
+    }
 
     public FactionDAO getFactionDAO() {
         return factionDAO;
@@ -160,17 +160,24 @@ public class MySQLProvider {
         }
     }
 
-    public ResultSet executeSelectQuery(String query, Object... params) throws SQLException {
+    public void executeSelectQuery(String query, ResultSetProcessor task, Object... params) {
         if (dataSource == null) {
-            return null;
+            return;
         }
-        Connection connection = dataSource.getConnection();
-        PreparedStatement statement = connection.prepareStatement(query);
-        // Set parameters
-        for (int i = 0; i < params.length; i++) {
-            statement.setObject(i + 1, params[i] instanceof UUID ? params[i].toString() : params[i]);
+        try {
+            try (Connection connection = dataSource.getConnection();
+                    PreparedStatement statement = connection.prepareStatement(query);) {
+                // Set parameters
+                for (int i = 0; i < params.length; i++) {
+                    statement.setObject(i + 1, params[i] instanceof UUID ? params[i].toString() : params[i]);
+                }
+                // Execute query and return result set
+                try (ResultSet result = statement.executeQuery()) {
+                    task.run(result);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        // Execute query and return result set
-        return statement.executeQuery();
     }
 }

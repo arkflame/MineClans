@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.arkflame.mineclans.models.Relation;
 import com.arkflame.mineclans.providers.MySQLProvider;
+import com.arkflame.mineclans.providers.ResultSetProcessor;
 
 public class RelationsDAO {
     private MySQLProvider mySQLProvider;
@@ -45,18 +46,18 @@ public class RelationsDAO {
     public Collection<Relation> getRelationsByFactionId(UUID factionId) {
         Collection<Relation> relations = ConcurrentHashMap.newKeySet();
         String query = "SELECT target_faction_id, relation_type FROM relations WHERE faction_id = ?";
-        try (ResultSet resultSet = mySQLProvider.executeSelectQuery(query, factionId)) {
-            if (resultSet != null) {
-                while (resultSet.next()) {
-                    UUID targetFactionId = UUID.fromString(resultSet.getString("target_faction_id"));
-                    String relationType = resultSet.getString("relation_type");
-                    Relation relation = new Relation(factionId, targetFactionId, relationType);
-                    relations.add(relation);
+        mySQLProvider.executeSelectQuery(query, new ResultSetProcessor() {
+            public void run(ResultSet resultSet) throws SQLException {
+                if (resultSet != null) {
+                    while (resultSet.next()) {
+                        UUID targetFactionId = UUID.fromString(resultSet.getString("target_faction_id"));
+                        String relationType = resultSet.getString("relation_type");
+                        Relation relation = new Relation(factionId, targetFactionId, relationType);
+                        relations.add(relation);
+                    }
                 }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+            };
+        }, factionId);
         return relations;
     }
 
