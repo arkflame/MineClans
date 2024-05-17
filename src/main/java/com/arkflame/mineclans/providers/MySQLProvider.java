@@ -99,10 +99,11 @@ public class MySQLProvider {
         config.setPassword(password);
         config.setMaximumPoolSize(10);
         config.setMinimumIdle(5);
+        config.setConnectionTestQuery("SELECT 1"); // Example query for connection testing
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-    }
+    }    
 
     public FactionDAO getFactionDAO() {
         return factionDAO;
