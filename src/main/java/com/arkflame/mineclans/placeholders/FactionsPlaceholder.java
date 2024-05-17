@@ -20,7 +20,7 @@ public class FactionsPlaceholder extends PlaceholderExpansion {
 
     @Override
     public boolean persist() {
-        return true; // This is required to tell PlaceholderAPI to not unregister your expansion on reload
+        return false;
     }
 
     @Override
