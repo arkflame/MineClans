@@ -10,8 +10,7 @@ import com.arkflame.mineclans.models.FactionPlayer;
 
 public class FactionsShowCommand {
     public static void onCommand(Player player) {
-        FactionPlayer factionPlayer = MineClans.getInstance().getFactionPlayerManager().getOrLoad(player.getUniqueId());
-        Faction faction = factionPlayer.getFaction();
+        Faction faction = MineClans.getInstance().getAPI().getFaction(player);
         if (faction == null) {
             player.sendMessage("You are not in a faction.");
             return;
@@ -21,9 +20,11 @@ public class FactionsShowCommand {
         message.append("\nOwner: " + faction.getOwner());
         message.append("\nMembers:");
         for (UUID memberId : faction.getMembers()) {
-            FactionPlayer member = MineClans.getInstance().getFactionPlayerManager().getOrLoad(memberId);
+            FactionPlayer member = MineClans.getInstance().getAPI().getFactionPlayer(memberId);
             if (member != null) {
-                message.append("\n" + memberId.toString()).append(" ").append(member.getRank().name());
+                message.append("\n" + member.getName()).append(", ").append(member.getRank().name());
+            } else {
+                message.append("\n" + memberId.toString());
             }
         }
         player.sendMessage(message.toString());
