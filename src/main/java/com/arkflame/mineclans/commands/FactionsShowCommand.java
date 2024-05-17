@@ -16,15 +16,19 @@ public class FactionsShowCommand {
             return;
         }
         StringBuilder message = new StringBuilder("Information of " + faction.getName() + ": ");
-        message.append("\nID: " + faction.getId());
-        message.append("\nOwner: " + faction.getOwner());
+        message.append("\nID: ");
+        message.append("\n " + faction.getId());
+        FactionPlayer owner = MineClans.getInstance().getAPI().getFactionPlayer(faction.getOwner());
+        String ownerDisplay = owner != null ? owner.getName() : faction.getOwner().toString();
+        message.append("\nOwner: ");
+        message.append("\n " + ownerDisplay);
         message.append("\nMembers:");
         for (UUID memberId : faction.getMembers()) {
             FactionPlayer member = MineClans.getInstance().getAPI().getFactionPlayer(memberId);
             if (member != null) {
-                message.append("\n" + member.getName()).append(", ").append(member.getRank().name());
+                message.append("\n " + member.getName()).append(", ").append(member.getRank().name());
             } else {
-                message.append("\n" + memberId.toString());
+                message.append("\n " + memberId.toString());
             }
         }
         player.sendMessage(message.toString());

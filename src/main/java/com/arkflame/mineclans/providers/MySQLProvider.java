@@ -50,6 +50,7 @@ import com.arkflame.mineclans.providers.daos.FactionDAO;
 import com.arkflame.mineclans.providers.daos.FactionPlayerDAO;
 import com.arkflame.mineclans.providers.daos.InvitedDAO;
 import com.arkflame.mineclans.providers.daos.MemberDAO;
+import com.arkflame.mineclans.providers.daos.RanksDAO;
 import com.arkflame.mineclans.providers.daos.RelationsDAO;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -58,11 +59,12 @@ public class MySQLProvider {
     private HikariConfig config;
     private HikariDataSource dataSource = null;
 
-    private MemberDAO memberDAO;
     private FactionDAO factionDAO;
-    private InvitedDAO invitedDAO;
-    private RelationsDAO relationsDAO;
     private FactionPlayerDAO factionPlayerDAO;
+    private InvitedDAO invitedDAO;
+    private MemberDAO memberDAO;
+    private RanksDAO ranksDAO;
+    private RelationsDAO relationsDAO;
 
     public MySQLProvider(boolean enabled, String url, String username, String password) {
         if (!enabled || url == null || username == null || password == null) {
@@ -72,11 +74,12 @@ public class MySQLProvider {
             MineClans.getInstance().getLogger().info("Using external database for protections.");
         }
 
-        memberDAO = new MemberDAO(this);
         factionDAO = new FactionDAO(this);
-        invitedDAO = new InvitedDAO(this);
-        relationsDAO = new RelationsDAO(this);
         factionPlayerDAO = new FactionPlayerDAO(this);
+        invitedDAO = new InvitedDAO(this);
+        memberDAO = new MemberDAO(this);
+        ranksDAO = new RanksDAO(this);
+        relationsDAO = new RelationsDAO(this);
 
         // Generate hikari config
         generateHikariConfig(url, username, password);
@@ -121,6 +124,10 @@ public class MySQLProvider {
         return relationsDAO;
     }
 
+    public RanksDAO getRanksDAO() {
+        return ranksDAO;
+    }
+
     public FactionPlayerDAO getFactionPlayerDAO() {
         return factionPlayerDAO;
     }
@@ -130,6 +137,7 @@ public class MySQLProvider {
         factionDAO.createTable();
         invitedDAO.createTable();
         relationsDAO.createTable();
+        ranksDAO.createTable();
         factionPlayerDAO.createTable();
     }
 
