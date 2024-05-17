@@ -105,21 +105,23 @@ public class FactionPlayerManager {
         }
     }
 
-    // Update a FactionPlayer's rank
-    public void updateRank(UUID playerId, Rank rank) {
-        FactionPlayer factionPlayer = getOrLoad(playerId);
-        if (factionPlayer != null) {
-            Faction faction = factionPlayer.getFaction();
-            faction.setRank(playerId, rank);
-            save(factionPlayer);
-        }
-    }
-
     public void updateName(UUID playerId, String name) {
         FactionPlayer factionPlayer = getOrLoad(playerId);
         if (factionPlayer != null) {
             factionPlayer.setName(name);
             save(factionPlayer);
+        }
+    }
+
+    // Update a FactionPlayer's rank
+    public void updateRank(UUID playerId, Rank rank) {
+        FactionPlayer factionPlayer = getOrLoad(playerId);
+        if (factionPlayer != null) {
+            Faction faction = factionPlayer.getFaction();
+            if (faction != null) {
+                faction.setRank(playerId, rank);
+            }
+            MineClans.getInstance().getMySQLProvider().getRanksDAO().setRank(playerId, rank);
         }
     }
 }

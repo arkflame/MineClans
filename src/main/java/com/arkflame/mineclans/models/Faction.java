@@ -231,4 +231,8 @@ public class Faction {
         }
         return onlineMembers;
     }
+
+    public void setRanks(Map<UUID, Rank> ranks) {
+        this.ranks = ranks;
+    }
 }

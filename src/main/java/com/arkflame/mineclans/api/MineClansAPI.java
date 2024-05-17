@@ -184,7 +184,7 @@ public class MineClansAPI {
         factionPlayerManager.updateFaction(factionPlayer.getPlayerId(), faction);
 
         // Update Rank
-        factionManager.updateRank(factionPlayer.getPlayerId(), Rank.LEADER);
+        factionPlayerManager.updateRank(factionPlayer.getPlayerId(), Rank.LEADER);
 
         return new CreateResult(CreateResultState.SUCCESS, faction);
     }
@@ -215,7 +215,9 @@ public class MineClansAPI {
             return new TransferResult(TransferResult.TransferResultState.NO_FACTION, null);
         }
     
-        if (!faction.getOwner().equals(factionPlayer.getPlayerId())) {
+        UUID oldOwnerId = factionPlayer.getPlayerId();
+
+        if (!faction.getOwner().equals(oldOwnerId)) {
             return new TransferResult(TransferResult.TransferResultState.NOT_OWNER, faction);
         }
     
@@ -228,8 +230,8 @@ public class MineClansAPI {
         UUID newOwnerId = newOwnerPlayer.getPlayerId();
     
         factionManager.updateFactionOwner(faction.getName(), newOwnerId);
-        factionManager.updateRank(newOwnerId, Rank.LEADER);
-        factionManager.updateRank(factionPlayer.getPlayerId(), Rank.MEMBER);
+        factionPlayerManager.updateRank(newOwnerId, Rank.LEADER);
+        factionPlayerManager.updateRank(oldOwnerId, Rank.MEMBER);
     
         return new TransferResult(TransferResult.TransferResultState.SUCCESS, faction);
     }

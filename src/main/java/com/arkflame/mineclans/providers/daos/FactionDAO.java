@@ -90,6 +90,7 @@ public class FactionDAO {
             faction.setMembers(mySQLProvider.getMemberDAO().getMembers(id));
             faction.setInvited(mySQLProvider.getInvitedDAO().getInvitedMembers(id));
             faction.setRelations(mySQLProvider.getRelationsDAO().getRelationsByFactionId(id));
+            faction.setRanks(mySQLProvider.getRanksDAO().getAllRanks());
 
             return faction;
         }
