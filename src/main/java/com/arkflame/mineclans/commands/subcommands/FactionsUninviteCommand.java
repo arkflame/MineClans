@@ -20,8 +20,8 @@ public class FactionsUninviteCommand {
             case NO_FACTION:
                 player.sendMessage("You have no faction.");
                 break;
-            case NOT_CAPTAIN:
-                player.sendMessage("You are not captain.");
+            case NO_PERMISSION:
+                player.sendMessage("You are not MODERATOR to uninvite.");
                 break;
             case NOT_INVITED:
                 player.sendMessage("Player is not invited.");

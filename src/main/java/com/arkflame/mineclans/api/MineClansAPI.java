@@ -11,6 +11,8 @@ import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.api.results.CreateResult;
 import com.arkflame.mineclans.api.results.DisbandResult;
 import com.arkflame.mineclans.api.results.FactionChatResult;
+import com.arkflame.mineclans.api.results.FocusResult;
+import com.arkflame.mineclans.api.results.FocusResult.FocusResultType;
 import com.arkflame.mineclans.api.results.FriendlyFireResult;
 import com.arkflame.mineclans.api.results.HomeResult;
 import com.arkflame.mineclans.api.results.InviteResult;
@@ -178,7 +180,7 @@ public class MineClansAPI {
         }
 
         if (factionPlayer.getRank().isLowerThan(Rank.MODERATOR)) {
-            return new UninviteResult(UninviteResult.UninviteResultState.NOT_CAPTAIN);
+            return new UninviteResult(UninviteResult.UninviteResultState.NO_PERMISSION);
         }
 
         FactionPlayer targetPlayer = factionPlayerManager.getOrLoad(toUninvite);
@@ -578,5 +580,31 @@ public class MineClansAPI {
         } catch (Exception e) {
             return new OpenChestResult(OpenChestResultType.ERROR, faction, factionPlayer);
         }
+    }
+
+    public FocusResult focus(Player player, String factionName) {
+        FactionPlayer factionPlayer = MineClans.getInstance().getFactionPlayerManager().getOrLoad(player.getUniqueId());
+        Faction faction = factionPlayer.getFaction();
+        if (faction == null) {
+            return new FocusResult(FocusResultType.NOT_IN_FACTION);
+        }
+
+        if (factionPlayer.getRank().isLowerThan(Rank.RECRUIT)) {
+            return new FocusResult(FocusResultType.NO_PERMISSION);
+        }
+
+        Faction targetFaction = MineClans.getInstance().getFactionManager().getFaction(factionName);
+        if (targetFaction == null) {
+            faction.setFocusedFaction(null);
+            return new FocusResult(FocusResultType.FACTION_NOT_FOUND);
+        }
+
+        if (faction == targetFaction) {
+            return new FocusResult(FocusResultType.SAME_FACTION);
+        }
+
+        faction.setFocusedFaction(targetFaction.getId());
+
+        return new FocusResult(FocusResultType.SUCCESS);
     }
 }

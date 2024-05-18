@@ -57,6 +57,8 @@ public class FactionsPlaceholder extends PlaceholderExpansion {
             return "";
         }
 
+        Faction focusedFaction = plugin.getFactionManager().getFaction(faction.getFocusedFaction());
+
         switch (identifier) {
             case "name":
                 return faction.getName();
@@ -72,8 +74,12 @@ public class FactionsPlaceholder extends PlaceholderExpansion {
                 return String.valueOf(faction.getBalance());
             case "members":
                 return String.valueOf(faction.getMembers().size());
+            case "focus_name":
+                return focusedFaction == null ? "" : focusedFaction.getDisplayName();
+            case "focus_online":
+                return focusedFaction == null ? "" : String.valueOf(focusedFaction.getOnlineMembers().size());
             default:
-                return null;
+                return "";
         }
     }
 }

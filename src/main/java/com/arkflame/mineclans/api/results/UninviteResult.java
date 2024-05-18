@@ -19,6 +19,6 @@ public class UninviteResult {
         NOT_INVITED, 
         PLAYER_NOT_FOUND, 
         NULL_NAME, 
-        NOT_CAPTAIN,
+        NO_PERMISSION,
     }
 }

@@ -60,6 +60,9 @@ public class Faction implements InventoryHolder {
     // Chest Inventory
     private Inventory chestInventory;
 
+    // Focused Faction
+    private UUID focusedFaction = null;
+
     // Constructor
     public Faction(UUID id, UUID owner, String name, String displayName) {
         this.id = id;
@@ -246,6 +249,14 @@ public class Faction implements InventoryHolder {
 
     public void setChest(Inventory chestInventory) {
         this.chestInventory = chestInventory;
+    }
+
+    public UUID getFocusedFaction() {
+        return focusedFaction;
+    }
+
+    public void setFocusedFaction(UUID focusedFaction) {
+        this.focusedFaction = focusedFaction;
     }
 
     @Override
