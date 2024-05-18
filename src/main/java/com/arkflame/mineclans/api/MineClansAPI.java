@@ -280,33 +280,35 @@ public class MineClansAPI {
     }
 
     public RenameResult rename(Player player, String newName) {
-        if (newName != null) {
-            Faction faction = MineClans.getInstance().getFactionManager().getFaction(newName);
-            if (faction == null) {
-                FactionPlayer factionPlayer = MineClans.getInstance().getFactionPlayerManager()
-                        .getOrLoad(player.getUniqueId());
-                Faction playerFaction = factionPlayer.getFaction();
-                if (playerFaction != null) {
-                    if (factionPlayer.getRank().isEqualOrHigherThan(Rank.LEADER)) {
-                        try {
-                            factionManager.updateFactionName(playerFaction.getName(), newName);
-                        } catch (IllegalArgumentException ex) {
-                            return new RenameResult(playerFaction, RenameResultState.ERROR);
-                        }
-                        return new RenameResult(playerFaction, RenameResultState.SUCCESS);
-                    } else {
-                        return new RenameResult(playerFaction, RenameResultState.NOT_ADMIN);
-                    }
-                } else {
-                    return new RenameResult(null, RenameResultState.NOT_IN_FACTION);
-                }
-            } else {
-                return new RenameResult(null, RenameResultState.ALREADY_EXISTS);
-            }
-        } else {
+        if (newName == null) {
             return new RenameResult(null, RenameResultState.NULL_NAME);
         }
-    }
+        
+        Faction faction = MineClans.getInstance().getFactionManager().getFaction(newName);
+        if (faction != null) {
+            return new RenameResult(null, RenameResultState.ALREADY_EXISTS);
+        }
+    
+        FactionPlayer factionPlayer = MineClans.getInstance().getFactionPlayerManager()
+                .getOrLoad(player.getUniqueId());
+        Faction playerFaction = factionPlayer.getFaction();
+    
+        if (playerFaction == null) {
+            return new RenameResult(null, RenameResultState.NOT_IN_FACTION);
+        }
+    
+        if (factionPlayer.getRank().isLowerThan(Rank.LEADER)) {
+            return new RenameResult(playerFaction, RenameResultState.NO_PERMISSION);
+        }
+    
+        try {
+            factionManager.updateFactionName(playerFaction.getName(), newName);
+        } catch (IllegalArgumentException ex) {
+            return new RenameResult(playerFaction, RenameResultState.ERROR);
+        }
+    
+        return new RenameResult(playerFaction, RenameResultState.SUCCESS);
+    }    
 
     public RenameDisplayResult renameDisplay(Player player, String displayName) {
         if (displayName != null) {
@@ -469,12 +471,12 @@ public class MineClansAPI {
             return new RankChangeResult(RankChangeResultType.NOT_IN_FACTION, null);
         }
 
-        if (target.getRank().isEqualOrHigherThan(sender.getRank())) {
-            return new RankChangeResult(RankChangeResultType.SUPERIOR_RANK, null);
+        if (sender.getRank().isLowerThan(Rank.LEADER)) {
+            return new RankChangeResult(RankChangeResultType.NO_PERMISSION, null);
         }
 
-        if (sender.getRank().isEqualOrHigherThan(Rank.LEADER)) {
-            return new RankChangeResult(RankChangeResultType.NO_PERMISSION, null);
+        if (target.getRank().isEqualOrHigherThan(sender.getRank())) {
+            return new RankChangeResult(RankChangeResultType.SUPERIOR_RANK, null);
         }
 
         Rank nextRank = target.getRank().getNext();
@@ -506,12 +508,12 @@ public class MineClansAPI {
             return new RankChangeResult(RankChangeResultType.NOT_IN_FACTION, null);
         }
 
-        if (target.getRank().isEqualOrHigherThan(sender.getRank())) {
-            return new RankChangeResult(RankChangeResultType.SUPERIOR_RANK, null);
+        if (sender.getRank().isLowerThan(Rank.LEADER)) {
+            return new RankChangeResult(RankChangeResultType.NO_PERMISSION, null);
         }
 
-        if (sender.getRank().isEqualOrHigherThan(Rank.LEADER)) {
-            return new RankChangeResult(RankChangeResultType.NO_PERMISSION, null);
+        if (target.getRank().isEqualOrHigherThan(sender.getRank())) {
+            return new RankChangeResult(RankChangeResultType.SUPERIOR_RANK, null);
         }
 
         Rank previousRank = target.getRank().getPrevious();

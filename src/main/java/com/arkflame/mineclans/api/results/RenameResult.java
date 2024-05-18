@@ -23,6 +23,8 @@ public class RenameResult {
         SUCCESS,
         NOT_IN_FACTION,
         ALREADY_EXISTS, 
-        NULL_NAME, ERROR, NOT_ADMIN
+        NULL_NAME, 
+        ERROR, 
+        NO_PERMISSION
     }
 }
