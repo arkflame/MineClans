@@ -213,34 +213,6 @@ public class Faction implements InventoryHolder {
         this.balance = 0;
     }
 
-    public void promoteMember(UUID member) {
-        if (this.ranks.containsKey(member)) {
-            Rank currentRank = this.ranks.get(member);
-            Rank nextRank = currentRank.getNext();
-            if (nextRank != null) {
-                this.ranks.put(member, nextRank);
-            } else {
-                throw new IllegalArgumentException("Cannot promote further");
-            }
-        } else {
-            throw new IllegalArgumentException("Member not in faction");
-        }
-    }
-
-    public void demoteMember(UUID member) {
-        if (this.ranks.containsKey(member)) {
-            Rank currentRank = this.ranks.get(member);
-            Rank previousRank = currentRank.getPrevious();
-            if (previousRank != null) {
-                this.ranks.put(member, previousRank);
-            } else {
-                throw new IllegalArgumentException("Cannot demote further");
-            }
-        } else {
-            throw new IllegalArgumentException("Member not in faction");
-        }
-    }
-
     public UUID getId() {
         return id;
     }

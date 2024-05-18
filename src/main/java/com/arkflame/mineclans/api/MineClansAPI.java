@@ -12,6 +12,7 @@ import com.arkflame.mineclans.api.DisbandResult.DisbandResultState;
 import com.arkflame.mineclans.api.HomeResult.HomeResultState;
 import com.arkflame.mineclans.api.JoinResult.JoinResultState;
 import com.arkflame.mineclans.api.LeaveResult.LeaveResultState;
+import com.arkflame.mineclans.api.RankChangeResult.RankChangeResultType;
 import com.arkflame.mineclans.api.RenameDisplayResult.RenameDisplayResultState;
 import com.arkflame.mineclans.api.RenameResult.RenameResultState;
 import com.arkflame.mineclans.api.SetHomeResult.SetHomeResultState;
@@ -425,4 +426,69 @@ public class MineClansAPI {
         return factionManager.getEffectiveRelation(faction.getName(), otherFaction.getName());
     }
 
+    public RankChangeResult promote(Player player, String playerName) {
+        FactionPlayer target = getFactionPlayer(playerName);
+        FactionPlayer sender = getFactionPlayer(player.getUniqueId());
+    
+        if (target == null || sender == null) {
+            return new RankChangeResult(RankChangeResultType.PLAYER_NOT_FOUND, null);
+        }
+    
+        if (!target.getFaction().equals(sender.getFaction())) {
+            return new RankChangeResult(RankChangeResultType.NOT_IN_FACTION, null);
+        }
+    
+        if (target.getRank().ordinal() >= sender.getRank().ordinal()) {
+            return new RankChangeResult(RankChangeResultType.SUPERIOR_RANK, null);
+        }
+    
+        if (sender.getRank().ordinal() < Rank.ADMIN.ordinal()) {
+            return new RankChangeResult(RankChangeResultType.ADMIN_REQUIRED, null);
+        }
+    
+        Rank nextRank = target.getRank().getNext();
+        if (nextRank != null) {
+            if (nextRank == Rank.LEADER) {      
+                return new RankChangeResult(RankChangeResultType.CANNOT_PROMOTE_TO_LEADER, null);
+            }
+
+            if (nextRank == sender.getRank()) {
+                return new RankChangeResult(RankChangeResultType.CANNOT_PROMOTE, null);
+            }
+
+            factionPlayerManager.updateRank(target.getPlayerId(), nextRank);
+            return new RankChangeResult(RankChangeResultType.SUCCESS, nextRank);
+        }
+    
+        return new RankChangeResult(RankChangeResultType.CANNOT_PROMOTE, null);
+    }
+    
+    public RankChangeResult demote(Player player, String playerName) {
+        FactionPlayer target = getFactionPlayer(playerName);
+        FactionPlayer sender = getFactionPlayer(player.getUniqueId());
+    
+        if (target == null || sender == null) {
+            return new RankChangeResult(RankChangeResultType.PLAYER_NOT_FOUND, null);
+        }
+    
+        if (!target.getFaction().equals(sender.getFaction())) {
+            return new RankChangeResult(RankChangeResultType.NOT_IN_FACTION, null);
+        }
+    
+        if (target.getRank().ordinal() >= sender.getRank().ordinal()) {
+            return new RankChangeResult(RankChangeResultType.SUPERIOR_RANK, null);
+        }
+    
+        if (sender.getRank().ordinal() < Rank.ADMIN.ordinal()) {
+            return new RankChangeResult(RankChangeResultType.ADMIN_REQUIRED, null);
+        }
+    
+        Rank previousRank = target.getRank().getPrevious();
+        if (previousRank != null) {
+            factionPlayerManager.updateRank(target.getPlayerId(), previousRank);
+            return new RankChangeResult(RankChangeResultType.SUCCESS, previousRank);
+        }
+    
+        return new RankChangeResult(RankChangeResultType.CANNOT_DEMOTE, null);
+    }
 }

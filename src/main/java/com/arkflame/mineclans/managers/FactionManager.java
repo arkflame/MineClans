@@ -112,24 +112,6 @@ public class FactionManager {
         }
     }
 
-    // Promote a player within a faction
-    public void promotePlayer(String factionName, UUID playerId) {
-        Faction faction = getFaction(factionName);
-        if (faction != null) {
-            faction.promoteMember(playerId);
-            saveFactionToDatabase(faction); // Save changes to the database
-        }
-    }
-
-    // Demote a player within a faction
-    public void demotePlayer(String factionName, UUID playerId) {
-        Faction faction = getFaction(factionName);
-        if (faction != null) {
-            faction.demoteMember(playerId);
-            saveFactionToDatabase(faction); // Save changes to the database
-        }
-    }
-
     // Disband a faction
     public void disbandFaction(String factionName) {
         Faction faction = getFaction(factionName);

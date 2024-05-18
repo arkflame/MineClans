@@ -67,7 +67,7 @@ public class FactionPlayer {
     public Rank getRank() {
         Faction faction = getFaction();
         if (faction == null) {
-            return null;
+            return Rank.MEMBER;
         }
         return faction.getRank(playerId);
     }

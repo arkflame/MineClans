@@ -85,6 +85,12 @@ public class FactionsCommand extends ModernCommand {
                 case "ally":
                     FactionsRelationSetCommand.onCommand(player, args);
                     break;
+                case "promote":
+                    FactionsPromoteCommand.onCommand(player, args);
+                    break;
+                case "demote":
+                    FactionsDemoteCommand.onCommand(player, args);
+                    break;
                 default:
                     sender.sendMessage(MineClans.getInstance().getMsg().getText("factions.usage"));
             }

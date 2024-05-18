@@ -5,6 +5,7 @@ public enum Rank {
     CAPTAIN,
     MODERATOR,
     ADMIN,
+    COLEADER,
     LEADER;
 
     public Rank getNext() {
@@ -16,6 +17,8 @@ public enum Rank {
             case MODERATOR:
                 return ADMIN;
             case ADMIN:
+                return COLEADER;
+            case COLEADER:
                 return LEADER;
             default:
                 return null; // LEADER has no next rank
@@ -25,6 +28,8 @@ public enum Rank {
     public Rank getPrevious() {
         switch (this) {
             case LEADER:
+                return COLEADER;
+            case COLEADER:
                 return ADMIN;
             case ADMIN:
                 return MODERATOR;
