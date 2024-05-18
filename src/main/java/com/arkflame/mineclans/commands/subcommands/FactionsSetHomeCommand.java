@@ -15,8 +15,8 @@ public class FactionsSetHomeCommand {
         SetHomeResultState state = result.getState();
 
         switch (state) {
-            case NOT_ADMIN:
-                player.sendMessage(ChatColor.RED + "You are not admin of this faction.");
+            case NO_PERMISSION:
+                player.sendMessage(ChatColor.RED + "You are not COLEADER of this faction.");
                 break;
             case SUCCESS:
                 player.sendMessage("Home set successfully.");

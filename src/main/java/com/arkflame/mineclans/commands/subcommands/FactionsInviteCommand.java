@@ -1,5 +1,6 @@
 package com.arkflame.mineclans.commands.subcommands;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.MineClans;
@@ -22,8 +23,8 @@ public class FactionsInviteCommand {
             case NO_FACTION:
                 player.sendMessage("You have no faction.");
                 break;
-            case NOT_CAPTAIN:
-                player.sendMessage("You are not captain.");
+            case NO_PERMISSION:
+                player.sendMessage(ChatColor.RED + "You require rank MODERATOR to do this.");
                 break;
             case MEMBER_EXISTS:
                 player.sendMessage("Player is already a member.");

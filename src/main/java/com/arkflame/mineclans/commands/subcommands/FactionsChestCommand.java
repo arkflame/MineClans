@@ -17,8 +17,8 @@ public class FactionsChestCommand {
             case NOT_IN_FACTION:
                 player.sendMessage(ChatColor.RED + "You are not in a faction.");
                 break;
-            case NOT_CAPTAIN:
-                player.sendMessage(ChatColor.RED + "You need to be captain to open the faction chest.");
+            case NO_PERMISSION:
+                player.sendMessage(ChatColor.RED + "You need to be MEMBER to open the faction chest.");
                 break;
             case ERROR:
                 player.sendMessage(ChatColor.RED + "An error occurred while trying to open the chest.");

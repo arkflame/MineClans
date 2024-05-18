@@ -5,7 +5,7 @@ public class FriendlyFireResult {
         ENABLED,
         DISABLED,
         NOT_IN_FACTION,
-        ERROR, NOT_ADMIN
+        ERROR, NO_PERMISSION
     }
 
     private final FriendlyFireResultState state;

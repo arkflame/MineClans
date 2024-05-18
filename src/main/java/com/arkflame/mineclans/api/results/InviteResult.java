@@ -28,7 +28,7 @@ public class InviteResult {
     public enum InviteResultState {
         SUCCESS,
         NO_FACTION,
-        NOT_CAPTAIN,
+        NO_PERMISSION,
         ALREADY_INVITED,
         MEMBER_EXISTS,
         PLAYER_NOT_FOUND,

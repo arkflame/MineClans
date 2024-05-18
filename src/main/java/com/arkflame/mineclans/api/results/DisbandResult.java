@@ -15,7 +15,7 @@ public class DisbandResult {
 
     public enum DisbandResultState {
         SUCCESS,
-        NOT_OWNER,
+        NO_PERMISSION,
         NO_FACTION,
     }
 }

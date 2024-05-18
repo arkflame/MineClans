@@ -141,8 +141,8 @@ public class MineClansAPI {
             return new InviteResult(InviteResult.InviteResultState.NO_FACTION);
         }
 
-        if (factionPlayer.getRank().ordinal() < Rank.CAPTAIN.ordinal()) {
-            return new InviteResult(InviteResult.InviteResultState.NOT_CAPTAIN);
+        if (factionPlayer.getRank().isLowerThan(Rank.MODERATOR)) {
+            return new InviteResult(InviteResult.InviteResultState.NO_PERMISSION);
         }
 
         FactionPlayer targetPlayer = factionPlayerManager.getOrLoad(toInvite);
@@ -177,7 +177,7 @@ public class MineClansAPI {
             return new UninviteResult(UninviteResult.UninviteResultState.NO_FACTION);
         }
 
-        if (factionPlayer.getRank().ordinal() < Rank.CAPTAIN.ordinal()) {
+        if (factionPlayer.getRank().isLowerThan(Rank.MODERATOR)) {
             return new UninviteResult(UninviteResult.UninviteResultState.NOT_CAPTAIN);
         }
 
@@ -234,8 +234,8 @@ public class MineClansAPI {
         if (faction == null) {
             return new DisbandResult(DisbandResultState.NO_FACTION);
         }
-        if (!faction.getOwner().equals(factionPlayer.getPlayerId())) {
-            return new DisbandResult(DisbandResultState.NOT_OWNER);
+        if (factionPlayer.getRank().isLowerThan(Rank.LEADER)) {
+            return new DisbandResult(DisbandResultState.NO_PERMISSION);
         }
         factionPlayerManager.updateFaction(factionPlayer.getPlayerId(), null);
         for (UUID uuid : faction.getMembers()) {
@@ -287,7 +287,7 @@ public class MineClansAPI {
                         .getOrLoad(player.getUniqueId());
                 Faction playerFaction = factionPlayer.getFaction();
                 if (playerFaction != null) {
-                    if (factionPlayer.getRank().ordinal() >= Rank.ADMIN.ordinal()) {
+                    if (factionPlayer.getRank().isEqualOrHigherThan(Rank.LEADER)) {
                         try {
                             factionManager.updateFactionName(playerFaction.getName(), newName);
                         } catch (IllegalArgumentException ex) {
@@ -367,8 +367,8 @@ public class MineClansAPI {
             return new FriendlyFireResult(FriendlyFireResult.FriendlyFireResultState.NOT_IN_FACTION);
         }
 
-        if (factionPlayer.getRank().ordinal() < Rank.ADMIN.ordinal()) {
-            return new FriendlyFireResult(FriendlyFireResult.FriendlyFireResultState.NOT_ADMIN);
+        if (factionPlayer.getRank().isLowerThan(Rank.COLEADER)) {
+            return new FriendlyFireResult(FriendlyFireResult.FriendlyFireResultState.NO_PERMISSION);
         }
 
         Faction faction = factionPlayer.getFaction();
@@ -385,8 +385,8 @@ public class MineClansAPI {
             return new SetHomeResult(SetHomeResultState.NOT_IN_FACTION);
         }
 
-        if (factionPlayer.getRank().ordinal() < Rank.ADMIN.ordinal()) {
-            return new SetHomeResult(SetHomeResultState.NOT_ADMIN);
+        if (factionPlayer.getRank().isLowerThan(Rank.COLEADER)) {
+            return new SetHomeResult(SetHomeResultState.NO_PERMISSION);
         }
 
         String factionName = factionPlayer.getFaction().getName();
@@ -473,8 +473,8 @@ public class MineClansAPI {
             return new RankChangeResult(RankChangeResultType.SUPERIOR_RANK, null);
         }
 
-        if (sender.getRank().ordinal() < Rank.ADMIN.ordinal()) {
-            return new RankChangeResult(RankChangeResultType.ADMIN_REQUIRED, null);
+        if (sender.getRank().isEqualOrHigherThan(Rank.LEADER)) {
+            return new RankChangeResult(RankChangeResultType.NO_PERMISSION, null);
         }
 
         Rank nextRank = target.getRank().getNext();
@@ -510,8 +510,8 @@ public class MineClansAPI {
             return new RankChangeResult(RankChangeResultType.SUPERIOR_RANK, null);
         }
 
-        if (sender.getRank().ordinal() < Rank.ADMIN.ordinal()) {
-            return new RankChangeResult(RankChangeResultType.ADMIN_REQUIRED, null);
+        if (sender.getRank().isEqualOrHigherThan(Rank.LEADER)) {
+            return new RankChangeResult(RankChangeResultType.NO_PERMISSION, null);
         }
 
         Rank previousRank = target.getRank().getPrevious();
@@ -565,8 +565,8 @@ public class MineClansAPI {
             return new OpenChestResult(OpenChestResultType.NOT_IN_FACTION, faction, factionPlayer);
         }
 
-        if (factionPlayer.getRank().ordinal() < Rank.CAPTAIN.ordinal()) {
-            return new OpenChestResult(OpenChestResultType.NOT_CAPTAIN, faction, factionPlayer);
+        if (factionPlayer.getRank().isLowerThan(Rank.MEMBER)) {
+            return new OpenChestResult(OpenChestResultType.NO_PERMISSION, faction, factionPlayer);
         }
 
         try {

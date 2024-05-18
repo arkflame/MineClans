@@ -23,8 +23,8 @@ public class FactionsPromoteCommand {
             case NOT_IN_FACTION:
                 player.sendMessage("Player is not in your faction.");
                 break;
-            case ADMIN_REQUIRED:
-                player.sendMessage("You require ADMIN to promote/demote players.");
+            case NO_PERMISSION:
+                player.sendMessage("You require LEADER to promote/demote players.");
                 break;
             case CANNOT_PROMOTE:
                 player.sendMessage("You cannot promote this player anymore.");

@@ -1,22 +1,19 @@
 package com.arkflame.mineclans.enums;
 
 public enum Rank {
+    RECRUIT,
     MEMBER,
-    CAPTAIN,
     MODERATOR,
-    ADMIN,
     COLEADER,
     LEADER;
 
     public Rank getNext() {
         switch (this) {
+            case RECRUIT:
+                return MEMBER;
             case MEMBER:
-                return CAPTAIN;
-            case CAPTAIN:
                 return MODERATOR;
             case MODERATOR:
-                return ADMIN;
-            case ADMIN:
                 return COLEADER;
             case COLEADER:
                 return LEADER;
@@ -30,15 +27,21 @@ public enum Rank {
             case LEADER:
                 return COLEADER;
             case COLEADER:
-                return ADMIN;
-            case ADMIN:
                 return MODERATOR;
             case MODERATOR:
-                return CAPTAIN;
-            case CAPTAIN:
                 return MEMBER;
+            case MEMBER:
+                return RECRUIT;
             default:
-                return null; // MEMBER has no previous rank
+                return null; // RECRUIT has no previous rank
         }
+    }
+
+    public boolean isEqualOrHigherThan(Rank rank) {
+        return this.ordinal() >= rank.ordinal();
+    }
+
+    public boolean isLowerThan(Rank rank) {
+        return this.ordinal() < rank.ordinal();
     }
 }

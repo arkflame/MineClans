@@ -17,8 +17,8 @@ public class FactionsFriendlyFireCommand {
             case ENABLED:
                 player.sendMessage(ChatColor.GREEN + "Friendly fire is now enabled in your faction.");
                 break;
-            case NOT_ADMIN:
-                player.sendMessage(ChatColor.RED + "You are not admin of this faction.");
+            case NO_PERMISSION:
+                player.sendMessage(ChatColor.RED + "You are not COLEADER of this faction.");
                 break;
             case DISABLED:
                 player.sendMessage(ChatColor.GREEN + "Friendly fire is now disabled in your faction.");

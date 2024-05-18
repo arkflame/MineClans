@@ -13,8 +13,8 @@ public class FactionsDisbandCommand {
         DisbandResultState state = disbandResult.getState();
 
         switch (state) {
-            case NOT_OWNER:
-                player.sendMessage("You are not the owner.");
+            case NO_PERMISSION:
+                player.sendMessage("You have to be LEADER to disband the faction.");
                 break;
             case NO_FACTION:
                 player.sendMessage("You have no faction.");

@@ -26,7 +26,7 @@ public class RankChangeResult {
         SUCCESS,
         PLAYER_NOT_FOUND,
         NOT_IN_FACTION,
-        ADMIN_REQUIRED,
+        NO_PERMISSION,
         SUPERIOR_RANK, 
         CANNOT_PROMOTE,
         CANNOT_DEMOTE, 

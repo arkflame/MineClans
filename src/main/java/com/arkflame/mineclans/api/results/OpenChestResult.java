@@ -30,6 +30,6 @@ public class OpenChestResult {
         SUCCESS,
         NOT_IN_FACTION,
         ERROR,
-        NOT_CAPTAIN
+        NO_PERMISSION
     }
 }
