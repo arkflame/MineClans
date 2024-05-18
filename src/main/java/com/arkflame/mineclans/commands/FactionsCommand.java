@@ -4,6 +4,25 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.MineClans;
+import com.arkflame.mineclans.commands.subcommands.FactionsChatCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsChestCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsCreateCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsDemoteCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsDisbandCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsDisplaynameCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsFriendlyFireCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsHomeCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsInviteCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsJoinCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsLeaveCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsListCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsPromoteCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsRelationSetCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsRenameCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsSetHomeCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsTellLocationCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsTransferCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsWhoCommand;
 import com.arkflame.mineclans.modernlib.commands.ModernArguments;
 import com.arkflame.mineclans.modernlib.commands.ModernCommand;
 

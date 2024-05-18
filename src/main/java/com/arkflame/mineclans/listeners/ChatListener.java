@@ -6,7 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import com.arkflame.mineclans.MineClans;
-import com.arkflame.mineclans.api.FactionChatResult;
+import com.arkflame.mineclans.api.results.FactionChatResult;
 import com.arkflame.mineclans.models.FactionPlayer;
 
 public class ChatListener implements Listener {
