@@ -54,8 +54,12 @@ public class RanksDAO {
                     while (resultSet.next()) {
                         UUID playerId = UUID.fromString(resultSet.getString("player_id"));
                         String rankStr = resultSet.getString("rank");
-                        Rank rank = Rank.valueOf(rankStr);
-                        ranks.put(playerId, rank);
+                        try {
+                            Rank rank = Rank.valueOf(rankStr);
+                            ranks.put(playerId, rank);
+                        } catch (IllegalArgumentException ex) {
+                            // Skip invalid rank
+                        }
                     }
                 }
             }
