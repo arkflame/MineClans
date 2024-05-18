@@ -18,6 +18,9 @@ public class FactionsRenameCommand {
             case NOT_IN_FACTION:
                 player.sendMessage("You are not in a faction.");
                 break;
+            case NOT_ADMIN:
+                player.sendMessage("You are not admin.");
+                break;
             case SUCCESS:
                 player.sendMessage("Faction name successfully changed.");
                 break;

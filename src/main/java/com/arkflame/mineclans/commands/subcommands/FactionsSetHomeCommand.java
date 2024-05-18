@@ -1,5 +1,6 @@
 package com.arkflame.mineclans.commands.subcommands;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -14,6 +15,9 @@ public class FactionsSetHomeCommand {
         SetHomeResultState state = result.getState();
 
         switch (state) {
+            case NOT_ADMIN:
+                player.sendMessage(ChatColor.RED + "You are not admin of this faction.");
+                break;
             case SUCCESS:
                 player.sendMessage("Home set successfully.");
                 break;

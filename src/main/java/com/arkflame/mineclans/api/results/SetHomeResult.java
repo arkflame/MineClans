@@ -12,6 +12,6 @@ public class SetHomeResult {
     }
 
     public enum SetHomeResultState {
-        SUCCESS, NOT_IN_FACTION, ERROR
+        SUCCESS, NOT_IN_FACTION, ERROR, NOT_ADMIN
     }
 }

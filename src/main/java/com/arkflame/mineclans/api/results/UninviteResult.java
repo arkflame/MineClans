@@ -16,9 +16,9 @@ public class UninviteResult {
     public enum UninviteResultState {
         SUCCESS,
         NO_FACTION,
-        NOT_OWNER,
         NOT_INVITED, 
         PLAYER_NOT_FOUND, 
-        NULL_NAME,
+        NULL_NAME, 
+        NOT_CAPTAIN,
     }
 }
