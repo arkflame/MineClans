@@ -58,21 +58,21 @@ public class FactionManager {
         return faction;
     }
 
-    private Faction loadFactionFromDatabase(String name) {
+    public Faction loadFactionFromDatabase(String name) {
         return MineClans.getInstance().getMySQLProvider().getFactionDAO().getFactionByName(name);
     }
 
-    private Faction loadFactionFromDatabase(UUID id) {
+    public Faction loadFactionFromDatabase(UUID id) {
         return MineClans.getInstance().getMySQLProvider().getFactionDAO().getFactionById(id);
     }
 
     // Save a faction to the database
-    private void saveFactionToDatabase(Faction faction) {
+    public void saveFactionToDatabase(Faction faction) {
         MineClans.getInstance().getMySQLProvider().getFactionDAO().insertOrUpdateFaction(faction);
     }
 
     // Remove a faction from the database
-    private void removeFactionFromDatabase(Faction faction) {
+    public void removeFactionFromDatabase(Faction faction) {
         MineClans.getInstance().getMySQLProvider().getFactionDAO().disbandFaction(faction);
         faction.disbandFaction();
     }

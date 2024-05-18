@@ -23,6 +23,6 @@ public class DepositResult {
         NO_PERMISSION,
         ERROR, 
         INVALID_AMOUNT,
-        NO_VAULT, NO_ECONOMY
+        NO_VAULT, NO_ECONOMY, NO_MONEY
     }
 }

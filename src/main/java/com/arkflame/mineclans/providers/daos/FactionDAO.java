@@ -26,7 +26,8 @@ public class FactionDAO {
                 "display_name VARCHAR(64) NOT NULL," +
                 "home VARCHAR(255)," +
                 "name VARCHAR(16) UNIQUE," +
-                "balance INT," +
+                "balance DOUBLE," +
+                "kills INT," +
                 "friendly_fire BOOLEAN)");
     }
 
@@ -36,15 +37,16 @@ public class FactionDAO {
     }
 
     public void insertOrUpdateFaction(Faction faction) {
-        String query = "INSERT INTO mineclans_factions (faction_id, owner_id, display_name, home, name, balance, friendly_fire) "
+        String query = "INSERT INTO mineclans_factions (faction_id, owner_id, display_name, home, name, balance, kills, friendly_fire) "
                 +
-                "VALUES (?, ?, ?, ?, ?, ?, ?) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?) " +
                 "ON DUPLICATE KEY UPDATE " +
                 "owner_id = VALUES(owner_id), " +
                 "display_name = VALUES(display_name), " +
                 "home = VALUES(home), " +
                 "name = VALUES(name), " +
                 "balance = VALUES(balance), " +
+                "kills = VALUES(kills), " +
                 "friendly_fire = VALUES(friendly_fire)";
         mySQLProvider.executeUpdateQuery(query,
                 faction.getId(),
@@ -53,6 +55,7 @@ public class FactionDAO {
                 faction.getHomeString(),
                 faction.getName(),
                 faction.getBalance(),
+                faction.getKills(),
                 faction.isFriendlyFire());
     }
 
@@ -76,6 +79,7 @@ public class FactionDAO {
             // Fetch additional faction properties
             Location home = LocationUtil.parseLocation(resultSet.getString("home"));
             double balance = resultSet.getDouble("balance");
+            int kills = resultSet.getInt("kills");
             boolean friendlyFire = resultSet.getBoolean("friendly_fire");
             // Name
             String name = resultSet.getString("name");
@@ -95,6 +99,9 @@ public class FactionDAO {
             // Load Chest
             faction.setChest(mySQLProvider.getChestDAO().loadFactionChest(faction));
 
+            // Load Kills
+            faction.setKills(kills);
+
             return faction;
         }
         return null;
@@ -102,7 +109,7 @@ public class FactionDAO {
 
     public Faction getFactionById(UUID factionId) {
         AtomicReference<Faction> faction = new AtomicReference<>(null);
-        String factionQuery = "SELECT faction_id, name, owner_id, display_name, home, balance, friendly_fire FROM mineclans_factions WHERE faction_id = ?";
+        String factionQuery = "SELECT faction_id, name, owner_id, display_name, home, balance, kills, friendly_fire FROM mineclans_factions WHERE faction_id = ?";
         mySQLProvider.executeSelectQuery(factionQuery, new ResultSetProcessor() {
             public void run(ResultSet resultSet) throws SQLException {
                 faction.set(extractFactionFromResultSet(resultSet));
@@ -113,7 +120,7 @@ public class FactionDAO {
 
     public Faction getFactionByName(String name) {
         AtomicReference<Faction> faction = new AtomicReference<>(null);
-        String query = "SELECT faction_id, name, owner_id, display_name, home, balance, friendly_fire FROM mineclans_factions WHERE name = ?";
+        String query = "SELECT faction_id, name, owner_id, display_name, home, balance, kills, friendly_fire FROM mineclans_factions WHERE name = ?";
         mySQLProvider.executeSelectQuery(query, new ResultSetProcessor() {
             public void run(ResultSet resultSet) throws SQLException {
                 faction.set(extractFactionFromResultSet(resultSet));

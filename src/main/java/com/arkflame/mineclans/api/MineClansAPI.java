@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import com.arkflame.mineclans.MineClans;
+import com.arkflame.mineclans.api.results.AddKillResult;
 import com.arkflame.mineclans.api.results.CreateResult;
 import com.arkflame.mineclans.api.results.DisbandResult;
 import com.arkflame.mineclans.api.results.FactionChatResult;
@@ -27,6 +28,7 @@ import com.arkflame.mineclans.api.results.ToggleChatResult;
 import com.arkflame.mineclans.api.results.TransferResult;
 import com.arkflame.mineclans.api.results.UninviteResult;
 import com.arkflame.mineclans.api.results.WithdrawResult;
+import com.arkflame.mineclans.api.results.AddKillResult.AddKillResultType;
 import com.arkflame.mineclans.api.results.WithdrawResult.WithdrawResultType;
 import com.arkflame.mineclans.api.results.CreateResult.CreateResultState;
 import com.arkflame.mineclans.api.results.DepositResult;
@@ -292,32 +294,32 @@ public class MineClansAPI {
         if (newName == null) {
             return new RenameResult(null, RenameResultState.NULL_NAME);
         }
-        
+
         Faction faction = MineClans.getInstance().getFactionManager().getFaction(newName);
         if (faction != null) {
             return new RenameResult(null, RenameResultState.ALREADY_EXISTS);
         }
-    
+
         FactionPlayer factionPlayer = MineClans.getInstance().getFactionPlayerManager()
                 .getOrLoad(player.getUniqueId());
         Faction playerFaction = factionPlayer.getFaction();
-    
+
         if (playerFaction == null) {
             return new RenameResult(null, RenameResultState.NOT_IN_FACTION);
         }
-    
+
         if (factionPlayer.getRank().isLowerThan(Rank.LEADER)) {
             return new RenameResult(playerFaction, RenameResultState.NO_PERMISSION);
         }
-    
+
         try {
             factionManager.updateFactionName(playerFaction.getName(), newName);
         } catch (IllegalArgumentException ex) {
             return new RenameResult(playerFaction, RenameResultState.ERROR);
         }
-    
+
         return new RenameResult(playerFaction, RenameResultState.SUCCESS);
-    }    
+    }
 
     public RenameDisplayResult renameDisplay(Player player, String displayName) {
         if (displayName != null) {
@@ -619,70 +621,123 @@ public class MineClansAPI {
         if (amount <= 0) {
             return new WithdrawResult(WithdrawResultType.INVALID_AMOUNT, 0); // Invalid amount
         }
-    
+
         if (!MineClans.getInstance().isVaultHooked()) {
             return new WithdrawResult(WithdrawResultType.NO_ECONOMY, 0); // Vault not hooked
         }
-    
+
         Economy economy = MineClans.getInstance().getVaultEconomy();
-    
+
         FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
         if (factionPlayer == null || factionPlayer.getFaction() == null) {
             return new WithdrawResult(WithdrawResultType.NOT_IN_FACTION, 0); // Player is not in a faction
         }
-    
+
         Faction faction = factionPlayer.getFaction();
         Rank playerRank = factionPlayer.getRank();
-    
+
         // Check if player rank is above a certain rank
         if (playerRank.isLowerThan(Rank.COLEADER)) {
             return new WithdrawResult(WithdrawResultType.NO_PERMISSION, 0); // Player doesn't have sufficient permission
         }
-    
+
         // Check if there's enough balance in the faction
         double factionBalance = faction.getBalance();
         if (factionBalance < amount) {
             return new WithdrawResult(WithdrawResultType.INSUFFICIENT_FUNDS, factionBalance); // Not enough balance
         }
-    
+
         // Assuming your FactionManager class has a method to withdraw currency
-        boolean success = factionManager.withdraw(faction.getName(), amount) && economy.depositPlayer(player, amount).type == EconomyResponse.ResponseType.SUCCESS;
+        boolean success = factionManager.withdraw(faction.getName(), amount)
+                && economy.depositPlayer(player, amount).type == EconomyResponse.ResponseType.SUCCESS;
         if (success) {
             return new WithdrawResult(WithdrawResultType.SUCCESS, amount); // Withdrawal successful
         } else {
             return new WithdrawResult(WithdrawResultType.ERROR, 0); // Error occurred during withdrawal
         }
     }
-    
+
     public DepositResult deposit(Player player, double amount) {
         if (amount <= 0) {
             return new DepositResult(DepositResultType.INVALID_AMOUNT, 0); // Invalid amount
         }
-    
+
         if (!MineClans.getInstance().isVaultHooked()) {
             return new DepositResult(DepositResultType.NO_ECONOMY, 0); // Vault not hooked
         }
-    
+
         Economy economy = MineClans.getInstance().getVaultEconomy();
-    
+
         FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
         if (factionPlayer == null || factionPlayer.getFaction() == null) {
             return new DepositResult(DepositResultType.NOT_IN_FACTION, 0); // Player is not in a faction
         }
-    
+
         Faction faction = factionPlayer.getFaction();
         Rank playerRank = factionPlayer.getRank();
-    
+
         if (playerRank.isLowerThan(Rank.RECRUIT)) {
             return new DepositResult(DepositResultType.NO_PERMISSION, 0); // Player doesn't have sufficient permission
         }
-    
+
+        if (!economy.has(player, amount)) {
+            return new DepositResult(DepositResultType.NO_MONEY, 0); // Player doesn't have sufficient permission
+        }
+
         // Assuming your FactionManager class has a method to deposit currency
-        boolean success = economy.withdrawPlayer(player, amount).type == EconomyResponse.ResponseType.SUCCESS && factionManager.deposit(faction.getName(), amount);
+        boolean success = economy.withdrawPlayer(player, amount).type == EconomyResponse.ResponseType.SUCCESS
+                && factionManager.deposit(faction.getName(), amount);
         if (success) {
             return new DepositResult(DepositResultType.SUCCESS, amount); // Deposit successful
         } else {
             return new DepositResult(DepositResultType.ERROR, 0); // Error occurred during deposit
         }
-    }    
+    }
+
+    public AddKillResult addKill(Player player, Player killed) {
+        FactionPlayer factionPlayer = getFactionPlayer(player);
+        FactionPlayer killedPlayer = getFactionPlayer(killed);
+
+        // Ensure both players exist in the system
+        if (factionPlayer == null || killedPlayer == null) {
+            return new AddKillResult(AddKillResultType.PLAYER_NOT_FOUND);
+        }
+
+        Faction faction = factionPlayer.getFaction();
+
+        if (faction == null) {
+            return new AddKillResult(AddKillResultType.NO_FACTION);
+        }
+
+        Faction killedFaction = killedPlayer.getFaction();
+
+        // Ignore kills within the same faction
+        if (faction.equals(killedFaction)) {
+            return new AddKillResult(AddKillResultType.SAME_FACTION);
+        }
+
+        // Add kill to the faction player and possibly to the faction
+        boolean playerKill = factionPlayer.addKill(killed.getUniqueId());
+        boolean factionKill = faction.addKill(killed.getUniqueId());
+        if (playerKill || factionKill) {
+            if (playerKill) {
+                factionPlayerManager.save(factionPlayer);
+            }
+            if (factionKill) {
+                factionManager.saveFactionToDatabase(faction);
+            }
+            return new AddKillResult(AddKillResultType.SUCCESS);
+        }
+        return new AddKillResult(AddKillResultType.ALREADY_KILLED);
+    }
+
+    public int getKills(Player player) {
+        FactionPlayer factionPlayer = getFactionPlayer(player);
+
+        if (factionPlayer == null) {
+            return 0;
+        }
+
+        return factionPlayer.getKills();
+    }
 }

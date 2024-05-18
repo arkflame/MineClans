@@ -74,6 +74,7 @@ public class FactionsWhoCommand {
         double factionBalance = faction.getBalance();
         String formattedBalance = NumberUtil.formatBalance(factionBalance);
         message.append("\n").append(ChatColor.AQUA).append("Balance: ").append(ChatColor.GREEN).append("$").append(formattedBalance);
+        message.append("\n").append(ChatColor.AQUA).append("Kills: ").append(ChatColor.RED).append(faction.getKills());
 
         player.sendMessage(message.toString());
     }

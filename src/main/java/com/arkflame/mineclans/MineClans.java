@@ -16,6 +16,7 @@ import com.arkflame.mineclans.listeners.ChatListener;
 import com.arkflame.mineclans.listeners.FactionFriendlyFireListener;
 import com.arkflame.mineclans.listeners.InventoryClickListener;
 import com.arkflame.mineclans.listeners.PlayerJoinListener;
+import com.arkflame.mineclans.listeners.PlayerKillListener;
 import com.arkflame.mineclans.listeners.PlayerQuitListener;
 import com.arkflame.mineclans.managers.FactionManager;
 import com.arkflame.mineclans.managers.FactionPlayerManager;
@@ -122,6 +123,7 @@ public class MineClans extends JavaPlugin {
         pluginManager.registerEvents(new FactionFriendlyFireListener(), this);
         pluginManager.registerEvents(new InventoryClickListener(), this);
         pluginManager.registerEvents(new PlayerJoinListener(factionPlayerManager), this);
+        pluginManager.registerEvents(new PlayerKillListener(), this);
         pluginManager.registerEvents(new PlayerQuitListener(factionPlayerManager), this);
         pluginManager.registerEvents(new MenuListener(), this);
 

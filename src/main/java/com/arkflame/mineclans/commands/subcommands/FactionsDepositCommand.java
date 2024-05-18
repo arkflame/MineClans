@@ -24,6 +24,9 @@ public class FactionsDepositCommand {
             case NO_PERMISSION:
                 player.sendMessage(ChatColor.RED + "You do not have permission to deposit funds.");
                 break;
+            case NO_MONEY:
+                player.sendMessage(ChatColor.RED + "You have insufficent funds.");
+                break;
             case ERROR:
                 player.sendMessage(
                         ChatColor.RED + "An error occurred while processing your deposit. Please try again later.");

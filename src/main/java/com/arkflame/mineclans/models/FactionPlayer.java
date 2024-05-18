@@ -9,6 +9,9 @@ import org.bukkit.entity.Player;
 import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.enums.Rank;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 public class FactionPlayer {
     private UUID playerId;
     private UUID factionId;
@@ -18,6 +21,7 @@ public class FactionPlayer {
     private int kills;
     private int deaths;
     private boolean chat;
+    private Collection<UUID> killedPlayers = new HashSet<>();
 
     public FactionPlayer(UUID playerId) {
         this.playerId = playerId;
@@ -98,6 +102,18 @@ public class FactionPlayer {
 
     public void setKills(int kills) {
         this.kills = kills;
+    }
+
+    public boolean addKill(UUID killedPlayerId) {
+        // If player is already killed by this player, return false
+        if (killedPlayers.contains(killedPlayerId)) {
+            return false;
+        }
+
+        killedPlayers.add(killedPlayerId);
+        kills++;
+
+        return true;
     }
 
     public int getDeaths() {

@@ -19,6 +19,7 @@ import com.arkflame.mineclans.utils.LocationUtil;
 import net.md_5.bungee.api.ChatColor;
 
 import java.util.Map;
+import java.util.HashSet;
 
 public class Faction implements InventoryHolder {
     // The ID
@@ -62,6 +63,10 @@ public class Faction implements InventoryHolder {
 
     // Focused Faction
     private UUID focusedFaction = null;
+
+    // Kills
+    private int kills = 0;
+    private Collection<UUID> killedPlayers = new HashSet<>();
 
     // Constructor
     public Faction(UUID id, UUID owner, String name, String displayName) {
@@ -257,6 +262,26 @@ public class Faction implements InventoryHolder {
 
     public void setFocusedFaction(UUID focusedFaction) {
         this.focusedFaction = focusedFaction;
+    }
+
+    public int getKills() {
+        return kills;
+    }
+
+    public boolean addKill(UUID killedPlayerId) {
+        // If player is already killed by this player, return false
+        if (killedPlayers.contains(killedPlayerId)) {
+            return false;
+        }
+
+        killedPlayers.add(killedPlayerId);
+        kills++;
+
+        return true;
+    }
+
+    public void setKills(int kills) {
+        this.kills = kills;
     }
 
     @Override
