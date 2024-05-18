@@ -6,10 +6,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.MineClans;
+import com.arkflame.mineclans.enums.RelationType;
 import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.models.FactionPlayer;
 import com.arkflame.mineclans.modernlib.commands.ModernArguments;
-import com.arkflame.mineclans.enums.RelationType;
+import com.arkflame.mineclans.utils.NumberUtil;
 
 public class FactionsWhoCommand {
     public static void onCommand(Player player, ModernArguments args) {
@@ -41,7 +42,7 @@ public class FactionsWhoCommand {
         StringBuilder message = new StringBuilder(
                 ChatColor.GOLD + "Information of " + ChatColor.YELLOW + faction.getName() + ChatColor.GOLD + ": ");
         message.append(ChatColor.RESET).append("\n")
-                .append(ChatColor.AQUA).append("ID: ").append(ChatColor.WHITE).append(faction.getId()).append("\n");
+                .append(ChatColor.AQUA).append("ID: ").append(ChatColor.GRAY).append(faction.getId()).append("\n");
 
         FactionPlayer owner = MineClans.getInstance().getAPI().getFactionPlayer(faction.getOwner());
         String ownerDisplay = owner != null ? owner.getName() : faction.getOwner().toString();
@@ -68,6 +69,11 @@ public class FactionsWhoCommand {
             RelationType relation = MineClans.getInstance().getAPI().getRelation(player, faction.getName());
             message.append("\n").append(ChatColor.AQUA).append("Relation: ").append(ChatColor.WHITE).append(relation.name());
         }
+
+        // Display faction balance
+        double factionBalance = faction.getBalance();
+        String formattedBalance = NumberUtil.formatBalance(factionBalance);
+        message.append("\n").append(ChatColor.AQUA).append("Balance: ").append(ChatColor.GREEN).append("$").append(formattedBalance);
 
         player.sendMessage(message.toString());
     }

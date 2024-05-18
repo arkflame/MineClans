@@ -64,4 +64,16 @@ public class ModernArguments {
     public boolean hasArg() {
         return args.length > 0;
     }
+
+    public double getDouble(int index) {
+        String text = getText(index);
+
+        if (text == null) return -1;
+
+        try {
+            return Double.parseDouble(args[index]);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
 }
