@@ -8,6 +8,7 @@ import com.arkflame.mineclans.commands.subcommands.FactionsChatCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsChestCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsCreateCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsDemoteCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsDepositCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsDisbandCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsDisplaynameCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsFocusCommand;
@@ -25,6 +26,7 @@ import com.arkflame.mineclans.commands.subcommands.FactionsSetHomeCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsTellLocationCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsTransferCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsWhoCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsWithdrawCommand;
 import com.arkflame.mineclans.modernlib.commands.ModernArguments;
 import com.arkflame.mineclans.modernlib.commands.ModernCommand;
 
@@ -117,6 +119,14 @@ public class FactionsCommand extends ModernCommand {
                     break;
                 case "focus":
                     FactionsFocusCommand.onCommand(player, args);
+                    break;
+                case "deposit":
+                case "d":
+                    FactionsDepositCommand.onCommand(player, args);
+                    break;
+                case "withdraw":
+                case "w":
+                    FactionsWithdrawCommand.onCommand(player, args);
                     break;
                 default:
                     sender.sendMessage(MineClans.getInstance().getMsg().getText("factions.usage"));

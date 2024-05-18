@@ -249,4 +249,27 @@ public class FactionManager {
         }
     }
     
+    public boolean deposit(String factionName, double amount) {
+        Faction faction = getFaction(factionName);
+        if (faction != null) {
+            double currentBalance = faction.getBalance();
+            double newBalance = currentBalance + amount;
+            faction.setBalance(newBalance);
+            saveFactionToDatabase(faction);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean withdraw(String factionName, double amount) {
+        Faction faction = getFaction(factionName);
+        if (faction != null) {
+            double currentBalance = faction.getBalance();
+            double newBalance = currentBalance - amount;
+            faction.setBalance(newBalance);
+            saveFactionToDatabase(faction);
+            return true;
+        }
+        return false;
+    }
 }

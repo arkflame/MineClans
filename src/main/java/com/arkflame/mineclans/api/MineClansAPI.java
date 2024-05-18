@@ -26,7 +26,11 @@ import com.arkflame.mineclans.api.results.SetRelationResult;
 import com.arkflame.mineclans.api.results.ToggleChatResult;
 import com.arkflame.mineclans.api.results.TransferResult;
 import com.arkflame.mineclans.api.results.UninviteResult;
+import com.arkflame.mineclans.api.results.WithdrawResult;
+import com.arkflame.mineclans.api.results.WithdrawResult.WithdrawResultType;
 import com.arkflame.mineclans.api.results.CreateResult.CreateResultState;
+import com.arkflame.mineclans.api.results.DepositResult;
+import com.arkflame.mineclans.api.results.DepositResult.DepositResultType;
 import com.arkflame.mineclans.api.results.DisbandResult.DisbandResultState;
 import com.arkflame.mineclans.api.results.HomeResult.HomeResultState;
 import com.arkflame.mineclans.api.results.JoinResult.JoinResultState;
@@ -606,5 +610,64 @@ public class MineClansAPI {
         faction.setFocusedFaction(targetFaction.getId());
 
         return new FocusResult(FocusResultType.SUCCESS);
+    }
+
+    public WithdrawResult withdraw(Player player, double amount) {
+        if (amount <= 0) {
+            return new WithdrawResult(WithdrawResultType.INVALID_AMOUNT, 0); // Player is not in a faction
+        }
+
+        FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
+        if (factionPlayer == null || factionPlayer.getFaction() == null) {
+            return new WithdrawResult(WithdrawResultType.NOT_IN_FACTION, 0); // Player is not in a faction
+        }
+
+        Faction faction = factionPlayer.getFaction();
+        Rank playerRank = factionPlayer.getRank();
+
+        // Check if player rank is above a certain rank
+        if (playerRank.isLowerThan(Rank.COLEADER)) {
+            return new WithdrawResult(WithdrawResultType.NO_PERMISSION, 0); // Player doesn't have sufficient permission
+        }
+
+        // Check if there's enough balance in the faction
+        double factionBalance = faction.getBalance();
+        if (factionBalance < amount) {
+            return new WithdrawResult(WithdrawResultType.INSUFFICIENT_FUNDS, factionBalance); // Not enough balance
+        }
+
+        // Assuming your FactionManager class has a method to withdraw currency
+        boolean success = factionManager.withdraw(faction.getName(), amount);
+        if (success) {
+            return new WithdrawResult(WithdrawResultType.SUCCESS, amount); // Withdrawal successful
+        } else {
+            return new WithdrawResult(WithdrawResultType.ERROR, 0); // Error occurred during withdrawal
+        }
+    }
+
+    public DepositResult deposit(Player player, double amount) {
+        if (amount <= 0) {
+            return new DepositResult(DepositResultType.INVALID_AMOUNT, 0); // Player is not in a faction
+        }
+
+        FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
+        if (factionPlayer == null || factionPlayer.getFaction() == null) {
+            return new DepositResult(DepositResultType.NOT_IN_FACTION, 0); // Player is not in a faction
+        }
+    
+        Faction faction = factionPlayer.getFaction();
+        Rank playerRank = factionPlayer.getRank();
+
+        if (playerRank.isLowerThan(Rank.RECRUIT)) {
+            return new DepositResult(DepositResultType.NO_PERMISSION, 0); // Player doesn't have sufficient permission
+        }
+    
+        // Assuming your FactionManager class has a method to deposit currency
+        boolean success = factionManager.deposit(faction.getName(), amount);
+        if (success) {
+            return new DepositResult(DepositResultType.SUCCESS, amount); // Deposit successful
+        } else {
+            return new DepositResult(DepositResultType.ERROR, 0); // Error occurred during deposit
+        }
     }
 }
