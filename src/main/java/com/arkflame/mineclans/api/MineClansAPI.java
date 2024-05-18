@@ -16,6 +16,7 @@ import com.arkflame.mineclans.api.RenameDisplayResult.RenameDisplayResultState;
 import com.arkflame.mineclans.api.RenameResult.RenameResultState;
 import com.arkflame.mineclans.api.SetHomeResult.SetHomeResultState;
 import com.arkflame.mineclans.enums.Rank;
+import com.arkflame.mineclans.enums.RelationType;
 import com.arkflame.mineclans.managers.FactionManager;
 import com.arkflame.mineclans.managers.FactionPlayerManager;
 import com.arkflame.mineclans.models.Faction;
@@ -374,4 +375,54 @@ public class MineClansAPI {
 
         return new HomeResult(HomeResultState.SUCCESS, homeLocation);
     }
+
+    public SetRelationResult setRelation(Player player, String otherFactionName, String relationName) {
+        relationName = relationName.toUpperCase();
+
+        RelationType relationType;
+        try {
+            relationType = RelationType.valueOf(relationName);
+        } catch (IllegalArgumentException e) {
+            return new SetRelationResult(SetRelationResult.SetRelationResultState.INVALID_RELATION_TYPE, null, null,
+                    null);
+        }
+
+        Faction faction = getFaction(player);
+        if (faction == null) {
+            return new SetRelationResult(SetRelationResult.SetRelationResultState.NO_FACTION, null, null, null);
+        }
+
+        Faction otherFaction = getFaction(otherFactionName);
+        if (otherFaction == null) {
+            return new SetRelationResult(SetRelationResult.SetRelationResultState.OTHER_FACTION_NOT_FOUND, faction,
+                    null, null);
+        }
+
+        if (faction == otherFaction) {
+            return new SetRelationResult(SetRelationResult.SetRelationResultState.SAME_FACTION, faction,
+                    otherFaction, null);
+        }
+
+        factionManager.updateFactionRelation(faction.getName(), otherFaction.getId(), relationName);
+        return new SetRelationResult(SetRelationResult.SetRelationResultState.SUCCESS, faction, otherFaction,
+                relationType);
+    }
+
+    public RelationType getRelation(Player player, String otherFactionName) {
+        // Get the player's faction
+        Faction faction = getFaction(player);
+        if (faction == null) {
+            return RelationType.NEUTRAL; // Player is not in a faction
+        }
+
+        // Get the other faction by name
+        Faction otherFaction = getFaction(otherFactionName);
+        if (otherFaction == null) {
+            return RelationType.NEUTRAL; // Other faction not found
+        }
+
+        // Get the relation type between the factions
+        return factionManager.getEffectiveRelation(faction.getName(), otherFaction.getName());
+    }
+
 }

@@ -80,6 +80,11 @@ public class FactionsCommand extends ModernCommand {
                 case "chest":
                     FactionsChestCommand.onCommand(player);
                     break;
+                case "enemy":
+                case "neutral":
+                case "ally":
+                    FactionsRelationSetCommand.onCommand(player, args);
+                    break;
                 default:
                     sender.sendMessage(MineClans.getInstance().getMsg().getText("factions.usage"));
             }

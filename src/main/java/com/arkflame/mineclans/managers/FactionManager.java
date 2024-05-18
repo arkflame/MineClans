@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.MineClans;
+import com.arkflame.mineclans.enums.RelationType;
 import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.models.Relation;
 
@@ -245,4 +246,25 @@ public class FactionManager {
             saveFactionToDatabase(faction);
         }
     }
+
+    public RelationType getEffectiveRelation(String factionName1, String factionName2) {
+        Faction faction1 = getFaction(factionName1);
+        Faction faction2 = getFaction(factionName2);
+    
+        if (faction1 == null || faction2 == null) {
+            return RelationType.NEUTRAL; // Default relation if either faction is not found
+        }
+    
+        RelationType relationFrom1To2 = faction1.getRelationType(faction2.getId());
+        RelationType relationFrom2To1 = faction2.getRelationType(faction1.getId());
+    
+        if (relationFrom1To2 == RelationType.ENEMY || relationFrom2To1 == RelationType.ENEMY) {
+            return RelationType.ENEMY;
+        } else if (relationFrom1To2 == RelationType.NEUTRAL || relationFrom2To1 == RelationType.NEUTRAL) {
+            return RelationType.NEUTRAL;
+        } else {
+            return RelationType.ALLY;
+        }
+    }
+    
 }

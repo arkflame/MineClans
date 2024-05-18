@@ -9,6 +9,7 @@ import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.models.FactionPlayer;
 import com.arkflame.mineclans.modernlib.commands.ModernArguments;
+import com.arkflame.mineclans.enums.RelationType;
 
 public class FactionsWhoCommand {
     public static void onCommand(Player player, ModernArguments args) {
@@ -57,6 +58,15 @@ public class FactionsWhoCommand {
                 message.append("\n").append(ChatColor.YELLOW).append(" - ")
                         .append(ChatColor.WHITE).append(memberId.toString());
             }
+        }
+
+        // Get the player's faction
+        Faction playerFaction = MineClans.getInstance().getAPI().getFaction(player);
+
+        // Check if the player's faction and the displayed faction are different
+        if (playerFaction != null && !playerFaction.equals(faction)) {
+            RelationType relation = MineClans.getInstance().getAPI().getRelation(player, faction.getName());
+            message.append("\n").append(ChatColor.AQUA).append("Relation: ").append(ChatColor.WHITE).append(relation.name());
         }
 
         player.sendMessage(message.toString());

@@ -12,6 +12,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 import com.arkflame.mineclans.enums.Rank;
+import com.arkflame.mineclans.enums.RelationType;
 import com.arkflame.mineclans.utils.FactionNamingUtil;
 import com.arkflame.mineclans.utils.LocationUtil;
 
@@ -138,6 +139,26 @@ public class Faction implements InventoryHolder {
     public void setRelation(UUID factionId, Relation relation) {
         this.relations.put(factionId, relation);
     }
+    
+    public void setRelations(Collection<Relation> relationsByFactionId) {
+        for (Relation relation : relationsByFactionId) {
+            this.relations.put(relation.getTargetFactionId(), relation);
+        }
+    }
+    
+    public Relation getRelation(UUID otherFactionId) {
+        return relations.get(otherFactionId);
+    }
+    
+    public RelationType getRelationType(UUID otherFactionId) {
+        Relation relation = relations.get(otherFactionId);
+
+        if (relation != null) {
+            return relation.getRelationType();
+        }
+
+        return RelationType.NEUTRAL;
+    }
 
     public Map<String, Boolean> getChestPermissions() {
         return chestPermissions;
@@ -222,12 +243,6 @@ public class Faction implements InventoryHolder {
 
     public UUID getId() {
         return id;
-    }
-
-    public void setRelations(Collection<Relation> relationsByFactionId) {
-        for (Relation relation : relationsByFactionId) {
-            this.relations.put(relation.getTargetFactionId(), relation);
-        }
     }
 
     public String getHomeString() {
