@@ -34,6 +34,9 @@ public class FactionsWithdrawCommand {
             case INVALID_AMOUNT:
                 player.sendMessage(ChatColor.RED + "Invalid amount entered: " + amount);
                 break;
+            case NO_ECONOMY:
+                player.sendMessage(ChatColor.RED + "Vault is not installed. No economy system present.");
+                break;
             default:
                 break;
         }

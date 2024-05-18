@@ -50,6 +50,9 @@ import com.arkflame.mineclans.managers.FactionPlayerManager;
 import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.models.FactionPlayer;
 
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
+
 /*
  * MineClans API
  * 
@@ -614,42 +617,54 @@ public class MineClansAPI {
 
     public WithdrawResult withdraw(Player player, double amount) {
         if (amount <= 0) {
-            return new WithdrawResult(WithdrawResultType.INVALID_AMOUNT, 0); // Player is not in a faction
+            return new WithdrawResult(WithdrawResultType.INVALID_AMOUNT, 0); // Invalid amount
         }
-
+    
+        if (!MineClans.getInstance().isVaultHooked()) {
+            return new WithdrawResult(WithdrawResultType.NO_ECONOMY, 0); // Vault not hooked
+        }
+    
+        Economy economy = MineClans.getInstance().getVaultEconomy();
+    
         FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
         if (factionPlayer == null || factionPlayer.getFaction() == null) {
             return new WithdrawResult(WithdrawResultType.NOT_IN_FACTION, 0); // Player is not in a faction
         }
-
+    
         Faction faction = factionPlayer.getFaction();
         Rank playerRank = factionPlayer.getRank();
-
+    
         // Check if player rank is above a certain rank
         if (playerRank.isLowerThan(Rank.COLEADER)) {
             return new WithdrawResult(WithdrawResultType.NO_PERMISSION, 0); // Player doesn't have sufficient permission
         }
-
+    
         // Check if there's enough balance in the faction
         double factionBalance = faction.getBalance();
         if (factionBalance < amount) {
             return new WithdrawResult(WithdrawResultType.INSUFFICIENT_FUNDS, factionBalance); // Not enough balance
         }
-
+    
         // Assuming your FactionManager class has a method to withdraw currency
-        boolean success = factionManager.withdraw(faction.getName(), amount);
+        boolean success = factionManager.withdraw(faction.getName(), amount) && economy.depositPlayer(player, amount).type == EconomyResponse.ResponseType.SUCCESS;
         if (success) {
             return new WithdrawResult(WithdrawResultType.SUCCESS, amount); // Withdrawal successful
         } else {
             return new WithdrawResult(WithdrawResultType.ERROR, 0); // Error occurred during withdrawal
         }
     }
-
+    
     public DepositResult deposit(Player player, double amount) {
         if (amount <= 0) {
-            return new DepositResult(DepositResultType.INVALID_AMOUNT, 0); // Player is not in a faction
+            return new DepositResult(DepositResultType.INVALID_AMOUNT, 0); // Invalid amount
         }
-
+    
+        if (!MineClans.getInstance().isVaultHooked()) {
+            return new DepositResult(DepositResultType.NO_ECONOMY, 0); // Vault not hooked
+        }
+    
+        Economy economy = MineClans.getInstance().getVaultEconomy();
+    
         FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
         if (factionPlayer == null || factionPlayer.getFaction() == null) {
             return new DepositResult(DepositResultType.NOT_IN_FACTION, 0); // Player is not in a faction
@@ -657,17 +672,17 @@ public class MineClansAPI {
     
         Faction faction = factionPlayer.getFaction();
         Rank playerRank = factionPlayer.getRank();
-
+    
         if (playerRank.isLowerThan(Rank.RECRUIT)) {
             return new DepositResult(DepositResultType.NO_PERMISSION, 0); // Player doesn't have sufficient permission
         }
     
         // Assuming your FactionManager class has a method to deposit currency
-        boolean success = factionManager.deposit(faction.getName(), amount);
+        boolean success = economy.withdrawPlayer(player, amount).type == EconomyResponse.ResponseType.SUCCESS && factionManager.deposit(faction.getName(), amount);
         if (success) {
             return new DepositResult(DepositResultType.SUCCESS, amount); // Deposit successful
         } else {
             return new DepositResult(DepositResultType.ERROR, 0); // Error occurred during deposit
         }
-    }
+    }    
 }

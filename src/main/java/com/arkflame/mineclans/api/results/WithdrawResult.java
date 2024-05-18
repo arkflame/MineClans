@@ -23,6 +23,7 @@ public class WithdrawResult {
         NO_PERMISSION,
         INSUFFICIENT_FUNDS,
         ERROR,
-        INVALID_AMOUNT
+        INVALID_AMOUNT,
+        NO_VAULT, NO_ECONOMY
     }
 }

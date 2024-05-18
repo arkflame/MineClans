@@ -7,6 +7,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.arkflame.mineclans.api.MineClansAPI;
@@ -25,6 +26,8 @@ import com.arkflame.mineclans.placeholders.FactionsPlaceholder;
 import com.arkflame.mineclans.providers.MySQLProvider;
 import com.arkflame.mineclans.tasks.InventorySaveTask;
 
+import net.milkbowl.vault.economy.Economy;
+
 public class MineClans extends JavaPlugin {
     private ConfigWrapper config;
     private ConfigWrapper messages;
@@ -42,6 +45,9 @@ public class MineClans extends JavaPlugin {
     private MineClansAPI api;
 
     private FactionsCommand factionsCommand;
+
+    // Vault Economy
+    private Economy economy;
 
     public ConfigWrapper getCfg() {
         return config;
@@ -69,6 +75,24 @@ public class MineClans extends JavaPlugin {
 
     public InventorySaveTask getInventorySaveTask() {
         return inventorySaveTask;
+    }
+
+    private boolean setupEconomy() {
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+
+        economy = rsp.getProvider();
+        return economy != null;
+    }
+
+    public boolean isVaultHooked() {
+        return economy != null;
+    }
+
+    public Economy getVaultEconomy() {
+        return economy;
     }
 
     @Override
@@ -113,6 +137,15 @@ public class MineClans extends JavaPlugin {
         // Register tasks
         inventorySaveTask = new InventorySaveTask();
         inventorySaveTask.register();
+
+        // Attempt to hook Vault
+        if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
+            if (!setupEconomy()) {
+                getLogger().severe("Vault economy setup failed, using fallback.");
+            }
+        } else {
+            getLogger().info("Vault not found, using fallback economy.");
+        }
     }
 
     @Override
