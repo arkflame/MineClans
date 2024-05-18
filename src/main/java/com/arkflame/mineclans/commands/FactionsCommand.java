@@ -14,6 +14,7 @@ import com.arkflame.mineclans.commands.subcommands.FactionsFriendlyFireCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsHomeCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsInviteCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsJoinCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsKickCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsLeaveCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsListCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsPromoteCommand;
@@ -109,6 +110,9 @@ public class FactionsCommand extends ModernCommand {
                     break;
                 case "demote":
                     FactionsDemoteCommand.onCommand(player, args);
+                    break;
+                case "kick":
+                    FactionsKickCommand.onCommand(player, args);
                     break;
                 default:
                     sender.sendMessage(MineClans.getInstance().getMsg().getText("factions.usage"));

@@ -27,6 +27,8 @@ import com.arkflame.mineclans.api.results.CreateResult.CreateResultState;
 import com.arkflame.mineclans.api.results.DisbandResult.DisbandResultState;
 import com.arkflame.mineclans.api.results.HomeResult.HomeResultState;
 import com.arkflame.mineclans.api.results.JoinResult.JoinResultState;
+import com.arkflame.mineclans.api.results.KickResult;
+import com.arkflame.mineclans.api.results.KickResult.KickResultType;
 import com.arkflame.mineclans.api.results.LeaveResult.LeaveResultState;
 import com.arkflame.mineclans.api.results.RankChangeResult.RankChangeResultType;
 import com.arkflame.mineclans.api.results.RenameDisplayResult.RenameDisplayResultState;
@@ -506,5 +508,40 @@ public class MineClansAPI {
         }
     
         return new RankChangeResult(RankChangeResultType.CANNOT_DEMOTE, null);
+    }
+
+    public KickResult kick(Player kicker, String playerName) {
+        // Check if the kicker is in a faction
+        FactionPlayer kickerFactionPlayer = factionPlayerManager.getOrLoad(kicker.getUniqueId());
+        if (kickerFactionPlayer == null || kickerFactionPlayer.getFaction() == null) {
+            return new KickResult(KickResultType.NOT_IN_FACTION, null, null);
+        }
+    
+        // Check if the kicker is the owner of the faction
+        Faction faction = kickerFactionPlayer.getFaction();
+        if (kickerFactionPlayer.getRank().ordinal() < Rank.MODERATOR.ordinal()) {
+            return new KickResult(KickResultType.NOT_MODERATOR, faction, null);
+        }
+    
+        // Check if the player to be kicked is a member of the faction
+        FactionPlayer playerToKick = factionPlayerManager.getOrLoad(playerName);
+        if (playerToKick == null || !faction.getMembers().contains(playerToKick.getPlayerId())) {
+            return new KickResult(KickResultType.PLAYER_NOT_FOUND, faction, playerToKick);
+        }
+
+        if (kickerFactionPlayer == playerToKick) {
+            return new KickResult(KickResultType.NOT_YOURSELF, faction, playerToKick);
+        }
+
+        // Check if the player to be kicked is the owner of the faction
+        if (kickerFactionPlayer.getRank().ordinal() <= playerToKick.getRank().ordinal()) {
+            return new KickResult(KickResultType.SUPERIOR_RANK, faction, playerToKick);
+        }
+    
+        // Kick the player from the faction
+        factionManager.removePlayerFromFaction(faction.getName(), playerToKick.getPlayerId());
+        factionPlayerManager.updateFaction(playerToKick.getPlayerId(), null);
+    
+        return new KickResult(KickResultType.SUCCESS, faction, playerToKick);
     }
 }
