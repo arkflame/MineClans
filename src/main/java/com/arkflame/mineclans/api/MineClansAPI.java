@@ -469,7 +469,7 @@ public class MineClansAPI {
             return new RankChangeResult(RankChangeResultType.NOT_IN_FACTION, null);
         }
 
-        if (target.getRank().ordinal() >= sender.getRank().ordinal()) {
+        if (target.getRank().isEqualOrHigherThan(sender.getRank())) {
             return new RankChangeResult(RankChangeResultType.SUPERIOR_RANK, null);
         }
 
@@ -506,7 +506,7 @@ public class MineClansAPI {
             return new RankChangeResult(RankChangeResultType.NOT_IN_FACTION, null);
         }
 
-        if (target.getRank().ordinal() >= sender.getRank().ordinal()) {
+        if (target.getRank().isEqualOrHigherThan(sender.getRank())) {
             return new RankChangeResult(RankChangeResultType.SUPERIOR_RANK, null);
         }
 
@@ -532,7 +532,7 @@ public class MineClansAPI {
 
         // Check if the kicker is the owner of the faction
         Faction faction = kickerFactionPlayer.getFaction();
-        if (kickerFactionPlayer.getRank().ordinal() < Rank.MODERATOR.ordinal()) {
+        if (kickerFactionPlayer.getRank().isLowerThan(Rank.MODERATOR)) {
             return new KickResult(KickResultType.NOT_MODERATOR, faction, null);
         }
 
@@ -547,7 +547,7 @@ public class MineClansAPI {
         }
 
         // Check if the player to be kicked is the owner of the faction
-        if (kickerFactionPlayer.getRank().ordinal() <= playerToKick.getRank().ordinal()) {
+        if (playerToKick.getRank().isEqualOrHigherThan(kickerFactionPlayer.getRank())) {
             return new KickResult(KickResultType.SUPERIOR_RANK, faction, playerToKick);
         }
 
