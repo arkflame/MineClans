@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 
 import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.api.results.CreateResult;
@@ -30,6 +31,8 @@ import com.arkflame.mineclans.api.results.JoinResult.JoinResultState;
 import com.arkflame.mineclans.api.results.KickResult;
 import com.arkflame.mineclans.api.results.KickResult.KickResultType;
 import com.arkflame.mineclans.api.results.LeaveResult.LeaveResultState;
+import com.arkflame.mineclans.api.results.OpenChestResult;
+import com.arkflame.mineclans.api.results.OpenChestResult.OpenChestResultType;
 import com.arkflame.mineclans.api.results.RankChangeResult.RankChangeResultType;
 import com.arkflame.mineclans.api.results.RenameDisplayResult.RenameDisplayResultState;
 import com.arkflame.mineclans.api.results.RenameResult.RenameResultState;
@@ -553,5 +556,25 @@ public class MineClansAPI {
         factionPlayerManager.updateFaction(playerToKick.getPlayerId(), null);
 
         return new KickResult(KickResultType.SUCCESS, faction, playerToKick);
+    }
+
+    public OpenChestResult openChest(Player player) {
+        FactionPlayer factionPlayer = getFactionPlayer(player);
+        Faction faction = factionPlayer.getFaction();
+        if (faction == null) {
+            return new OpenChestResult(OpenChestResultType.NOT_IN_FACTION, faction, factionPlayer);
+        }
+
+        if (factionPlayer.getRank().ordinal() < Rank.CAPTAIN.ordinal()) {
+            return new OpenChestResult(OpenChestResultType.NOT_CAPTAIN, faction, factionPlayer);
+        }
+
+        try {
+            Inventory chestInventory = faction.getChest();
+            player.openInventory(chestInventory);
+            return new OpenChestResult(OpenChestResultType.SUCCESS, faction, factionPlayer);
+        } catch (Exception e) {
+            return new OpenChestResult(OpenChestResultType.ERROR, faction, factionPlayer);
+        }
     }
 }
