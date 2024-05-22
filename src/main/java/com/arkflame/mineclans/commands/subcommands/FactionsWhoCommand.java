@@ -48,7 +48,7 @@ public class FactionsWhoCommand {
         String ownerDisplay = owner != null ? owner.getName() : faction.getOwner().toString();
         message.append(ChatColor.AQUA).append("Owner: ").append(ChatColor.WHITE).append(ownerDisplay).append("\n");
 
-        message.append(ChatColor.AQUA).append("Members:").append(ChatColor.RESET);
+        message.append(ChatColor.AQUA).append("Members (").append(faction.getMembers().size()).append("):").append(ChatColor.RESET);
         for (UUID memberId : faction.getMembers()) {
             FactionPlayer member = MineClans.getInstance().getAPI().getFactionPlayer(memberId);
             if (member != null) {
@@ -75,6 +75,7 @@ public class FactionsWhoCommand {
         String formattedBalance = NumberUtil.formatBalance(factionBalance);
         message.append("\n").append(ChatColor.AQUA).append("Balance: ").append(ChatColor.GREEN).append("$").append(formattedBalance);
         message.append("\n").append(ChatColor.AQUA).append("Kills: ").append(ChatColor.RED).append(faction.getKills());
+        message.append("\n").append(ChatColor.AQUA).append("Power: ").append(ChatColor.GREEN).append("*").append(faction.calculatePower());
 
         player.sendMessage(message.toString());
     }

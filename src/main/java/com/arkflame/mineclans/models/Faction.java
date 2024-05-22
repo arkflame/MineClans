@@ -284,6 +284,18 @@ public class Faction implements InventoryHolder {
         this.kills = kills;
     }
 
+    public double calculatePower() {
+        double killsWeight = 0.5;
+        double moneyWeight = 0.3;
+        double memberCountWeight = 0.2;
+
+        double killsPower = kills * killsWeight;
+        double moneyPower = balance * moneyWeight;
+        double memberCountPower = members.size() * memberCountWeight;
+
+        return (int) (killsPower + moneyPower + memberCountPower);
+    }
+
     @Override
     public Inventory getInventory() {
         return chestInventory;
