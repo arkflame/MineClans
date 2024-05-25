@@ -5,6 +5,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.MineClans;
+import com.arkflame.mineclans.events.ClanEvent;
+import com.arkflame.mineclans.events.ClanEventScheduler;
 import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.models.FactionPlayer;
 
@@ -58,6 +60,9 @@ public class FactionsPlaceholder extends PlaceholderExpansion {
         }
 
         Faction focusedFaction = plugin.getFactionManager().getFaction(faction.getFocusedFaction());
+        ClanEventScheduler eventScheduler = plugin.getClanEventScheduler();
+        ClanEvent currentEvent = eventScheduler.getEvent();
+        ClanEvent nextEvent = eventScheduler.getNextEvent();
 
         switch (identifier) {
             case "name":
@@ -78,6 +83,12 @@ public class FactionsPlaceholder extends PlaceholderExpansion {
                 return focusedFaction == null ? "" : focusedFaction.getDisplayName();
             case "focus_online":
                 return focusedFaction == null ? "" : String.valueOf(focusedFaction.getOnlineMembers().size());
+            case "event_name":
+                return currentEvent == null ? "" : currentEvent.getName();
+            case "next_event_name":
+                return nextEvent == null ? "" : nextEvent.getName();
+            case "next_event_time":
+                return eventScheduler.getTimeLeftFormatted();
             default:
                 return "";
         }

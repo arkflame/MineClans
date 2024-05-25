@@ -1,3 +1,27 @@
+# config.yml
+events:
+  interval: 25 # minutes
+  custom-events:
+    # You can create as much events as you want
+    diamond-event:
+      # Name of the event
+      name: "Diamond Mining"
+      # Descriptiion of the event
+      description: "The first to mine 10 diamonds wins!"
+      # FACTION_KILL
+      # BLOCK_BREAK
+      # MONSTER_KILL
+      # DIAMOND_MINE
+      # Objective: Target Score
+      objectives:
+        # The faction will require to mine 10 diamond ores
+        diamond_mine: 10
+      # Rewards to give for each faction player event winner
+      rewards:
+        commands:
+          - "give {player} diamond 1"
+        deposit: 1
+
 mysql:
   enabled: true
   url: jdbc:mysql://localhost:3306/database

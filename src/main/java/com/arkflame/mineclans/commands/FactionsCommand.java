@@ -11,6 +11,7 @@ import com.arkflame.mineclans.commands.subcommands.FactionsDemoteCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsDepositCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsDisbandCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsDisplaynameCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsEventCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsFocusCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsFriendlyFireCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsHomeCommand;
@@ -127,6 +128,10 @@ public class FactionsCommand extends ModernCommand {
                 case "withdraw":
                 case "w":
                     FactionsWithdrawCommand.onCommand(player, args);
+                    break;
+                case "events":
+                case "event":
+                    FactionsEventCommand.onCommand(player);
                     break;
                 default:
                     sender.sendMessage(MineClans.getInstance().getMsg().getText("factions.usage"));

@@ -12,7 +12,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.arkflame.mineclans.api.MineClansAPI;
 import com.arkflame.mineclans.commands.FactionsCommand;
+import com.arkflame.mineclans.events.ClanEventManager;
+import com.arkflame.mineclans.events.ClanEventScheduler;
 import com.arkflame.mineclans.listeners.ChatListener;
+import com.arkflame.mineclans.listeners.ClanEventListener;
 import com.arkflame.mineclans.listeners.FactionFriendlyFireListener;
 import com.arkflame.mineclans.listeners.InventoryClickListener;
 import com.arkflame.mineclans.listeners.PlayerJoinListener;
@@ -49,6 +52,10 @@ public class MineClans extends JavaPlugin {
 
     // Vault Economy
     private Economy economy;
+
+    // Events
+    private ClanEventManager clanEventManager;
+    private ClanEventScheduler clanEventScheduler;
 
     public ConfigWrapper getCfg() {
         return config;
@@ -96,6 +103,14 @@ public class MineClans extends JavaPlugin {
         return economy;
     }
 
+    public ClanEventManager getClanEventManager() {
+        return clanEventManager;
+    }
+
+    public ClanEventScheduler getClanEventScheduler() {
+        return clanEventScheduler;
+    }
+
     @Override
     public void onEnable() {
         // Set static instance
@@ -111,8 +126,11 @@ public class MineClans extends JavaPlugin {
                 config.getString("mysql.username"),
                 config.getString("mysql.password"));
 
+        // Managers
         factionManager = new FactionManager();
         factionPlayerManager = new FactionPlayerManager();
+        clanEventManager = new ClanEventManager(this);
+        clanEventScheduler = new ClanEventScheduler(config.getInt("events.interval"));
 
         // Initialize API
         api = new MineClansAPI(factionManager, factionPlayerManager);
@@ -120,6 +138,7 @@ public class MineClans extends JavaPlugin {
         // Register Listeners
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new ChatListener(), this);
+        pluginManager.registerEvents(new ClanEventListener(clanEventManager), this);
         pluginManager.registerEvents(new FactionFriendlyFireListener(), this);
         pluginManager.registerEvents(new InventoryClickListener(), this);
         pluginManager.registerEvents(new PlayerJoinListener(factionPlayerManager), this);

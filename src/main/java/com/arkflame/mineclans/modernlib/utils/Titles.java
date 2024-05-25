@@ -68,6 +68,12 @@ public class Titles {
             player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
         }
     }
+
+    public static void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            sendTitle(player, title, subtitle, fadeIn, stay, fadeOut);
+        }
+    }
     
     private static Method getChatComponentMethod(Class<?> clazz) throws NoSuchMethodException {
         Method method = CHAT_COMPONENT_METHOD_CACHE.get(clazz);
