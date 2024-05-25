@@ -14,6 +14,7 @@ import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.enums.EventObjectiveType;
 import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.models.FactionPlayer;
+import com.arkflame.mineclans.modernlib.utils.Titles;
 
 public class ClanEvent {
     // Container of static information
@@ -120,7 +121,7 @@ public class ClanEvent {
             Player player = factionPlayer.getPlayer();
 
             if (player != null && player.isOnline()) {
-                player.sendTitle("", "Winner: " + winnerFaction.getName(), 10, 70, 20);
+                Titles.sendTitle(player, "", "Winner: " + winnerFaction.getName(), 10, 70, 20);
 
                 for (String command : config.getCommands()) {
                     String formattedCommand = command.replace("{player}", player.getName());

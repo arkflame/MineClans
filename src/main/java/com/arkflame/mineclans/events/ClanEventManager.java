@@ -3,6 +3,7 @@ package com.arkflame.mineclans.events;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.enums.EventObjectiveType;
 
 import java.util.*;
@@ -11,7 +12,6 @@ import java.util.stream.Collectors;
 public class ClanEventManager {
     private final JavaPlugin plugin;
     private final Map<String, EventConfig> eventConfigs = new HashMap<>();
-    private ClanEvent currentEvent;
 
     public ClanEventManager(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -38,14 +38,6 @@ public class ClanEventManager {
                 )));
     }
 
-    public ClanEvent getCurrentEvent() {
-        return currentEvent;
-    }
-
-    public void setCurrentEvent(ClanEvent currentEvent) {
-        this.currentEvent = currentEvent;
-    }
-
     public Map<String, EventConfig> getEventConfigs() {
         return eventConfigs;
     }
@@ -53,15 +45,19 @@ public class ClanEventManager {
     public void startEvent(String eventName) {
         EventConfig config = eventConfigs.get(eventName);
         if (config != null) {
-            currentEvent = RandomEventFactory.createEventFromConfig(config);
-            currentEvent.startEvent();
+            ClanEventScheduler clanEventScheduler = MineClans.getInstance().getClanEventScheduler();
+            clanEventScheduler.setEvent(RandomEventFactory.createEventFromConfig(config));
+            clanEventScheduler.getEvent().startEvent();
         }
     }
 
     public void stopCurrentEvent() {
+        ClanEventScheduler clanEventScheduler = MineClans.getInstance().getClanEventScheduler();
+        ClanEvent currentEvent = clanEventScheduler.getEvent();
+
         if (currentEvent != null) {
-            currentEvent.setActive(false);
-            currentEvent = null;
+            currentEvent.endEvent(null);
+            clanEventScheduler.setEvent(null);
         }
     }
 }

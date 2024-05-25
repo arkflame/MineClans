@@ -9,6 +9,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.events.ClanEvent;
 import com.arkflame.mineclans.events.ClanEventManager;
+import com.arkflame.mineclans.events.ClanEventScheduler;
 import com.arkflame.mineclans.models.FactionPlayer;
 
 import org.bukkit.entity.Player;
@@ -16,9 +17,11 @@ import org.bukkit.entity.Monster;
 
 public class ClanEventListener implements Listener {
     private final ClanEventManager clanEventManager;
+    private final ClanEventScheduler clanEventScheduler;
 
-    public ClanEventListener(ClanEventManager clanEventManager) {
+    public ClanEventListener(ClanEventManager clanEventManager, ClanEventScheduler clanEventScheduler) {
         this.clanEventManager = clanEventManager;
+        this.clanEventScheduler = clanEventScheduler;
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -27,7 +30,7 @@ public class ClanEventListener implements Listener {
         Player killer = player.getKiller();
         if (killer != null) {
             FactionPlayer factionPlayer = MineClans.getInstance().getAPI().getFactionPlayer(player);
-            ClanEvent currentEvent = clanEventManager.getCurrentEvent();
+            ClanEvent currentEvent = clanEventScheduler.getEvent();
             if (currentEvent != null) {
                 currentEvent.onFactionKill(factionPlayer);
             }
@@ -38,7 +41,7 @@ public class ClanEventListener implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
         FactionPlayer factionPlayer = MineClans.getInstance().getAPI().getFactionPlayer(player);
-        ClanEvent currentEvent = clanEventManager.getCurrentEvent();
+        ClanEvent currentEvent = clanEventScheduler.getEvent();
         if (currentEvent != null) {
             currentEvent.onBlockBreak(event.getBlock(), factionPlayer);
         }
@@ -51,7 +54,7 @@ public class ClanEventListener implements Listener {
             Player killer = monster.getKiller();
             if (killer != null) {
                 FactionPlayer factionPlayer = MineClans.getInstance().getAPI().getFactionPlayer(killer);
-                ClanEvent currentEvent = clanEventManager.getCurrentEvent();
+                ClanEvent currentEvent = clanEventScheduler.getEvent();
                 if (currentEvent != null) {
                     currentEvent.onMonsterKill(factionPlayer);
                 }

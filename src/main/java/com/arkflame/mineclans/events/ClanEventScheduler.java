@@ -155,4 +155,8 @@ public class ClanEventScheduler {
 
         return formattedTime.toString().trim();
     }
+
+    public void setEvent(ClanEvent event) {
+        this.event = event;
+    }
 }
