@@ -138,7 +138,7 @@ public class MineClans extends JavaPlugin {
         // Register Listeners
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new ChatListener(), this);
-        pluginManager.registerEvents(new ClanEventListener(clanEventManager, clanEventScheduler), this);
+        pluginManager.registerEvents(new ClanEventListener(), this);
         pluginManager.registerEvents(new FactionFriendlyFireListener(), this);
         pluginManager.registerEvents(new InventoryClickListener(), this);
         pluginManager.registerEvents(new PlayerJoinListener(factionPlayerManager), this);

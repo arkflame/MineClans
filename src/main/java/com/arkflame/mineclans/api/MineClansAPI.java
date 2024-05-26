@@ -47,6 +47,7 @@ import com.arkflame.mineclans.api.results.RenameResult.RenameResultState;
 import com.arkflame.mineclans.api.results.SetHomeResult.SetHomeResultState;
 import com.arkflame.mineclans.enums.Rank;
 import com.arkflame.mineclans.enums.RelationType;
+import com.arkflame.mineclans.events.ClanEvent;
 import com.arkflame.mineclans.managers.FactionManager;
 import com.arkflame.mineclans.managers.FactionPlayerManager;
 import com.arkflame.mineclans.models.Faction;
@@ -739,5 +740,9 @@ public class MineClansAPI {
         }
 
         return factionPlayer.getKills();
+    }
+
+    public ClanEvent getCurrentEvent() {
+        return MineClans.getInstance().getClanEventScheduler().getEvent();
     }
 }
