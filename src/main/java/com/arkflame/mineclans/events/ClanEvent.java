@@ -6,7 +6,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -138,22 +137,29 @@ public class ClanEvent {
     public void startEvent() {
         this.isActive = true;
 
-        Titles.sendTitle(ChatColor.GREEN + "Start!",
-                ChatColor.YELLOW + getConfig().getDescription(), 10, 40, 10);
+        String titleMessage = MineClans.getInstance().getMessages().getText("event.start.title");
+        String subtitleMessage = MineClans.getInstance().getMessages().getText("event.start.subtitle")
+                .replace("%description%", getConfig().getDescription());
+
+        Titles.sendTitle(titleMessage, subtitleMessage, 10, 40, 10);
         MelodyUtil.playMelody(MineClans.getInstance(), Melody.EVENT_START_MELODY);
     }
 
     public void endEvent(Faction winner) {
         if (this.isActive) {
             this.isActive = false;
-            Bukkit.broadcastMessage("Event ended: " + getName());
-            String winnerName = "No Winner";
+            String winnerName = MineClans.getInstance().getMessages().getText("event.end.default_winner");
 
             if (winner != null) {
                 rewardWinnerFaction(winner);
                 winnerName = winner.getName();
             }
-            Titles.sendTitle("Event Finished!", "Winner: " + winnerName, 10, 70, 20);
+
+            String titleMessage = MineClans.getInstance().getMessages().getText("event.end.title");
+            String subtitleMessage = MineClans.getInstance().getMessages().getText("event.end.subtitle")
+                    .replace("%winnerName%", winnerName);
+
+            Titles.sendTitle(titleMessage, subtitleMessage, 10, 70, 20);
             MelodyUtil.playMelody(MineClans.getInstance(), Melody.EVENT_END_MELODY);
         }
     }

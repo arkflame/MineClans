@@ -92,17 +92,9 @@ public class ClanEventScheduler {
         updateTime();
         nextEvent = RandomEventFactory
                 .createRandomEvent(MineClans.getInstance().getClanEventManager().getEventConfigs());
-
-        if (nextEvent != null) {
-            MineClans.getInstance().getLogger().info("Next event scheduled: " + nextEvent.getName());
-        } else {
-            MineClans.getInstance().getLogger().warning("Failed to schedule the next event.");
-        }
     }
 
     public void finishEvent() {
-        MineClans.getInstance().getLogger().info("Event finished: " + event.getName());
-
         // Reset current event
         event = null;
         time = 0;

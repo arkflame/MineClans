@@ -1,4 +1,19 @@
+event:
+  start:
+    title: "&aStart!"
+    subtitle: "&e%description%"
+  end:
+    title: "&cEvent Finished!"
+    subtitle: "&eWinner: %winnerName%"
+    default_winner: "No Winner"
+
 factions:
+  chat:
+    prefix: "&e[Faction] %player%: "
+    enabled: "&aFaction chat enabled."
+    disabled: "&cFaction chat disabled."
+    not_in_faction: "&cYou are not in a faction."
+    unknown_error: "&cAn unknown error occurred."
   withdraw:
     success: "&aWithdrawal of $%amount% successful!"
     not_in_faction: "&cYou are not in a faction."
@@ -168,10 +183,5 @@ factions:
     no_permission: "&cYou need to be MEMBER to open the faction chest."
     error: "&cAn error occurred while trying to open the chest."
     unknown_result: "&cUnknown result."
-  chat:
-    enabled: "&aFaction chat enabled."
-    disabled: "&cFaction chat disabled."
-    not_in_faction: "&cYou are not in a faction."
-    unknown_error: "&cAn unknown error occurred."
   usage: "&cUsage: /factions <create|disband> <factionName>"
   no-console: "&cYou cannot use this command from console."

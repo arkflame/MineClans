@@ -6,7 +6,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerFishEvent;
-import org.bukkit.event.player.PlayerHarvestBlockEvent;
 
 import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.events.ClanEvent;

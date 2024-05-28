@@ -362,18 +362,20 @@ public class MineClansAPI {
             return new FactionChatResult(FactionChatResult.FactionChatState.NOT_IN_FACTION, message, null,
                     factionPlayer);
         }
-
+    
         Faction faction = factionPlayer.getFaction();
-        String formattedMessage = ChatColor.YELLOW + "[Faction] " + ChatColor.RESET + player.getName() + ": " + message;
+        String chatPrefix = MineClans.getInstance().getMessages().getText("factions.chat.prefix");
+        String playerName = player.getName();
+        String formattedMessage = chatPrefix.replace("%player%", playerName) + message;
         faction.getMembers().forEach(memberId -> {
             Player member = MineClans.getInstance().getServer().getPlayer(memberId);
             if (member != null && member.isOnline()) {
                 member.sendMessage(formattedMessage);
             }
         });
-
+    
         return new FactionChatResult(FactionChatResult.FactionChatState.SUCCESS, message, faction, factionPlayer);
-    }
+    }    
 
     public FriendlyFireResult toggleFriendlyFire(Player player) {
         FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
