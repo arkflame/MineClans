@@ -10,27 +10,30 @@ import com.arkflame.mineclans.modernlib.commands.ModernArguments;
 public class FactionsDemoteCommand {
     public static void onCommand(Player player, ModernArguments args) {
         String playerName = args.getText(1);
-        RankChangeResult demoteResult = MineClans.getInstance().getAPI().demote(player, playerName);
+        MineClans mineClans = MineClans.getInstance();
+        String basePath = "factions.demote.";
+
+        RankChangeResult demoteResult = mineClans.getAPI().demote(player, playerName);
         RankChangeResultType resultType = demoteResult.getResultType();
 
         switch (resultType) {
             case SUPERIOR_RANK:
-                player.sendMessage("The player is higher or same rank than you.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "superior_rank"));
                 break;
             case PLAYER_NOT_FOUND:
-                player.sendMessage("Player not found.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "player_not_found"));
                 break;
             case NOT_IN_FACTION:
-                player.sendMessage("Player is not in your faction.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "not_in_faction"));
                 break;
             case NO_PERMISSION:
-                player.sendMessage("You require LEADER to promote/demote players.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "no_permission"));
                 break;
             case CANNOT_DEMOTE:
-                player.sendMessage("Cannot demote player.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "cannot_demote"));
                 break;
             case SUCCESS:
-                player.sendMessage("Player demoted successfully.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "success"));
                 break;
             default:
                 break;

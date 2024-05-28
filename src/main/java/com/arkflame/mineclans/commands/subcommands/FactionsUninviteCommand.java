@@ -10,27 +10,29 @@ import com.arkflame.mineclans.modernlib.commands.ModernArguments;
 public class FactionsUninviteCommand {
     public static void onCommand(Player player, ModernArguments args) {
         String targetPlayerName = args.getText(1);
+        String basePath = "factions.uninvite.";
+
         UninviteResult uninviteResult = MineClans.getInstance().getAPI().uninvite(player, targetPlayerName);
         UninviteResultState state = uninviteResult.getState();
 
         switch (state) {
             case NULL_NAME:   
-                player.sendMessage("Usage: /factions uninvite <player>");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "null_name"));
                 break;
             case NO_FACTION:
-                player.sendMessage("You have no faction.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "no_faction"));
                 break;
             case NO_PERMISSION:
-                player.sendMessage("You are not MODERATOR to uninvite.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "no_permission"));
                 break;
             case NOT_INVITED:
-                player.sendMessage("Player is not invited.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "not_invited"));
                 break;
             case SUCCESS:
-                player.sendMessage("Player uninvited successfully.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "success"));
                 break;
             case PLAYER_NOT_FOUND:
-                player.sendMessage("Player not found.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "player_not_found"));
                 break;
             default:
                 break;

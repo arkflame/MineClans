@@ -14,6 +14,7 @@ import com.arkflame.mineclans.utils.NumberUtil;
 
 public class FactionsWhoCommand {
     public static void onCommand(Player player, ModernArguments args) {
+        String basePath = "factions.who.";
         Faction faction = null;
         String text = args.getText(1);
         if (text != null) {
@@ -28,27 +29,31 @@ public class FactionsWhoCommand {
             }
 
             if (faction == null) {
-                player.sendMessage(ChatColor.RED + "The faction is not valid.");
+                player.sendMessage(ChatColor.RED + MineClans.getInstance().getMessages().getText(basePath + "invalid_faction"));
                 return;
             }
         } else if (faction == null) {
             faction = MineClans.getInstance().getAPI().getFaction(player);
             if (faction == null) {
-                player.sendMessage(ChatColor.RED + "You are not in a faction.");
+                player.sendMessage(ChatColor.RED + MineClans.getInstance().getMessages().getText(basePath + "not_in_faction"));
                 return;
             }
         }
 
         StringBuilder message = new StringBuilder(
-                ChatColor.GOLD + "Information of " + ChatColor.YELLOW + faction.getName() + ChatColor.GOLD + ": ");
+                ChatColor.GOLD + MineClans.getInstance().getMessages().getText(basePath + "information_title")
+                .replace("%faction_name%", faction.getName()) + ": ");
         message.append(ChatColor.RESET).append("\n")
-                .append(ChatColor.AQUA).append("ID: ").append(ChatColor.GRAY).append(faction.getId()).append("\n");
+                .append(ChatColor.AQUA).append(MineClans.getInstance().getMessages().getText(basePath + "id"))
+                .append(ChatColor.GRAY).append(faction.getId()).append("\n");
 
         FactionPlayer owner = MineClans.getInstance().getAPI().getFactionPlayer(faction.getOwner());
         String ownerDisplay = owner != null ? owner.getName() : faction.getOwner().toString();
-        message.append(ChatColor.AQUA).append("Owner: ").append(ChatColor.WHITE).append(ownerDisplay).append("\n");
+        message.append(ChatColor.AQUA).append(MineClans.getInstance().getMessages().getText(basePath + "owner"))
+                .append(ChatColor.WHITE).append(ownerDisplay).append("\n");
 
-        message.append(ChatColor.AQUA).append("Members (").append(faction.getMembers().size()).append("):").append(ChatColor.RESET);
+        message.append(ChatColor.AQUA).append(MineClans.getInstance().getMessages().getText(basePath + "members_title"))
+                .append(" (").append(faction.getMembers().size()).append("):").append(ChatColor.RESET);
         for (UUID memberId : faction.getMembers()) {
             FactionPlayer member = MineClans.getInstance().getAPI().getFactionPlayer(memberId);
             if (member != null) {
@@ -67,15 +72,19 @@ public class FactionsWhoCommand {
         // Check if the player's faction and the displayed faction are different
         if (playerFaction != null && !playerFaction.equals(faction)) {
             RelationType relation = MineClans.getInstance().getAPI().getRelation(player, faction.getName());
-            message.append("\n").append(ChatColor.AQUA).append("Relation: ").append(ChatColor.WHITE).append(relation.name());
+            message.append("\n").append(ChatColor.AQUA).append(MineClans.getInstance().getMessages().getText(basePath + "relation"))
+                    .append(ChatColor.WHITE).append(relation.name());
         }
 
         // Display faction balance
         double factionBalance = faction.getBalance();
         String formattedBalance = NumberUtil.formatBalance(factionBalance);
-        message.append("\n").append(ChatColor.AQUA).append("Balance: ").append(ChatColor.GREEN).append("$").append(formattedBalance);
-        message.append("\n").append(ChatColor.AQUA).append("Kills: ").append(ChatColor.RED).append(faction.getKills());
-        message.append("\n").append(ChatColor.AQUA).append("Power: ").append(ChatColor.GREEN).append("*").append(faction.calculatePower());
+        message.append("\n").append(ChatColor.AQUA).append(MineClans.getInstance().getMessages().getText(basePath + "balance"))
+                .append(ChatColor.GREEN).append("$").append(formattedBalance);
+        message.append("\n").append(ChatColor.AQUA).append(MineClans.getInstance().getMessages().getText(basePath + "kills"))
+                .append(ChatColor.RED).append(faction.getKills());
+        message.append("\n").append(ChatColor.AQUA).append(MineClans.getInstance().getMessages().getText(basePath + "power"))
+                .append(ChatColor.GREEN).append("*").append(faction.calculatePower());
 
         player.sendMessage(message.toString());
     }

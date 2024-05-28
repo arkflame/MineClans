@@ -1,6 +1,5 @@
 package com.arkflame.mineclans.commands.subcommands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.MineClans;
@@ -11,31 +10,32 @@ import com.arkflame.mineclans.utils.NumberUtil;
 public class FactionsDepositCommand {
     public static void onCommand(Player player, ModernArguments args) {
         double amount = args.getDouble(1);
-        DepositResult depositResult = MineClans.getInstance().getAPI().deposit(player, amount);
+        MineClans mineClans = MineClans.getInstance();
+        String basePath = "factions.deposit.";
+
+        DepositResult depositResult = mineClans.getAPI().deposit(player, amount);
 
         switch (depositResult.getResultType()) {
             case SUCCESS:
-                player.sendMessage(
-                        ChatColor.GREEN + "Deposit of $" + NumberUtil.formatBalance(amount) + " successful!");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "success").replace("%amount%", NumberUtil.formatBalance(amount)));
                 break;
             case NOT_IN_FACTION:
-                player.sendMessage(ChatColor.RED + "You are not in a faction.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "not_in_faction"));
                 break;
             case NO_PERMISSION:
-                player.sendMessage(ChatColor.RED + "You do not have permission to deposit funds.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "no_permission"));
                 break;
             case NO_MONEY:
-                player.sendMessage(ChatColor.RED + "You have insufficent funds.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "no_money"));
                 break;
             case ERROR:
-                player.sendMessage(
-                        ChatColor.RED + "An error occurred while processing your deposit. Please try again later.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "error"));
                 break;
             case INVALID_AMOUNT:
-                player.sendMessage(ChatColor.RED + "Invalid amount entered: $" + NumberUtil.formatBalance(amount));
+                player.sendMessage(mineClans.getMessages().getText(basePath + "invalid_amount").replace("%amount%", NumberUtil.formatBalance(amount)));
                 break;
             case NO_ECONOMY:
-                player.sendMessage(ChatColor.RED + "Vault is not installed. No economy system present.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "no_economy"));
                 break;
             default:
                 break;

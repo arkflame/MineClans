@@ -12,28 +12,29 @@ public class FactionsPromoteCommand {
         String playerName = args.getText(1);
         RankChangeResult promoteResult = MineClans.getInstance().getAPI().promote(player, playerName);
         RankChangeResultType resultType = promoteResult.getResultType();
+        String basePath = "factions.promote.";
 
         switch (resultType) {
             case SUPERIOR_RANK:
-                player.sendMessage("The player is higher or same rank than you.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "superior_rank"));
                 break;
             case PLAYER_NOT_FOUND:
-                player.sendMessage("Player not found.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "player_not_found"));
                 break;
             case NOT_IN_FACTION:
-                player.sendMessage("Player is not in your faction.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "not_in_faction"));
                 break;
             case NO_PERMISSION:
-                player.sendMessage("You require LEADER to promote/demote players.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "no_permission"));
                 break;
             case CANNOT_PROMOTE:
-                player.sendMessage("You cannot promote this player anymore.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "cannot_promote"));
                 break;
             case CANNOT_PROMOTE_TO_LEADER:
-                player.sendMessage("Cannot promote player to leader.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "cannot_promote_to_leader"));
                 break;
             case SUCCESS:
-                player.sendMessage("Player promoted successfully.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "success"));
                 break;
             default:
                 break;

@@ -1,6 +1,5 @@
 package com.arkflame.mineclans.commands.subcommands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.MineClans;
@@ -9,23 +8,25 @@ import com.arkflame.mineclans.api.results.ToggleChatResult.ToggleChatState;
 
 public class FactionsChatCommand {
     public static void onCommand(Player player) {
-        ToggleChatResult result = MineClans.getInstance().getAPI().toggleChat(player);
+        MineClans mineClans = MineClans.getInstance();
+        String basePath = "factions.chat.";
+
+        ToggleChatResult result = mineClans.getAPI().toggleChat(player);
         ToggleChatState state = result.getState();
 
         switch (state) {
             case ENABLED:
-                player.sendMessage(ChatColor.GREEN + "Faction chat enabled.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "enabled"));
                 break;
             case DISABLED:
-                player.sendMessage(ChatColor.RED + "Faction chat disabled.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "disabled"));
                 break;
             case NOT_IN_FACTION:
-                player.sendMessage(ChatColor.RED + "You are not in a faction.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "not_in_faction"));
                 break;
             default:
-                player.sendMessage(ChatColor.RED + "An unknown error occurred.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "unknown_error"));
                 break;
         }
     }
 }
-

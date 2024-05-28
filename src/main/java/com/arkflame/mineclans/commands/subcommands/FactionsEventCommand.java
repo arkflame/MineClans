@@ -1,6 +1,5 @@
 package com.arkflame.mineclans.commands.subcommands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.MineClans;
@@ -15,20 +14,21 @@ public class FactionsEventCommand {
     public static void onCommand(Player player, ModernArguments args) {
         MineClans plugin = MineClans.getInstance();
         ClanEventScheduler eventScheduler = plugin.getClanEventScheduler();
+        String basePath = "factions.event.";
 
         if (args.hasArg(1)) {
             if (args.getText(1).equalsIgnoreCase("start")) {
                 if (player.hasPermission("mineclans.events.start")) {
                     startEvent(player, eventScheduler);
                 } else {
-                    player.sendMessage(ChatColor.RED + "You do not have permission to start events.");
+                    player.sendMessage(plugin.getMessages().getText(basePath + "no_permission_start"));
                 }
                 return;
             } else if (args.getText(1).equalsIgnoreCase("end")) {
                 if (player.hasPermission("mineclans.events.end")) {
                     endEvent(player, eventScheduler);
                 } else {
-                    player.sendMessage(ChatColor.RED + "You do not have permission to end events.");
+                    player.sendMessage(plugin.getMessages().getText(basePath + "no_permission_end"));
                 }
                 return;
             }
@@ -44,34 +44,40 @@ public class FactionsEventCommand {
         ClanEvent currentEvent = eventScheduler.getEvent();
         ClanEvent nextEvent = eventScheduler.getNextEvent();
         StringBuilder message = new StringBuilder();
+        String basePath = "factions.event.";
 
         if (currentEvent != null) {
             String currentEventName = currentEvent.getName();
             String timeLeftFormatted = eventScheduler.getTimeLeftFormatted();
             Faction faction = plugin.getAPI().getFaction(player);
 
-            message.append(ChatColor.GOLD).append("Current Event: ").append(ChatColor.YELLOW).append(currentEventName).append("\n");
-            message.append(ChatColor.GOLD).append("Time Remaining: ").append(ChatColor.YELLOW).append(timeLeftFormatted).append("\n");
+            message.append(plugin.getMessages().getText(basePath + "current_event")
+                    .replace("%event%", currentEventName)
+                    .replace("%time%", timeLeftFormatted));
 
             if (faction != null) {
-                message.append(ChatColor.GOLD).append("Faction Progress: ").append("\n");
+                message.append(plugin.getMessages().getText(basePath + "faction_progress"));
                 for (EventObjective objective : currentEvent.getObjectives()) {
                     String type = objective.getType().getAction();
                     String progressBar = objective.getProgressBar(faction, 20);
                     String progressPercentage = objective.getProgressPercentage(faction) + "%";
-                    message.append(ChatColor.YELLOW).append(type).append(": ").append(ChatColor.GREEN).append(progressBar + " ").append(ChatColor.WHITE).append(progressPercentage).append("\n");
+                    message.append(plugin.getMessages().getText(basePath + "event_objective")
+                            .replace("%type%", type)
+                            .replace("%progress%", progressBar)
+                            .replace("%percentage%", progressPercentage));
                 }
             } else {
-                message.append(ChatColor.RED).append("You are not part of any faction.");
+                message.append(plugin.getMessages().getText(basePath + "not_in_faction"));
             }
         } else if (nextEvent != null) {
             String nextEventName = nextEvent.getName();
             String timeLeftFormatted = eventScheduler.getTimeLeftFormatted();
 
-            message.append(ChatColor.GOLD).append("Next Event: ").append(ChatColor.YELLOW).append(nextEventName).append("\n");
-            message.append(ChatColor.GOLD).append("Starts In: ").append(ChatColor.YELLOW).append(timeLeftFormatted).append("\n");
+            message.append(plugin.getMessages().getText(basePath + "next_event")
+                    .replace("%event%", nextEventName)
+                    .replace("%time%", timeLeftFormatted));
         } else {
-            message.append(ChatColor.RED).append("No events are scheduled at the moment.");
+            message.append(plugin.getMessages().getText(basePath + "no_events_scheduled"));
         }
 
         player.sendMessage(message.toString());
@@ -79,21 +85,25 @@ public class FactionsEventCommand {
 
     private static void startEvent(Player player, ClanEventScheduler eventScheduler) {
         ClanEvent nextEvent = eventScheduler.getNextEvent();
+        String basePath = "factions.event.";
         if (nextEvent != null) {
             eventScheduler.startEvent();
-            player.sendMessage(ChatColor.GREEN + "The event " + nextEvent.getName() + " has started!");
+            player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "start_success")
+                    .replace("%event%", nextEvent.getName()));
         } else {
-            player.sendMessage(ChatColor.RED + "No event is scheduled to start.");
+            player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "no_event_scheduled"));
         }
     }
 
     private static void endEvent(Player player, ClanEventScheduler eventScheduler) {
         ClanEvent currentEvent = eventScheduler.getEvent();
+        String basePath = "factions.event.";
         if (currentEvent != null) {
             MineClans.getInstance().getClanEventManager().stopCurrentEvent();
-            player.sendMessage(ChatColor.GREEN + "The event " + currentEvent.getName() + " has ended!");
+            player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "end_success")
+                    .replace("%event%", currentEvent.getName()));
         } else {
-            player.sendMessage(ChatColor.RED + "No event is currently running.");
+            player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "no_event_running"));
         }
     }
 }

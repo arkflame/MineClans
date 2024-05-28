@@ -4,31 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.MineClans;
-import com.arkflame.mineclans.commands.subcommands.FactionsChatCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsChestCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsCreateCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsDemoteCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsDepositCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsDisbandCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsDisplaynameCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsEventCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsFocusCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsFriendlyFireCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsHomeCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsInviteCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsJoinCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsKickCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsLeaveCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsListCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsMelodyCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsPromoteCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsRelationSetCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsRenameCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsSetHomeCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsTellLocationCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsTransferCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsWhoCommand;
-import com.arkflame.mineclans.commands.subcommands.FactionsWithdrawCommand;
+import com.arkflame.mineclans.commands.subcommands.*;
 import com.arkflame.mineclans.modernlib.commands.ModernArguments;
 import com.arkflame.mineclans.modernlib.commands.ModernCommand;
 
@@ -39,13 +15,15 @@ public class FactionsCommand extends ModernCommand {
 
     @Override
     public void onCommand(CommandSender sender, ModernArguments args) {
+        String basePath = "factions.";
+
         if (!args.hasArg(0)) {
-            sender.sendMessage(MineClans.getInstance().getMsg().getText("factions.usage"));
+            sender.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "usage"));
             return;
         }
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage("Not from console.");
+            sender.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "no-console"));
             return;
         }
 
@@ -138,7 +116,7 @@ public class FactionsCommand extends ModernCommand {
                     FactionsMelodyCommand.onCommand(player, args);
                     break;
                 default:
-                    sender.sendMessage(MineClans.getInstance().getMsg().getText("factions.usage"));
+                    sender.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "usage"));
             }
         });
     }

@@ -11,16 +11,17 @@ public class FactionsDisbandCommand {
     public static void onCommand(Player player, ModernArguments args) {
         DisbandResult disbandResult = MineClans.getInstance().getAPI().disband(player);
         DisbandResultState state = disbandResult.getState();
+        String basePath = "factions.disband.";
 
         switch (state) {
             case NO_PERMISSION:
-                player.sendMessage("You have to be LEADER to disband the faction.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "no_permission"));
                 break;
             case NO_FACTION:
-                player.sendMessage("You have no faction.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "no_faction"));
                 break;
             case SUCCESS:
-                player.sendMessage("Disbanded faction.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "success"));
                 break;
             default:
                 break;

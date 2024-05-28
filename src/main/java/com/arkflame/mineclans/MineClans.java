@@ -61,7 +61,7 @@ public class MineClans extends JavaPlugin {
         return config;
     }
 
-    public ConfigWrapper getMsg() {
+    public ConfigWrapper getMessages() {
         return messages;
     }
 

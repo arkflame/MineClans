@@ -10,24 +10,27 @@ import com.arkflame.mineclans.modernlib.commands.ModernArguments;
 public class FactionsCreateCommand {
     public static void onCommand(Player player, ModernArguments args) {
         String factionName = args.getText(1);
-        CreateResult createResult = MineClans.getInstance().getAPI().create(player, factionName);
+        MineClans mineClans = MineClans.getInstance();
+        String basePath = "factions.create.";
+
+        CreateResult createResult = mineClans.getAPI().create(player, factionName);
         CreateResultState state = createResult.getState();
 
         switch (state) {
             case ALREADY_HAVE_FACTION:
-                player.sendMessage("You already have a faction. Disband it or leave first.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "already_have_faction"));
                 break;
             case FACTION_EXISTS:
-                player.sendMessage("The faction already exists.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "faction_exists"));
                 break;
             case NULL_NAME:
-                player.sendMessage(MineClans.getInstance().getMsg().getText("factions.create.usage"));
+                player.sendMessage(mineClans.getMessages().getText(basePath + "usage"));
                 break;
             case SUCCESS:
-                player.sendMessage("Created faction.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "success"));
                 break;
             case ERROR:
-                player.sendMessage("You entered an invalid name.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "error"));
                 break;
             default:
                 break;

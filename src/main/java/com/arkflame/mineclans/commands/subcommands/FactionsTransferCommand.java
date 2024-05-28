@@ -9,26 +9,29 @@ import com.arkflame.mineclans.modernlib.commands.ModernArguments;
 public class FactionsTransferCommand {
     public static void onCommand(Player player, ModernArguments args) {
         String newOwnerName = args.getText(1);
+        String basePath = "factions.transfer.";
+
         TransferResult transferResult = MineClans.getInstance().getAPI().transfer(player, newOwnerName);
 
         switch (transferResult.getState()) {
             case MEMBER_NOT_FOUND:
-                player.sendMessage("The specified player is not a member of your faction.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "member_not_found"));
                 break;
             case NOT_OWNER:
-                player.sendMessage("You must be the faction owner to transfer ownership.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "not_owner"));
                 break;
             case NO_FACTION:
-                player.sendMessage("You are not in a faction.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "no_faction"));
                 break;
             case NULL_NAME:
-                player.sendMessage("You must specify the name of the new owner.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "null_name"));
                 break;
             case SUCCESS:
-                player.sendMessage("Ownership of the faction has been successfully transferred to " + newOwnerName + ".");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "success")
+                                       .replace("%new_owner%", newOwnerName));
                 break;
             default:
-                player.sendMessage("An unknown error occurred.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "unknown_error"));
                 break;
         }
     }

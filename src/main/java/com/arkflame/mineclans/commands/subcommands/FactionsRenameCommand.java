@@ -10,25 +10,26 @@ public class FactionsRenameCommand {
     public static void onCommand(Player player, ModernArguments args) {
         String newName = args.getText(1);
         RenameResult result = MineClans.getInstance().getAPI().rename(player, newName);
+        String basePath = "factions.rename.";
 
         switch (result.getState()) {
             case ALREADY_EXISTS:
-                player.sendMessage("The faction name already exists.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "already_exists"));
                 break;
             case NOT_IN_FACTION:
-                player.sendMessage("You are not in a faction.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "not_in_faction"));
                 break;
             case NO_PERMISSION:
-                player.sendMessage("You are not LEADER of this faction.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "no_permission"));
                 break;
             case SUCCESS:
-                player.sendMessage("Faction name successfully changed.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "success"));
                 break;
             case NULL_NAME:
-                player.sendMessage("You have to enter a name.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "null_name"));
                 break;
             case ERROR:
-                player.sendMessage("The name is not valid.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "error"));
                 break;
             default:
                 break;

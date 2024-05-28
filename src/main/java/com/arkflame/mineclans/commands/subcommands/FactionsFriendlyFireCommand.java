@@ -1,6 +1,5 @@
 package com.arkflame.mineclans.commands.subcommands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.MineClans;
@@ -12,25 +11,26 @@ public class FactionsFriendlyFireCommand {
     public static void onCommand(Player player, ModernArguments args) {
         FriendlyFireResult result = MineClans.getInstance().getAPI().toggleFriendlyFire(player);
         FriendlyFireResultState state = result.getState();
+        String basePath = "factions.friendly_fire.";
 
         switch (state) {
             case ENABLED:
-                player.sendMessage(ChatColor.GREEN + "Friendly fire is now enabled in your faction.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "enabled"));
                 break;
             case NO_PERMISSION:
-                player.sendMessage(ChatColor.RED + "You are not COLEADER of this faction.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "no_permission"));
                 break;
             case DISABLED:
-                player.sendMessage(ChatColor.GREEN + "Friendly fire is now disabled in your faction.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "disabled"));
                 break;
             case NOT_IN_FACTION:
-                player.sendMessage(ChatColor.RED + "You are not in a faction.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "not_in_faction"));
                 break;
             case ERROR:
-                player.sendMessage(ChatColor.RED + "An error occurred while toggling friendly fire.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "error"));
                 break;
             default:
-                player.sendMessage(ChatColor.RED + "An unknown error occurred.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "unknown_error"));
                 break;
         }
     }

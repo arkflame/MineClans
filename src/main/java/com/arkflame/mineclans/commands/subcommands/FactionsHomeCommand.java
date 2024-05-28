@@ -10,20 +10,21 @@ public class FactionsHomeCommand {
     public static void onCommand(Player player) {
         HomeResult result = MineClans.getInstance().getAPI().getHome(player);
         HomeResultState state = result.getState();
+        String basePath = "factions.home.";
 
         switch (state) {
             case SUCCESS:
-                player.sendMessage("Teleporting home...");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "success"));
                 MineClans.runSync(() -> player.teleport(result.getHomeLocation()));
                 break;
             case NO_HOME_SET:
-                player.sendMessage("You haven't set a home yet.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "no_home_set"));
                 break;
             case ERROR:
-                player.sendMessage("An error occurred while teleporting home.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "error"));
                 break;
             case NOT_IN_FACTION:
-                player.sendMessage("You are not in a faction.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "not_in_faction"));
                 break;
             default:
                 break;

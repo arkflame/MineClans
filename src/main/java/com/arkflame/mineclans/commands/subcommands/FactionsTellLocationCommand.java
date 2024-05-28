@@ -1,6 +1,5 @@
 package com.arkflame.mineclans.commands.subcommands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -15,22 +14,27 @@ public class FactionsTellLocationCommand {
         double x = location.getX();
         double y = location.getY();
         double z = location.getZ();
+        String basePath = "factions.tell_location.";
 
-        String message = "My location is " + world + ": " + x + ", " + y + ", " + z;
+        String message = MineClans.getInstance().getMessages().getText(basePath + "message")
+                           .replace("%world%", world)
+                           .replace("%x%", String.valueOf(x))
+                           .replace("%y%", String.valueOf(y))
+                           .replace("%z%", String.valueOf(z));
         FactionChatResult result = MineClans.getInstance().getAPI().sendFactionMessage(player, message);
 
         switch (result.getState()) {
             case SUCCESS:
-                player.sendMessage(ChatColor.GREEN + "Location shared with your faction.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "success"));
                 break;
             case NOT_IN_FACTION:
-                player.sendMessage(ChatColor.RED + "You are not in a faction.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "not_in_faction"));
                 break;
             case ERROR:
-                player.sendMessage(ChatColor.RED + "An error occurred while sending the message.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "error"));
                 break;
             default:
-                player.sendMessage(ChatColor.RED + "An unknown error occurred.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "unknown_error"));
                 break;
         }
     }

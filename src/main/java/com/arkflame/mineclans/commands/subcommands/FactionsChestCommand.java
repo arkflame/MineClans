@@ -1,30 +1,32 @@
 package com.arkflame.mineclans.commands.subcommands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import com.arkflame.mineclans.api.results.OpenChestResult;
 import com.arkflame.mineclans.MineClans;
+import com.arkflame.mineclans.api.results.OpenChestResult;
 
 public class FactionsChestCommand {
     public static void onCommand(Player player) {
-        OpenChestResult result = MineClans.getInstance().getAPI().openChest(player);
+        MineClans mineClans = MineClans.getInstance();
+        String basePath = "factions.chest.";
+
+        OpenChestResult result = mineClans.getAPI().openChest(player);
 
         switch (result.getResultType()) {
             case SUCCESS:
-                player.sendMessage(ChatColor.GREEN + "You have opened the faction chest.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "success"));
                 break;
             case NOT_IN_FACTION:
-                player.sendMessage(ChatColor.RED + "You are not in a faction.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "not_in_faction"));
                 break;
             case NO_PERMISSION:
-                player.sendMessage(ChatColor.RED + "You need to be MEMBER to open the faction chest.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "no_permission"));
                 break;
             case ERROR:
-                player.sendMessage(ChatColor.RED + "An error occurred while trying to open the chest.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "error"));
                 break;
             default:
-                player.sendMessage(ChatColor.RED + "Unknown result.");
+                player.sendMessage(mineClans.getMessages().getText(basePath + "unknown_result"));
                 break;
         }
     }

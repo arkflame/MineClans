@@ -10,22 +10,23 @@ public class FactionsJoinCommand {
     public static void onCommand(Player player, ModernArguments args) {
         String factionName = args.getText(1);
         JoinResult joinResult = MineClans.getInstance().getAPI().join(player, factionName);
+        String basePath = "factions.join.";
 
         switch (joinResult.getState()) {
             case ALREADY_HAVE_FACTION:
-                player.sendMessage("You are already in a faction.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "already_in_faction"));
                 break;
             case NOT_INVITED:
-                player.sendMessage("You are not invited to this faction.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "not_invited"));
                 break;
             case NO_FACTION:
-                player.sendMessage("No faction with this name.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "no_faction"));
                 break;
             case NULL_NAME:
-                player.sendMessage("Usage: /factions join <faction>");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "usage"));
                 break;
             case SUCCESS:
-                player.sendMessage("You have joined the faction " + factionName + ".");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "success").replace("%faction%", factionName));
                 break;
             default:
                 break;

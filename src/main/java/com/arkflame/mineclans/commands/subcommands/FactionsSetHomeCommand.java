@@ -1,31 +1,29 @@
 package com.arkflame.mineclans.commands.subcommands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.api.results.SetHomeResult;
-import com.arkflame.mineclans.api.results.SetHomeResult.SetHomeResultState;
 
 public class FactionsSetHomeCommand {
     public static void onCommand(Player player) {
         Location homeLocation = player.getLocation();
         SetHomeResult result = MineClans.getInstance().getAPI().setHome(player, homeLocation);
-        SetHomeResultState state = result.getState();
+        String basePath = "factions.sethome.";
 
-        switch (state) {
+        switch (result.getState()) {
             case NO_PERMISSION:
-                player.sendMessage(ChatColor.RED + "You are not COLEADER of this faction.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "no_permission"));
                 break;
             case SUCCESS:
-                player.sendMessage("Home set successfully.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "success"));
                 break;
             case ERROR:
-                player.sendMessage("An error occurred while setting home.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "error"));
                 break;
             case NOT_IN_FACTION:
-                player.sendMessage("You are not in any faction.");
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "not_in_faction"));
                 break;
             default:
                 break;
