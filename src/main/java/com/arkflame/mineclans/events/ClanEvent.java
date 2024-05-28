@@ -14,6 +14,7 @@ import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.enums.EventObjectiveType;
 import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.models.FactionPlayer;
+import com.arkflame.mineclans.modernlib.utils.Materials;
 import com.arkflame.mineclans.modernlib.utils.Titles;
 
 public class ClanEvent {
@@ -37,23 +38,55 @@ public class ClanEvent {
 
     public void onBlockBreak(Block block, FactionPlayer player) {
         Material type = block.getType();
-        if (type == Material.DIAMOND_ORE) {
-            increaseScore(EventObjectiveType.BLOCK_BREAK_DIAMOND, player.getFaction());
+        if (Materials.is(type, "DIAMOND_ORE")) {
+            increaseScore(EventObjectiveType.DIAMOND_MINE, player.getFaction());
         }
-        increaseScore(EventObjectiveType.BLOCK_BREAK, player.getFaction());
+        if (Materials.is(type, "OAK_LOG", "LOG")) {
+            increaseScore(EventObjectiveType.WOOD_MINE, player.getFaction());
+        }
+        if (isHarvestableCrop(type)) {
+            onCropHarvest(player, 1);
+        }
+        increaseScore(EventObjectiveType.BLOCK_MINE, player.getFaction());
+    }
+    
+    private boolean isHarvestableCrop(Material type) {
+        // Add all harvestable crop materials here
+        return type == Materials.get("WHEAT") || type == Materials.get("POTATOES") || type == Materials.get("CARROTS") || type == Materials.get("BEETROOTS");
     }
 
     public void onMonsterKill(FactionPlayer player) {
-        increaseScore(EventObjectiveType.MONSTER_KILL, player.getFaction());
+        increaseScore(EventObjectiveType.MOB_KILL, player.getFaction());
+    }
+
+    public void onCropHarvest(FactionPlayer player, int amount) {
+        increaseScore(EventObjectiveType.CROP_HARVEST, player.getFaction(), amount);
+    }
+
+    public void onWoodcuttingChallenge(FactionPlayer player, int amount) {
+        increaseScore(EventObjectiveType.WOOD_MINE, player.getFaction(), amount);
+    }
+
+    public void onFishingFrenzy(FactionPlayer player, int amount) {
+        increaseScore(EventObjectiveType.FISHING, player.getFaction(), amount);
     }
 
     public void onObjectiveChange(EventObjective objective, Faction faction) {
-        for (EventObjective objective2 : objectives.values()) {
-            if (!objective2.isCompleted(faction)) {
-                return;
+        if (objective.isCompleted(faction)) {
+            if (hasCompletedObjectives(faction)) {
+                endEvent(faction);
             }
         }
-        endEvent(faction);
+    }
+
+    public boolean hasCompletedObjectives(Faction faction) {
+        for (EventObjective objective2 : objectives.values()) {
+            if (!objective2.isCompleted(faction)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public void resetScores() {
@@ -104,13 +137,15 @@ public class ClanEvent {
     }
 
     public void endEvent(Faction winner) {
-        this.isActive = false;
-        // Send end title/subtitle/message
-        Bukkit.broadcastMessage("Event ended: " + getName());
+        if (this.isActive) {
+            this.isActive = false;
+            // Send end title/subtitle/message
+            Bukkit.broadcastMessage("Event ended: " + getName());
 
-        if (winner != null) {
-            // Reward winner faction
-            rewardWinnerFaction(winner);
+            if (winner != null) {
+                // Reward winner faction
+                rewardWinnerFaction(winner);
+            }
         }
     }
 
@@ -121,7 +156,7 @@ public class ClanEvent {
             Player player = factionPlayer.getPlayer();
 
             if (player != null && player.isOnline()) {
-                Titles.sendTitle(player, "", "Winner: " + winnerFaction.getName(), 10, 70, 20);
+                Titles.sendTitle(player, "Event Finished!", "Winner: " + winnerFaction.getName(), 10, 70, 20);
 
                 for (String command : config.getCommands()) {
                     String formattedCommand = command.replace("{player}", player.getName());
@@ -130,7 +165,7 @@ public class ClanEvent {
 
                 if (config.getDeposit() > 0) {
                     // Assuming a method to add deposit exists
-                    if (MineClans.getInstance().isVaultHooked()){
+                    if (MineClans.getInstance().isVaultHooked()) {
                         MineClans.getInstance().getVaultEconomy().depositPlayer(player, config.getDeposit());
                     }
                 }

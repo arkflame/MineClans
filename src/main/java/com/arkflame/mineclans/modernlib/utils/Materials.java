@@ -28,4 +28,14 @@ public class Materials {
     public static Material get(List<String> names) {
         return get(names.toArray(new String[0]));
     }
+
+    public static boolean is(Material type, String... names) {
+        for (String name : names) {
+            Material material = get(name.toUpperCase());
+            if (material != null && type == material) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

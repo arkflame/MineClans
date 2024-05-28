@@ -1,26 +1,69 @@
-# config.yml
 events:
   interval: 25 # minutes
   custom-events:
-    # You can create as much events as you want
-    diamond-event:
-      # Name of the event
-      name: "Diamond Mining"
-      # Descriptiion of the event
-      description: "The first to mine 10 diamonds wins!"
-      # FACTION_KILL
-      # BLOCK_BREAK
-      # MONSTER_KILL
-      # DIAMOND_MINE
-      # Objective: Target Score
+    diamond-mining-competition:
+      name: "Diamond Rush"
+      description: "Mine 50 diamonds before other factions to claim victory!"
       objectives:
-        # The faction will require to mine 10 diamond ores
-        diamond_mine: 10
-      # Rewards to give for each faction player event winner
+        diamond_mine: 50
       rewards:
         commands:
-          - "give {player} diamond 1"
-        deposit: 1
+          - "give {player} diamond_block 1"
+        deposit: 5
+    faction-warfare:
+      name: "Faction Warfare"
+      description: "Eliminate 25 enemy faction members to dominate the battlefield!"
+      objectives:
+        faction_kill: 25
+      rewards:
+        commands:
+          - "give {player} golden_apple 1"
+        deposit: 5
+    ore-extraction-challenge:
+      name: "Ore Extraction Race"
+      description: "Extract 500 blocks of ore faster than any other faction!"
+      objectives:
+        block_mine: 500
+      rewards:
+        commands:
+          - "give {player} emerald 1"
+        deposit: 5
+    monster-slaying-competition:
+      name: "Monster Hunt"
+      description: "Slay 250 mobs to prove your faction's combat prowess!"
+      objectives:
+        mob_kill: 250
+      rewards:
+        commands:
+          - "give {player} enchanted_golden_apple 1"
+        deposit: 5
+    bountiful-harvest-challenge:
+      name: "Bountiful Harvest"
+      description: "Harvest 1000 crops before other factions to reap the rewards!"
+      objectives:
+        crop_harvest: 1000
+      rewards:
+        commands:
+          - "give {player} pumpkin_pie 1"
+        deposit: 5
+    timber-felling-competition:
+      name: "Timber Felling Challenge"
+      description: "Gather 2000 logs faster than any other faction!"
+      objectives:
+        wood_mine: 2000
+      rewards:
+        commands:
+          - "give {player} dark_oak_log 1"
+        deposit: 5
+    anglers-tournament:
+      name: "Angler's Tournament"
+      description: "Catch 400 fish before your rivals to claim the title of master angler!"
+      objectives:
+        fishing: 400
+      rewards:
+        commands:
+          - "give {player} cooked_salmon 1"
+        deposit: 5
 
 mysql:
   enabled: true

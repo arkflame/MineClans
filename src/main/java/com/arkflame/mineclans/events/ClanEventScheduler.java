@@ -30,7 +30,7 @@ public class ClanEventScheduler {
 
     // Update time to be set to next event time
     public void updateTime() {
-        time = System.currentTimeMillis() + (interval * 60 * 1000);
+        time = System.currentTimeMillis() + (interval * 60 * 1000) + 1000;
     }
 
     public void runTimer() {
@@ -57,28 +57,34 @@ public class ClanEventScheduler {
                 } else {
                     // Countdown
                     long timeLeft = time - currentTime;
-                    if ((timeLeft < 60000 && timeLeft > 59000) ||
-                            (timeLeft < 30000 && timeLeft > 29000) ||
-                            (timeLeft < 5000 && timeLeft > 0)) {
-                        int secondsLeft = (int) Math.ceil((timeLeft + 1000) / 1000);
-                        ChatColor color;
-
-                        if (secondsLeft > 3) {
-                            color = ChatColor.GREEN;
-                        } else if (secondsLeft > 1) {
-                            color = ChatColor.YELLOW;
-                        } else {
-                            color = ChatColor.RED;
-                        }
-
-                        String title = color + String.valueOf(secondsLeft);
-                        Bukkit.getScheduler().runTask(MineClans.getInstance(), () -> {
-                            Titles.sendTitle(title, ChatColor.YELLOW + nextEvent.getName(), 0, 20, 0);
-                        });
-                    }
+                    handleCountdown(timeLeft);
                 }
             }
         }, 20L, 20L); // Run every second (20 ticks)
+    }
+
+    private void handleCountdown(long timeLeft) {
+        int secondsLeft = (int) Math.ceil(timeLeft / 1000.0);
+        ChatColor color;
+
+        // Determine the color based on the time left
+        if (secondsLeft > 10) {
+            color = ChatColor.GREEN;
+        } else if (secondsLeft > 3) {
+            color = ChatColor.YELLOW;
+        } else {
+            color = ChatColor.RED;
+        }
+
+        // Only show countdown messages for specific intervals
+        if (secondsLeft == 60 || secondsLeft == 30 || 
+            secondsLeft == 10 || secondsLeft <= 5) {
+            
+            String title = color + String.valueOf(secondsLeft);
+            Bukkit.getScheduler().runTask(MineClans.getInstance(), () -> {
+                Titles.sendTitle(title, ChatColor.YELLOW + nextEvent.getName(), 0, 20, 0);
+            });
+        }
     }
 
     private void scheduleNextEvent() {
@@ -87,14 +93,14 @@ public class ClanEventScheduler {
                 .createRandomEvent(MineClans.getInstance().getClanEventManager().getEventConfigs());
 
         if (nextEvent != null) {
-            Bukkit.getLogger().info("Next event scheduled: " + nextEvent.getName());
+            MineClans.getInstance().getLogger().info("Next event scheduled: " + nextEvent.getName());
         } else {
-            Bukkit.getLogger().warning("Failed to schedule the next event.");
+            MineClans.getInstance().getLogger().warning("Failed to schedule the next event.");
         }
     }
 
     private void finishEvent() {
-        Bukkit.getLogger().info("Event finished: " + event.getName());
+        MineClans.getInstance().getLogger().info("Event finished: " + event.getName());
 
         // Reset current event
         event = null;

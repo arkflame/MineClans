@@ -192,6 +192,8 @@ public class MineClans extends JavaPlugin {
                 }
             }
         }
+
+        getServer().getScheduler().cancelTasks(this);
     }
 
     private static MineClans instance;

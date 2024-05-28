@@ -5,6 +5,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.player.PlayerHarvestBlockEvent;
 
 import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.events.ClanEvent;
@@ -51,6 +53,17 @@ public class ClanEventListener implements Listener {
                     currentEvent.onMonsterKill(factionPlayer);
                 }
             }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerFish(PlayerFishEvent event) {
+        Player player = event.getPlayer();
+        FactionPlayer factionPlayer = MineClans.getInstance().getAPI().getFactionPlayer(player);
+        int amount = event.getCaught() != null ? 1 : 0; // Assuming the event provides the caught item
+        ClanEvent currentEvent = MineClans.getInstance().getAPI().getCurrentEvent();
+        if (currentEvent != null) {
+            currentEvent.onFishingFrenzy(factionPlayer, amount);
         }
     }
 }

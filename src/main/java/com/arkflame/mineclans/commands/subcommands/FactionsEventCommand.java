@@ -28,7 +28,7 @@ public class FactionsEventCommand {
             if (faction != null) {
                 message.append(ChatColor.GOLD).append("Faction Progress: ").append("\n");
                 for (EventObjective objective : currentEvent.getObjectives()) {
-                    String type = objective.getType().name();
+                    String type = objective.getType().getAction();
                     String progressBar = objective.getProgressBar(faction, 20);
                     String progressPercentage = objective.getProgressPercentage(faction) + "%";
                     message.append(ChatColor.YELLOW).append(type).append(": ").append(ChatColor.GREEN).append(progressBar + " ").append(ChatColor.WHITE).append(progressPercentage).append("\n");
