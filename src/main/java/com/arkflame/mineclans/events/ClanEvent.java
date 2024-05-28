@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -16,6 +17,8 @@ import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.models.FactionPlayer;
 import com.arkflame.mineclans.modernlib.utils.Materials;
 import com.arkflame.mineclans.modernlib.utils.Titles;
+import com.arkflame.mineclans.utils.MelodyUtil;
+import com.arkflame.mineclans.utils.MelodyUtil.Melody;
 
 public class ClanEvent {
     // Container of static information
@@ -49,10 +52,11 @@ public class ClanEvent {
         }
         increaseScore(EventObjectiveType.BLOCK_MINE, player.getFaction());
     }
-    
+
     private boolean isHarvestableCrop(Material type) {
         // Add all harvestable crop materials here
-        return type == Materials.get("WHEAT") || type == Materials.get("POTATOES") || type == Materials.get("CARROTS") || type == Materials.get("BEETROOTS");
+        return type == Materials.get("WHEAT") || type == Materials.get("POTATOES") || type == Materials.get("CARROTS")
+                || type == Materials.get("BEETROOTS");
     }
 
     public void onMonsterKill(FactionPlayer player) {
@@ -133,19 +137,24 @@ public class ClanEvent {
 
     public void startEvent() {
         this.isActive = true;
-        // Send start title/subtitle/message
+
+        Titles.sendTitle(ChatColor.GREEN + "Start!",
+                ChatColor.YELLOW + getConfig().getDescription(), 10, 40, 10);
+        MelodyUtil.playMelody(MineClans.getInstance(), Melody.EVENT_START_MELODY);
     }
 
     public void endEvent(Faction winner) {
         if (this.isActive) {
             this.isActive = false;
-            // Send end title/subtitle/message
             Bukkit.broadcastMessage("Event ended: " + getName());
+            String winnerName = "No Winner";
 
             if (winner != null) {
-                // Reward winner faction
                 rewardWinnerFaction(winner);
+                winnerName = winner.getName();
             }
+            Titles.sendTitle("Event Finished!", "Winner: " + winnerName, 10, 70, 20);
+            MelodyUtil.playMelody(MineClans.getInstance(), Melody.EVENT_END_MELODY);
         }
     }
 
@@ -156,8 +165,6 @@ public class ClanEvent {
             Player player = factionPlayer.getPlayer();
 
             if (player != null && player.isOnline()) {
-                Titles.sendTitle(player, "Event Finished!", "Winner: " + winnerFaction.getName(), 10, 70, 20);
-
                 for (String command : config.getCommands()) {
                     String formattedCommand = command.replace("{player}", player.getName());
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), formattedCommand);

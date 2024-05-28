@@ -20,6 +20,7 @@ import com.arkflame.mineclans.commands.subcommands.FactionsJoinCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsKickCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsLeaveCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsListCommand;
+import com.arkflame.mineclans.commands.subcommands.FactionsMelodyCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsPromoteCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsRelationSetCommand;
 import com.arkflame.mineclans.commands.subcommands.FactionsRenameCommand;
@@ -131,7 +132,10 @@ public class FactionsCommand extends ModernCommand {
                     break;
                 case "events":
                 case "event":
-                    FactionsEventCommand.onCommand(player);
+                    FactionsEventCommand.onCommand(player, args);
+                    break;
+                case "melody":
+                    FactionsMelodyCommand.onCommand(player, args);
                     break;
                 default:
                     sender.sendMessage(MineClans.getInstance().getMsg().getText("factions.usage"));

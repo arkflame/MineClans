@@ -2,9 +2,11 @@ package com.arkflame.mineclans.events;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.arkflame.mineclans.MineClans;
+import com.arkflame.mineclans.modernlib.utils.Sounds;
 import com.arkflame.mineclans.modernlib.utils.Titles;
 
 public class ClanEventScheduler {
@@ -47,10 +49,6 @@ public class ClanEventScheduler {
                 // Check if next event is scheduled and it's time to start
                 if (nextEvent != null && currentTime >= time) {
                     startEvent();
-
-                    Bukkit.getScheduler().runTask(MineClans.getInstance(), () -> {
-                        Titles.sendTitle(ChatColor.GREEN + "Start!", ChatColor.YELLOW + nextEvent.getConfig().getDescription(), 10, 40, 10);
-                    });
                 } else if (nextEvent == null) {
                     // Schedule the next event
                     scheduleNextEvent();
@@ -77,13 +75,16 @@ public class ClanEventScheduler {
         }
 
         // Only show countdown messages for specific intervals
-        if (secondsLeft == 60 || secondsLeft == 30 || 
-            secondsLeft == 10 || secondsLeft <= 5) {
-            
+        if (secondsLeft == 60 || secondsLeft == 30 ||
+                secondsLeft == 10 || secondsLeft <= 5) {
+
             String title = color + String.valueOf(secondsLeft);
             Bukkit.getScheduler().runTask(MineClans.getInstance(), () -> {
                 Titles.sendTitle(title, ChatColor.YELLOW + nextEvent.getName(), 0, 20, 0);
             });
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                Sounds.play(player, 1.0f, 1.0f, "CLICK");
+            }
         }
     }
 
@@ -99,7 +100,7 @@ public class ClanEventScheduler {
         }
     }
 
-    private void finishEvent() {
+    public void finishEvent() {
         MineClans.getInstance().getLogger().info("Event finished: " + event.getName());
 
         // Reset current event
@@ -110,11 +111,9 @@ public class ClanEventScheduler {
         scheduleNextEvent();
     }
 
-    private void startEvent() {
+    public void startEvent() {
         event = nextEvent;
         nextEvent = null;
-
-        Bukkit.getLogger().info("Event started: " + event.getName());
 
         // Handle event starting logic here (e.g., announcements)
         event.startEvent();
