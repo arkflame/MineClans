@@ -141,7 +141,7 @@ public class ClanEvent {
         String subtitleMessage = MineClans.getInstance().getMessages().getText("event.start.subtitle")
                 .replace("%description%", getConfig().getDescription());
 
-        Titles.sendTitle(titleMessage, subtitleMessage, 10, 40, 10);
+        Titles.sendTitle(titleMessage, subtitleMessage, 10, 70, 10);
         MelodyUtil.playMelody(MineClans.getInstance(), Melody.EVENT_START_MELODY);
     }
 

@@ -52,8 +52,8 @@ public class FactionsWhoCommand {
         message.append(ChatColor.AQUA).append(MineClans.getInstance().getMessages().getText(basePath + "owner"))
                 .append(ChatColor.WHITE).append(ownerDisplay).append("\n");
 
-        message.append(ChatColor.AQUA).append(MineClans.getInstance().getMessages().getText(basePath + "members_title"))
-                .append(" (").append(faction.getMembers().size()).append("):").append(ChatColor.RESET);
+        message.append(ChatColor.AQUA).append(MineClans.getInstance().getMessages().getText(basePath + "members_title")
+                .replace("%faction_members%", String.valueOf(faction.getMembers().size()))).append(ChatColor.RESET);
         for (UUID memberId : faction.getMembers()) {
             FactionPlayer member = MineClans.getInstance().getAPI().getFactionPlayer(memberId);
             if (member != null) {
@@ -80,11 +80,11 @@ public class FactionsWhoCommand {
         double factionBalance = faction.getBalance();
         String formattedBalance = NumberUtil.formatBalance(factionBalance);
         message.append("\n").append(ChatColor.AQUA).append(MineClans.getInstance().getMessages().getText(basePath + "balance"))
-                .append(ChatColor.GREEN).append("$").append(formattedBalance);
+                .append(ChatColor.GREEN).append(formattedBalance);
         message.append("\n").append(ChatColor.AQUA).append(MineClans.getInstance().getMessages().getText(basePath + "kills"))
                 .append(ChatColor.RED).append(faction.getKills());
         message.append("\n").append(ChatColor.AQUA).append(MineClans.getInstance().getMessages().getText(basePath + "power"))
-                .append(ChatColor.GREEN).append("*").append(faction.calculatePower());
+                .append(ChatColor.GREEN).append(faction.calculatePower());
 
         player.sendMessage(message.toString());
     }
