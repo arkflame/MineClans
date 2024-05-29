@@ -286,14 +286,14 @@ public class Faction implements InventoryHolder {
 
     public double calculatePower() {
         double killsWeight = 0.5;
-        double moneyWeight = 0.3;
-        double memberCountWeight = 0.2;
+        double moneyWeight = 0.01;
+        double memberCountWeight = 0.1;
 
         double killsPower = kills * killsWeight;
         double moneyPower = balance * moneyWeight;
         double memberCountPower = members.size() * memberCountWeight;
 
-        return (int) (killsPower + moneyPower + memberCountPower);
+        return killsPower + moneyPower + memberCountPower;
     }
 
     @Override

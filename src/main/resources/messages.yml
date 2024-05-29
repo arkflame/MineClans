@@ -32,7 +32,7 @@ factions:
     relation: "&bRelation: &f%relation%"
     balance: "&bBalance: &a$%balance%"
     kills: "&bKills: &c%kills%"
-    power: "&bPower: &a%power%"
+    power: "&bPower: &b%power%"
     invalid_faction: "&cThe faction is not valid."
     not_in_faction: "&cYou are not in a faction."
   uninvite:

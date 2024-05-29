@@ -2,7 +2,6 @@ package com.arkflame.mineclans.commands.subcommands;
 
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.MineClans;
@@ -19,7 +18,7 @@ public class FactionsWhoCommand {
         MineClans mineClansInstance = MineClans.getInstance();
         MineClansAPI api = mineClansInstance.getAPI();
         ConfigWrapper messages = mineClansInstance.getMessages();
-        
+
         String basePath = "factions.who.";
         Faction faction = null;
         String text = args.getText(1);
@@ -36,13 +35,13 @@ public class FactionsWhoCommand {
             }
 
             if (faction == null) {
-                player.sendMessage(ChatColor.RED + messages.getText(basePath + "invalid_faction"));
+                player.sendMessage(messages.getText(basePath + "invalid_faction"));
                 return;
             }
         } else {
             faction = api.getFaction(player);
             if (faction == null) {
-                player.sendMessage(ChatColor.RED + messages.getText(basePath + "not_in_faction"));
+                player.sendMessage(messages.getText(basePath + "not_in_faction"));
                 return;
             }
         }
@@ -53,10 +52,12 @@ public class FactionsWhoCommand {
         UUID factionOwner = faction.getOwner();
         FactionPlayer owner = api.getFactionPlayer(factionOwner);
         String ownerDisplay = (owner != null) ? owner.getName() : factionOwner.toString();
-        String membersTitleText = messages.getText(basePath + "members_title").replace("%faction_members%", String.valueOf(factionMembersSize));
-        String informationTitleText = messages.getText(basePath + "information_title").replace("%faction_name%", factionName);
-        String factionIdText = messages.getText(basePath + "id");
-        String ownerText = messages.getText(basePath + "owner");
+        String membersTitleText = messages.getText(basePath + "members_title").replace("%faction_members%",
+                String.valueOf(factionMembersSize));
+        String informationTitleText = messages.getText(basePath + "information_title").replace("%faction_name%",
+                factionName);
+        String factionIdText = messages.getText(basePath + "id").replace("%id%", factionId);
+        String ownerText = messages.getText(basePath + "owner").replace("%owner%", ownerDisplay);
         String memberEntry = messages.getText(basePath + "member_entry");
         String memberEntryNoData = messages.getText(basePath + "member_entry_no_data");
         String balanceText = messages.getText(basePath + "balance");
@@ -64,24 +65,21 @@ public class FactionsWhoCommand {
         String powerText = messages.getText(basePath + "power");
         String relationText = messages.getText(basePath + "relation");
 
-        StringBuilder message = new StringBuilder(ChatColor.GOLD + informationTitleText + ": ");
-        message.append(ChatColor.RESET).append("\n")
-               .append(ChatColor.AQUA).append(factionIdText)
-               .append(ChatColor.GRAY).append(factionId).append("\n")
-               .append(ChatColor.AQUA).append(ownerText)
-               .append(ChatColor.WHITE).append(ownerDisplay).append("\n")
-               .append(ChatColor.AQUA).append(membersTitleText)
-               .append(ChatColor.RESET);
+        StringBuilder message = new StringBuilder(informationTitleText);
+        message.append("\n")
+                .append(factionIdText).append("\n")
+                .append(ownerText).append("\n")
+                .append(membersTitleText);
 
         for (UUID memberId : faction.getMembers()) {
             FactionPlayer member = api.getFactionPlayer(memberId);
             if (member != null) {
                 message.append("\n")
-                       .append(memberEntry.replace("%faction_member%", member.getName())
-                                          .replace("%faction_member_rank%", member.getRank().name()));
+                        .append(memberEntry.replace("%faction_member%", member.getName())
+                                .replace("%faction_member_rank%", member.getRank().name()));
             } else {
                 message.append("\n")
-                       .append(memberEntryNoData.replace("%faction_member_id%", memberId.toString()));
+                        .append(memberEntryNoData.replace("%faction_member_id%", memberId.toString()));
             }
         }
 
@@ -90,19 +88,15 @@ public class FactionsWhoCommand {
         if (playerFaction != null && !playerFaction.equals(faction)) {
             RelationType relation = api.getRelation(player, factionName);
             message.append("\n")
-                   .append(ChatColor.AQUA).append(relationText)
-                   .append(ChatColor.WHITE).append(relation.name());
+                    .append(relationText.replace("%relation%", relation.name()));
         }
 
         double factionBalance = faction.getBalance();
         String formattedBalance = NumberUtil.formatBalance(factionBalance);
         message.append("\n")
-               .append(ChatColor.AQUA).append(balanceText)
-               .append(ChatColor.GREEN).append(formattedBalance).append("\n")
-               .append(ChatColor.AQUA).append(killsText)
-               .append(ChatColor.RED).append(faction.getKills()).append("\n")
-               .append(ChatColor.AQUA).append(powerText)
-               .append(ChatColor.GREEN).append(faction.calculatePower());
+                .append(balanceText.replace("%balance%", formattedBalance)).append("\n")
+                .append(killsText.replace("%kills%", String.valueOf(faction.getKills()))).append("\n")
+                .append(powerText.replace("%power%", String.valueOf(faction.calculatePower())));
 
         player.sendMessage(message.toString());
     }
