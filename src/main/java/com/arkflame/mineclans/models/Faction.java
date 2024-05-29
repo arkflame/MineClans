@@ -11,8 +11,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
+import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.enums.Rank;
 import com.arkflame.mineclans.enums.RelationType;
+import com.arkflame.mineclans.modernlib.config.ConfigWrapper;
 import com.arkflame.mineclans.utils.FactionNamingUtil;
 import com.arkflame.mineclans.utils.LocationUtil;
 
@@ -67,6 +69,9 @@ public class Faction implements InventoryHolder {
     // Kills
     private int kills = 0;
     private Collection<UUID> killedPlayers = new HashSet<>();
+
+    // Events Won
+    private int eventsWon = 0;
 
     // Constructor
     public Faction(UUID id, UUID owner, String name, String displayName) {
@@ -284,16 +289,31 @@ public class Faction implements InventoryHolder {
         this.kills = kills;
     }
 
+    public int getEventsWon() {
+        return eventsWon;
+    }
+
+    public void setEventsWon(int eventsWon) {
+        this.eventsWon = eventsWon;
+    }
+
+    public void addEventsWon() {
+        this.eventsWon++;
+    }
+
     public double calculatePower() {
-        double killsWeight = 0.5;
-        double moneyWeight = 0.01;
-        double memberCountWeight = 0.1;
+        ConfigWrapper config = MineClans.getInstance().getCfg();
+        double killsWeight = config.getDouble("weights.kill");
+        double moneyWeight = config.getDouble("weights.money");
+        double memberCountWeight = config.getDouble("weights.member_count");
+        double eventsWonWeight = config.getDouble("weights.events_won");
 
         double killsPower = kills * killsWeight;
         double moneyPower = balance * moneyWeight;
         double memberCountPower = members.size() * memberCountWeight;
+        double eventsWonPower = eventsWon * eventsWonWeight;
 
-        return killsPower + moneyPower + memberCountPower;
+        return killsPower + moneyPower + memberCountPower + eventsWonPower;
     }
 
     @Override

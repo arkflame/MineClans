@@ -216,4 +216,8 @@ public class ConfigWrapper {
     public ConfigurationSection getConfigurationSection(String path) {
         return config.getConfigurationSection(path);
     }
+
+    public double getDouble(String path) {
+        return config.getDouble(path);
+    }
 }

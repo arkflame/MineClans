@@ -1,3 +1,9 @@
+weights:
+  kill: 0.5
+  money: 0.01
+  member_count: 0.1
+  events_won: 0.1
+
 events:
   interval: 25 # minutes
   custom-events:

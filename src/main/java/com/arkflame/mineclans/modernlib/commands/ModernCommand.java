@@ -45,7 +45,7 @@ public abstract class ModernCommand extends Command {
 
     private Object getPrivateField(Object object, String field) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
         Class<?> clazz = object.getClass();
-        Field objectField = clazz.getDeclaredField(field); // Line 283
+        Field objectField = clazz.getDeclaredField(field);
         boolean accessible = objectField.isAccessible();
         if (!accessible) objectField.setAccessible(true);
         Object result = objectField.get(object);

@@ -7,6 +7,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import com.arkflame.mineclans.MineClans;
+import com.arkflame.mineclans.api.results.AddEventsWonResult;
+import com.arkflame.mineclans.api.results.AddEventsWonResult.AddEventsWonResultType;
 import com.arkflame.mineclans.api.results.AddKillResult;
 import com.arkflame.mineclans.api.results.CreateResult;
 import com.arkflame.mineclans.api.results.DisbandResult;
@@ -361,7 +363,7 @@ public class MineClansAPI {
             return new FactionChatResult(FactionChatResult.FactionChatState.NOT_IN_FACTION, message, null,
                     factionPlayer);
         }
-    
+
         Faction faction = factionPlayer.getFaction();
         String chatPrefix = MineClans.getInstance().getMessages().getText("factions.chat.prefix");
         String playerName = player.getName();
@@ -372,9 +374,9 @@ public class MineClansAPI {
                 member.sendMessage(formattedMessage);
             }
         });
-    
+
         return new FactionChatResult(FactionChatResult.FactionChatState.SUCCESS, message, faction, factionPlayer);
-    }    
+    }
 
     public FriendlyFireResult toggleFriendlyFire(Player player) {
         FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
@@ -741,6 +743,41 @@ public class MineClansAPI {
         }
 
         return factionPlayer.getKills();
+    }
+
+    public AddEventsWonResult addEvenstsWon(Player player) {
+        FactionPlayer factionPlayer = getFactionPlayer(player);
+
+        // Ensure player exist in the system
+        if (factionPlayer == null) {
+            return new AddEventsWonResult(AddEventsWonResultType.PLAYER_NOT_FOUND);
+        }
+
+        Faction faction = factionPlayer.getFaction();
+
+        if (faction == null) {
+            return new AddEventsWonResult(AddEventsWonResultType.NO_FACTION);
+        }
+
+        // Add event won
+        faction.addEventsWon();
+        return new AddEventsWonResult(AddEventsWonResultType.SUCCESS);
+    }
+
+    public int getEventsWon(Player player) {
+        FactionPlayer factionPlayer = getFactionPlayer(player);
+
+        if (factionPlayer == null) {
+            return 0;
+        }
+
+        Faction faction = factionPlayer.getFaction();
+
+        if (faction == null) {
+            return 0;
+        }
+
+        return faction.getEventsWon();
     }
 
     public ClanEvent getCurrentEvent() {
