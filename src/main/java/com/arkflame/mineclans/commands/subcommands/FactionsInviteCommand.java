@@ -5,9 +5,9 @@ import org.bukkit.entity.Player;
 import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.api.results.InviteResult;
 import com.arkflame.mineclans.api.results.InviteResult.InviteResultState;
+import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.modernlib.commands.ModernArguments;
 import com.arkflame.mineclans.modernlib.config.ConfigWrapper;
-import com.arkflame.mineclans.modernlib.utils.Sounds;
 import com.arkflame.mineclans.modernlib.utils.Titles;
 
 public class FactionsInviteCommand {
@@ -37,13 +37,14 @@ public class FactionsInviteCommand {
                 player.sendMessage(messages.getText(basePath + "already_invited"));
                 break;
             case SUCCESS:
+                Faction faction = inviteResult.getFaction();
                 Titles.sendTitle(player,
                         messages.getText("factions.invite.title_invited_other").replace("%player%", targetPlayerName),
                         messages.getText("factions.invite.subtitle_invited_other").replace("%player%",
                                 targetPlayerName),
                         10, 20, 10);
                 player.sendMessage(messages.getText(basePath + "success"));
-                inviteResult.getPlayer().getPlayer().sendMessage(messages.getText(basePath + "invite_message"));
+                inviteResult.getPlayer().getPlayer().sendMessage(messages.getText(basePath + "invite_message").replace("%faction%", faction.getName()));
                 break;
             case PLAYER_NOT_FOUND:
                 player.sendMessage(messages.getText(basePath + "player_not_found"));

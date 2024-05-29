@@ -105,7 +105,7 @@ factions:
     member_exists: "&cPlayer is already a member."
     already_invited: "&cPlayer is already invited."
     success: "&aPlayer invited successfully."
-    invite_message: "&aYou have been invited to join a faction."
+    invite_message: "&aYou have been invited to join a &b%faction%&a."
     player_not_found: "&cPlayer not found."
   join:
     title: "&aJoined Faction"

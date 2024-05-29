@@ -159,21 +159,21 @@ public class MineClansAPI {
         FactionPlayer targetPlayer = factionPlayerManager.getOrLoad(toInvite);
 
         if (targetPlayer == null) {
-            return new InviteResult(InviteResult.InviteResultState.PLAYER_NOT_FOUND);
+            return new InviteResult(InviteResult.InviteResultState.PLAYER_NOT_FOUND, targetPlayer, faction);
         }
 
         UUID targetPlayerId = targetPlayer.getPlayerId();
 
         if (faction.getMembers().contains(targetPlayerId)) {
-            return new InviteResult(InviteResult.InviteResultState.MEMBER_EXISTS);
+            return new InviteResult(InviteResult.InviteResultState.MEMBER_EXISTS, targetPlayer, faction);
         }
 
         if (faction.getInvited().contains(targetPlayerId)) {
-            return new InviteResult(InviteResult.InviteResultState.ALREADY_INVITED);
+            return new InviteResult(InviteResult.InviteResultState.ALREADY_INVITED, targetPlayer, faction);
         }
 
         factionManager.invitePlayerToFaction(faction.getName(), targetPlayerId);
-        return new InviteResult(InviteResult.InviteResultState.SUCCESS, targetPlayer);
+        return new InviteResult(InviteResult.InviteResultState.SUCCESS, targetPlayer, faction);
     }
 
     public UninviteResult uninvite(Player player, String toUninvite) {
@@ -204,7 +204,7 @@ public class MineClansAPI {
             return new UninviteResult(UninviteResult.UninviteResultState.NOT_INVITED);
         }
 
-        faction.uninvitePlayer(targetPlayerId);
+        factionManager.uninvitePlayerFromFaction(faction.getName(), targetPlayerId);
         return new UninviteResult(UninviteResult.UninviteResultState.SUCCESS);
     }
 
