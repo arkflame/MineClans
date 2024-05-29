@@ -2,7 +2,6 @@ package com.arkflame.mineclans.api;
 
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -255,7 +254,7 @@ public class MineClansAPI {
             factionPlayerManager.updateRank(uuid, Rank.MEMBER);
         }
         factionManager.disbandFaction(faction.getName());
-        return new DisbandResult(DisbandResultState.SUCCESS);
+        return new DisbandResult(DisbandResultState.SUCCESS, faction);
     }
 
     public TransferResult transfer(Player player, String newOwnerName) {

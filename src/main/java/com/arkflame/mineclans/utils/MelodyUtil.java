@@ -1,7 +1,6 @@
 package com.arkflame.mineclans.utils;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Instrument;
 import org.bukkit.Note;
 import org.bukkit.entity.Player;
@@ -45,7 +44,59 @@ public class MelodyUtil {
                 new ToneOctavePair(Note.Tone.F, 1),
                 new ToneOctavePair(Note.Tone.A, 1),
                 new ToneOctavePair(Note.Tone.C, 1)
-        }, 4, Instrument.PIANO);
+        }, 4, Instrument.PIANO),
+
+        FACTION_JOIN_MELODY(new ToneOctavePair[] {
+                new ToneOctavePair(Note.Tone.D, 0),
+                new ToneOctavePair(Note.Tone.F, 0),
+                new ToneOctavePair(Note.Tone.A, 0),
+                new ToneOctavePair(Note.Tone.D, 1),
+                new ToneOctavePair(Note.Tone.F, 1),
+                new ToneOctavePair(Note.Tone.A, 1),
+                new ToneOctavePair(Note.Tone.D, 1)
+        }, 4, Instrument.PIANO),
+
+        FACTION_LEAVE_MELODY(new ToneOctavePair[] {
+                new ToneOctavePair(Note.Tone.E, 0),
+                new ToneOctavePair(Note.Tone.G, 0),
+                new ToneOctavePair(Note.Tone.B, 0),
+                new ToneOctavePair(Note.Tone.E, 1),
+                new ToneOctavePair(Note.Tone.G, 1),
+                new ToneOctavePair(Note.Tone.B, 1),
+                new ToneOctavePair(Note.Tone.E, 1)
+        }, 4, Instrument.PIANO),
+
+        KILL_REWARD_MELODY(new ToneOctavePair[] {
+                new ToneOctavePair(Note.Tone.C, 1),
+                new ToneOctavePair(Note.Tone.E, 1),
+                new ToneOctavePair(Note.Tone.G, 1)
+        }, 4, Instrument.PIANO),
+
+        FACTION_CREATE_MELODY(new ToneOctavePair[] {
+                new ToneOctavePair(Note.Tone.C, 1),
+                new ToneOctavePair(Note.Tone.D, 1),
+                new ToneOctavePair(Note.Tone.E, 1),
+                new ToneOctavePair(Note.Tone.F, 1),
+                new ToneOctavePair(Note.Tone.G, 1),
+                new ToneOctavePair(Note.Tone.A, 1),
+                new ToneOctavePair(Note.Tone.B, 1),
+                new ToneOctavePair(Note.Tone.C, 1)
+        }, 4, Instrument.PIANO),
+
+        FACTION_DISBAND_MELODY(new ToneOctavePair[] {
+                new ToneOctavePair(Note.Tone.C, 0),
+                new ToneOctavePair(Note.Tone.B, 0),
+                new ToneOctavePair(Note.Tone.G, 0),
+                new ToneOctavePair(Note.Tone.E, 0),
+                new ToneOctavePair(Note.Tone.C, 0),
+                new ToneOctavePair(Note.Tone.A, 0),
+                new ToneOctavePair(Note.Tone.G, 0),
+                new ToneOctavePair(Note.Tone.E, 0)
+        }, 4, Instrument.PIANO),
+
+        ERROR(new ToneOctavePair[] {
+                new ToneOctavePair(Note.Tone.C, 0),
+        }, 1, Instrument.BASS_GUITAR);
 
         private final ToneOctavePair[] notes;
         private final int tickInterval;
@@ -135,5 +186,5 @@ public class MelodyUtil {
         }
         return availableMelodies.toString();
     }
-    
+
 }

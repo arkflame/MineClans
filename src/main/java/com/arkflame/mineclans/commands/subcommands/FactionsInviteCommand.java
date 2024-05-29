@@ -6,11 +6,15 @@ import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.api.results.InviteResult;
 import com.arkflame.mineclans.api.results.InviteResult.InviteResultState;
 import com.arkflame.mineclans.modernlib.commands.ModernArguments;
+import com.arkflame.mineclans.modernlib.config.ConfigWrapper;
+import com.arkflame.mineclans.modernlib.utils.Sounds;
+import com.arkflame.mineclans.modernlib.utils.Titles;
 
 public class FactionsInviteCommand {
     public static void onCommand(Player player, ModernArguments args) {
+        ConfigWrapper messages = MineClans.getInstance().getMessages();
         if (!args.hasArg(1)) {
-            player.sendMessage(MineClans.getInstance().getMessages().getText("factions.invite.usage"));
+            player.sendMessage(messages.getText("factions.invite.usage"));
             return;
         }
 
@@ -21,23 +25,28 @@ public class FactionsInviteCommand {
 
         switch (state) {
             case NO_FACTION:
-                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "no_faction"));
+                player.sendMessage(messages.getText(basePath + "no_faction"));
                 break;
             case NO_PERMISSION:
-                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "no_permission"));
+                player.sendMessage(messages.getText(basePath + "no_permission"));
                 break;
             case MEMBER_EXISTS:
-                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "member_exists"));
+                player.sendMessage(messages.getText(basePath + "member_exists"));
                 break;
             case ALREADY_INVITED:
-                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "already_invited"));
+                player.sendMessage(messages.getText(basePath + "already_invited"));
                 break;
             case SUCCESS:
-                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "success"));
-                inviteResult.getPlayer().getPlayer().sendMessage(MineClans.getInstance().getMessages().getText(basePath + "invitee_message"));
+                Titles.sendTitle(player,
+                        messages.getText("factions.invite.title_invited_other").replace("%player%", targetPlayerName),
+                        messages.getText("factions.invite.subtitle_invited_other").replace("%player%",
+                                targetPlayerName),
+                        10, 20, 10);
+                player.sendMessage(messages.getText(basePath + "success"));
+                inviteResult.getPlayer().getPlayer().sendMessage(messages.getText(basePath + "invite_message"));
                 break;
             case PLAYER_NOT_FOUND:
-                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "player_not_found"));
+                player.sendMessage(messages.getText(basePath + "player_not_found"));
                 break;
             default:
                 break;

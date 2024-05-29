@@ -115,6 +115,10 @@ public class FactionsCommand extends ModernCommand {
                 case "melody":
                     FactionsMelodyCommand.onCommand(player, args);
                     break;
+                case "uninvite":
+                case "deinvite":
+                    FactionsUninviteCommand.onCommand(player, args);
+                    break;
                 default:
                     sender.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "usage"));
             }

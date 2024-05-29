@@ -1,16 +1,26 @@
 package com.arkflame.mineclans.api.results;
 
+import com.arkflame.mineclans.models.Faction;
+
 public class DisbandResult {
     private DisbandResultState state;
+    private Faction faction;
 
-    // Constructor
-    public DisbandResult(DisbandResultState state) {
+    public DisbandResult(DisbandResultState state, Faction faction) {
         this.state = state;
+        this.faction = faction;
     }
 
-    // Getter for CreateResultState
+    public DisbandResult(DisbandResultState state) {
+        this(state, null);
+    }
+
     public DisbandResultState getState() {
         return state;
+    }
+
+    public Faction getFaction() {
+        return faction;
     }
 
     public enum DisbandResultState {

@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.arkflame.mineclans.providers.MySQLProvider;
 import com.arkflame.mineclans.providers.ResultSetProcessor;
@@ -23,13 +24,26 @@ public class InvitedDAO {
     }
 
     public void addInvitedMember(UUID factionId, UUID memberId) {
-        mySQLProvider.executeUpdateQuery("INSERT INTO mineclans_invited (faction_id, member_id) VALUES (?, ?)", factionId,
-                memberId);
+        mySQLProvider.executeUpdateQuery(
+                "INSERT INTO mineclans_invited (faction_id, member_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE faction_id = VALUES(faction_id), member_id = VALUES(member_id)",
+                factionId, memberId);
     }
 
     public void removeInvitedMember(UUID factionId, UUID memberId) {
-        mySQLProvider.executeUpdateQuery("DELETE FROM mineclans_invited WHERE faction_id = ? AND member_id = ?", factionId,
-                memberId);
+        mySQLProvider.executeUpdateQuery("DELETE FROM mineclans_invited WHERE faction_id = ? AND member_id = ?",
+                factionId, memberId);
+    }
+
+    public boolean isMemberInvited(UUID factionId, UUID memberId) {
+        AtomicBoolean isMemberInvited = new AtomicBoolean(false);
+        mySQLProvider.executeSelectQuery("SELECT 1 FROM mineclans_invited WHERE faction_id = ? AND member_id = ?",
+                new ResultSetProcessor() {
+                    @Override
+                    public void run(ResultSet resultSet) throws SQLException {
+                        isMemberInvited.set(resultSet.next());
+                    }
+                }, factionId, memberId);
+        return isMemberInvited.get();
     }
 
     public Collection<UUID> getInvitedMembers(UUID factionId) {
