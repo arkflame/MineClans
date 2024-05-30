@@ -52,8 +52,20 @@ public class FactionsPlaceholder extends PlaceholderExpansion {
         }
 
         Player onlinePlayer = (Player) player;
-        FactionPlayer factionPlayer = plugin.getFactionPlayerManager().getOrLoad(onlinePlayer.getUniqueId());
-        Faction faction = factionPlayer.getFaction();
+
+        if (identifier.startsWith("leaderboard_")) {
+            try {
+                int position = Integer.parseInt(identifier.replace("leaderboard_", ""));
+                Faction faction = MineClans.getInstance().getLeaderboardManager().getFactionByPosition(position);
+                if (faction != null) {
+                    return faction.getName();
+                }
+            } catch (NumberFormatException ex) {
+                // Do nothing
+            }
+            return "N/A";
+        }
+
         ClanEventScheduler eventScheduler = plugin.getClanEventScheduler();
         ClanEvent currentEvent = eventScheduler.getEvent();
         ClanEvent nextEvent = eventScheduler.getNextEvent();
@@ -68,6 +80,9 @@ public class FactionsPlaceholder extends PlaceholderExpansion {
             default:
                 break;
         }
+
+        FactionPlayer factionPlayer = plugin.getFactionPlayerManager().getOrLoad(onlinePlayer.getUniqueId());
+        Faction faction = factionPlayer.getFaction();
 
         if (faction == null) {
             return "";
@@ -94,12 +109,6 @@ public class FactionsPlaceholder extends PlaceholderExpansion {
                 return focusedFaction == null ? "" : focusedFaction.getDisplayName();
             case "focus_online":
                 return focusedFaction == null ? "" : String.valueOf(focusedFaction.getOnlineMembers().size());
-            case "event_name":
-                return currentEvent == null ? "" : currentEvent.getName();
-            case "next_event_name":
-                return nextEvent == null ? "" : nextEvent.getName();
-            case "next_event_time":
-                return eventScheduler.getTimeLeftFormatted();
             default:
                 return "";
         }

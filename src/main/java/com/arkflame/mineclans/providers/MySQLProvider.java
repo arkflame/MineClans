@@ -51,6 +51,7 @@ import com.arkflame.mineclans.providers.daos.FactionDAO;
 import com.arkflame.mineclans.providers.daos.FactionPlayerDAO;
 import com.arkflame.mineclans.providers.daos.InvitedDAO;
 import com.arkflame.mineclans.providers.daos.MemberDAO;
+import com.arkflame.mineclans.providers.daos.PowerDAO;
 import com.arkflame.mineclans.providers.daos.RanksDAO;
 import com.arkflame.mineclans.providers.daos.RelationsDAO;
 import com.zaxxer.hikari.HikariConfig;
@@ -67,6 +68,7 @@ public class MySQLProvider {
     private MemberDAO memberDAO;
     private RanksDAO ranksDAO;
     private RelationsDAO relationsDAO;
+    private PowerDAO powerDAO;
 
     public MySQLProvider(boolean enabled, String url, String username, String password) {
         if (!enabled || url == null || username == null || password == null) {
@@ -83,6 +85,7 @@ public class MySQLProvider {
         memberDAO = new MemberDAO(this);
         ranksDAO = new RanksDAO(this);
         relationsDAO = new RelationsDAO(this);
+        powerDAO = new PowerDAO(this);
 
         // Generate hikari config
         generateHikariConfig(url, username, password);
@@ -131,6 +134,10 @@ public class MySQLProvider {
         return relationsDAO;
     }
 
+    public PowerDAO getPowerDAO() {
+        return powerDAO;
+    }
+
     public RanksDAO getRanksDAO() {
         return ranksDAO;
     }
@@ -147,6 +154,7 @@ public class MySQLProvider {
         relationsDAO.createTable();
         ranksDAO.createTable();
         factionPlayerDAO.createTable();
+        powerDAO.createTable();
     }
 
     public void initialize() {

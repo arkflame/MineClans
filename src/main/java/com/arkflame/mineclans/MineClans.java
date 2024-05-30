@@ -23,6 +23,7 @@ import com.arkflame.mineclans.listeners.PlayerKillListener;
 import com.arkflame.mineclans.listeners.PlayerQuitListener;
 import com.arkflame.mineclans.managers.FactionManager;
 import com.arkflame.mineclans.managers.FactionPlayerManager;
+import com.arkflame.mineclans.managers.LeaderboardManager;
 import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.modernlib.config.ConfigWrapper;
 import com.arkflame.mineclans.modernlib.menus.listeners.MenuListener;
@@ -56,6 +57,9 @@ public class MineClans extends JavaPlugin {
     // Events
     private ClanEventManager clanEventManager;
     private ClanEventScheduler clanEventScheduler;
+
+    // Leaderboard Manager
+    private LeaderboardManager leaderboardManager;
 
     public ConfigWrapper getCfg() {
         return config;
@@ -111,6 +115,10 @@ public class MineClans extends JavaPlugin {
         return clanEventScheduler;
     }
 
+    public LeaderboardManager getLeaderboardManager() {
+        return leaderboardManager;
+    }
+
     @Override
     public void onEnable() {
         // Set static instance
@@ -131,6 +139,7 @@ public class MineClans extends JavaPlugin {
         factionPlayerManager = new FactionPlayerManager();
         clanEventManager = new ClanEventManager(this);
         clanEventScheduler = new ClanEventScheduler(config.getInt("events.interval"));
+        leaderboardManager = new LeaderboardManager(mySQLProvider.getPowerDAO());
 
         // Initialize API
         api = new MineClansAPI(factionManager, factionPlayerManager);

@@ -73,6 +73,7 @@ public class FactionManager {
 
     // Remove a faction from the database
     public void removeFactionFromDatabase(Faction faction) {
+        MineClans.getInstance().getMySQLProvider().getPowerDAO().removeFaction(faction.getId());
         MineClans.getInstance().getMySQLProvider().getFactionDAO().disbandFaction(faction);
         faction.disbandFaction();
     }

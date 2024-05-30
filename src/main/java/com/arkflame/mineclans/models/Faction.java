@@ -313,7 +313,9 @@ public class Faction implements InventoryHolder {
         double memberCountPower = members.size() * memberCountWeight;
         double eventsWonPower = eventsWon * eventsWonWeight;
 
-        return killsPower + moneyPower + memberCountPower + eventsWonPower;
+        double power = killsPower + moneyPower + memberCountPower + eventsWonPower;
+        MineClans.getInstance().getLeaderboardManager().updateFactionPower(id, power);
+        return power;
     }
 
     @Override
