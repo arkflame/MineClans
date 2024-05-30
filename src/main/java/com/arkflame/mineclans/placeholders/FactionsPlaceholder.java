@@ -54,15 +54,26 @@ public class FactionsPlaceholder extends PlaceholderExpansion {
         Player onlinePlayer = (Player) player;
         FactionPlayer factionPlayer = plugin.getFactionPlayerManager().getOrLoad(onlinePlayer.getUniqueId());
         Faction faction = factionPlayer.getFaction();
+        ClanEventScheduler eventScheduler = plugin.getClanEventScheduler();
+        ClanEvent currentEvent = eventScheduler.getEvent();
+        ClanEvent nextEvent = eventScheduler.getNextEvent();
+
+        switch (identifier) {
+            case "event_name":
+                return currentEvent == null ? "" : currentEvent.getName();
+            case "next_event_name":
+                return nextEvent == null ? "" : nextEvent.getName();
+            case "next_event_time":
+                return eventScheduler.getTimeLeftFormatted();
+            default:
+                break;
+        }
 
         if (faction == null) {
             return "";
         }
 
         Faction focusedFaction = plugin.getFactionManager().getFaction(faction.getFocusedFaction());
-        ClanEventScheduler eventScheduler = plugin.getClanEventScheduler();
-        ClanEvent currentEvent = eventScheduler.getEvent();
-        ClanEvent nextEvent = eventScheduler.getNextEvent();
 
         switch (identifier) {
             case "name":
