@@ -73,6 +73,9 @@ public class Faction implements InventoryHolder {
     // Events Won
     private int eventsWon = 0;
 
+    // Power
+    private double power = 0;
+
     // Constructor
     public Faction(UUID id, UUID owner, String name, String displayName) {
         this.id = id;
@@ -143,6 +146,7 @@ public class Faction implements InventoryHolder {
 
     public void setBalance(double balance) {
         this.balance = balance;
+        updatePower();
     }
 
     public Map<UUID, Relation> getRelations() {
@@ -203,6 +207,7 @@ public class Faction implements InventoryHolder {
 
     public void addMember(UUID member) {
         this.members.add(member);
+        updatePower();
     }
 
     public void removeMember(UUID member) {
@@ -280,13 +285,14 @@ public class Faction implements InventoryHolder {
         }
 
         killedPlayers.add(killedPlayerId);
-        kills++;
+        setKills(kills + 1);
 
         return true;
     }
 
     public void setKills(int kills) {
         this.kills = kills;
+        updatePower();
     }
 
     public int getEventsWon() {
@@ -295,13 +301,14 @@ public class Faction implements InventoryHolder {
 
     public void setEventsWon(int eventsWon) {
         this.eventsWon = eventsWon;
+        updatePower();
     }
 
     public void addEventsWon() {
-        this.eventsWon++;
+        setEventsWon(eventsWon + 1);
     }
 
-    public double calculatePower() {
+    private double calculatePower() {
         ConfigWrapper config = MineClans.getInstance().getCfg();
         double killsWeight = config.getDouble("weights.kill");
         double moneyWeight = config.getDouble("weights.money");
@@ -314,12 +321,22 @@ public class Faction implements InventoryHolder {
         double eventsWonPower = eventsWon * eventsWonWeight;
 
         double power = killsPower + moneyPower + memberCountPower + eventsWonPower;
-        MineClans.getInstance().getLeaderboardManager().updateFactionPower(id, power);
         return power;
     }
 
     @Override
     public Inventory getInventory() {
         return chestInventory;
+    }
+
+    public double getPower() {
+        return this.power;
+    }
+
+    public void updatePower() {
+        double newPower = calculatePower();
+        if (this.power != newPower) {
+            this.power = newPower;
+        }
     }
 }

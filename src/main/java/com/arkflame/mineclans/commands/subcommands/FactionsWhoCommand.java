@@ -96,7 +96,7 @@ public class FactionsWhoCommand {
         message.append("\n")
                 .append(balanceText.replace("%balance%", formattedBalance)).append("\n")
                 .append(killsText.replace("%kills%", String.valueOf(faction.getKills()))).append("\n")
-                .append(powerText.replace("%power%", String.valueOf(faction.calculatePower())));
+                .append(powerText.replace("%power%", String.valueOf(faction.getPower())));
 
         player.sendMessage(message.toString());
     }

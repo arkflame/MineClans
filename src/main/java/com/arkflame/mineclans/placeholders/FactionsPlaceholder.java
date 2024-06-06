@@ -59,6 +59,8 @@ public class FactionsPlaceholder extends PlaceholderExpansion {
                 Faction faction = MineClans.getInstance().getLeaderboardManager().getFactionByPosition(position);
                 if (faction != null) {
                     return faction.getName();
+                } else {
+                    return "N/A";
                 }
             } catch (NumberFormatException ex) {
                 // Do nothing
