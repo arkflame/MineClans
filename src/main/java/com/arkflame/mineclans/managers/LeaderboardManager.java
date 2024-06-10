@@ -49,8 +49,9 @@ public class LeaderboardManager {
 
     public void onFactionUpdatePower(UUID factionId) {
         int newPosition = powerDAO.getFactionPosition(factionId);
+        Integer cachedPosition = cacheManagerByFaction.get(factionId);
 
-        if (newPosition != cacheManagerByFaction.get(factionId)) {
+        if (cachedPosition != null && newPosition != cachedPosition) {
             cacheManagerByPosition.clear();
             cacheManagerByFaction.clear();
         }

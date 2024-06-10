@@ -69,6 +69,7 @@ public class FactionManager {
     // Save a faction to the database
     public void saveFactionToDatabase(Faction faction) {
         MineClans.getInstance().getMySQLProvider().getFactionDAO().insertOrUpdateFaction(faction);
+        MineClans.getInstance().getMySQLProvider().getPowerDAO().updateFactionPower(faction.getId(), faction.getPower());
     }
 
     // Remove a faction from the database
@@ -123,6 +124,7 @@ public class FactionManager {
             faction.disbandFaction();
             factionCacheByName.remove(factionName);
             removeFactionFromDatabase(faction);
+            MineClans.getInstance().getLeaderboardManager().removeFaction(faction.getId());
         }
     }
 

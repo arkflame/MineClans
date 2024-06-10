@@ -729,7 +729,6 @@ public class MineClansAPI {
             }
             if (factionKill) {
                 factionManager.saveFactionToDatabase(faction);
-                MineClans.getInstance().getMySQLProvider().getPowerDAO().updateFactionPower(faction.getId(), faction.getPower());
             }
             return new AddKillResult(AddKillResultType.SUCCESS);
         }
