@@ -69,7 +69,7 @@ public class FactionManager {
     // Save a faction to the database
     public void saveFactionToDatabase(Faction faction) {
         MineClans.getInstance().getMySQLProvider().getFactionDAO().insertOrUpdateFaction(faction);
-        MineClans.getInstance().getMySQLProvider().getPowerDAO().updateFactionPower(faction.getId(), faction.getPower());
+        MineClans.getInstance().getPowerManager().updatePower(faction.getId(), faction.getPower());
     }
 
     // Remove a faction from the database
@@ -86,7 +86,6 @@ public class FactionManager {
         factionCacheByName.put(factionName, newFaction);
         saveFactionToDatabase(newFaction); // Save the new faction to the database
         addPlayerToFaction(factionName, playerId);
-        MineClans.getInstance().getLeaderboardManager().onFactionUpdatePower(newFaction.getId());
         return newFaction;
     }
 
@@ -101,7 +100,6 @@ public class FactionManager {
         if (faction != null) {
             faction.addMember(playerId);
             MineClans.getInstance().getMySQLProvider().getMemberDAO().addMember(faction.getId(), playerId);
-            MineClans.getInstance().getLeaderboardManager().onFactionUpdatePower(faction.getId());
             saveFactionToDatabase(faction);
         }
     }
@@ -112,7 +110,6 @@ public class FactionManager {
         if (faction != null) {
             faction.removeMember(playerId);
             MineClans.getInstance().getMySQLProvider().getMemberDAO().removeMember(faction.getId(), playerId);
-            MineClans.getInstance().getLeaderboardManager().onFactionUpdatePower(faction.getId());
             saveFactionToDatabase(faction);
         }
     }
@@ -133,7 +130,7 @@ public class FactionManager {
         Faction faction = getFaction(factionName);
         if (faction != null) {
             faction.setHome(home);
-            saveFactionToDatabase(faction); // Save changes to the database
+            saveFactionToDatabase(faction);
         }
     }
 
@@ -148,8 +145,7 @@ public class FactionManager {
         Faction faction = getFaction(factionName);
         if (faction != null) {
             faction.setBalance(balance);
-            saveFactionToDatabase(faction); // Save changes to the database
-            MineClans.getInstance().getLeaderboardManager().onFactionUpdatePower(faction.getId());
+            saveFactionToDatabase(faction);
         }
     }
 
@@ -263,7 +259,6 @@ public class FactionManager {
             double newBalance = currentBalance + amount;
             faction.setBalance(newBalance);
             saveFactionToDatabase(faction);
-            MineClans.getInstance().getLeaderboardManager().onFactionUpdatePower(faction.getId());
             return true;
         }
         return false;
@@ -276,7 +271,6 @@ public class FactionManager {
             double newBalance = currentBalance - amount;
             faction.setBalance(newBalance);
             saveFactionToDatabase(faction);
-            MineClans.getInstance().getLeaderboardManager().onFactionUpdatePower(faction.getId());
             return true;
         }
         return false;

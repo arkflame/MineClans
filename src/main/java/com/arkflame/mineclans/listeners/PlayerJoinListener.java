@@ -8,7 +8,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.arkflame.mineclans.MineClans;
+import com.arkflame.mineclans.buff.ActiveBuff;
 import com.arkflame.mineclans.managers.FactionPlayerManager;
+import com.arkflame.mineclans.models.Faction;
 
 public class PlayerJoinListener implements Listener {
     private FactionPlayerManager factionPlayerManager;
@@ -26,6 +28,13 @@ public class PlayerJoinListener implements Listener {
             factionPlayerManager.updateJoinDate(id);
             factionPlayerManager.updateLastActive(id);
             factionPlayerManager.updateName(id, player.getName());
+
+            Faction faction = MineClans.getInstance().getAPI().getFaction(player);
+            MineClans.runSync(() -> {
+                for (ActiveBuff activeBuff : faction.getBuffs()) {
+                    activeBuff.giveEffectToPlayer(player);
+                }
+            });
         });
     }
 }

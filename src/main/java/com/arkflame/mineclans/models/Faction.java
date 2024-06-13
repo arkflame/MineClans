@@ -12,6 +12,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 import com.arkflame.mineclans.MineClans;
+import com.arkflame.mineclans.buff.ActiveBuff;
+import com.arkflame.mineclans.buff.Buff;
 import com.arkflame.mineclans.enums.Rank;
 import com.arkflame.mineclans.enums.RelationType;
 import com.arkflame.mineclans.modernlib.config.ConfigWrapper;
@@ -22,6 +24,7 @@ import net.md_5.bungee.api.ChatColor;
 
 import java.util.Map;
 import java.util.HashSet;
+import java.util.Iterator;
 
 public class Faction implements InventoryHolder {
     // The ID
@@ -76,6 +79,9 @@ public class Faction implements InventoryHolder {
     // Power
     private double power = 0;
 
+    // Active Buffs
+    private Collection<ActiveBuff> activeBuffs = ConcurrentHashMap.newKeySet();
+
     // Constructor
     public Faction(UUID id, UUID owner, String name, String displayName) {
         this.id = id;
@@ -123,7 +129,8 @@ public class Faction implements InventoryHolder {
     public void setDisplayName(String displayName) {
         String strippedName = ChatColor.stripColor(displayName).toLowerCase().trim();
         if (!strippedName.equals(name.toLowerCase())) {
-            throw new IllegalArgumentException("Invalid faction displayname: " + strippedName + " - " + name.toLowerCase());
+            throw new IllegalArgumentException(
+                    "Invalid faction displayname: " + strippedName + " - " + name.toLowerCase());
         }
         if (displayName.length() < 3 || displayName.length() > 32) {
             throw new IllegalArgumentException("Invalid faction name");
@@ -156,17 +163,17 @@ public class Faction implements InventoryHolder {
     public void setRelation(UUID factionId, Relation relation) {
         this.relations.put(factionId, relation);
     }
-    
+
     public void setRelations(Collection<Relation> relationsByFactionId) {
         for (Relation relation : relationsByFactionId) {
             this.relations.put(relation.getTargetFactionId(), relation);
         }
     }
-    
+
     public Relation getRelation(UUID otherFactionId) {
         return relations.get(otherFactionId);
     }
-    
+
     public RelationType getRelationType(UUID otherFactionId) {
         Relation relation = relations.get(otherFactionId);
 
@@ -338,5 +345,27 @@ public class Faction implements InventoryHolder {
         if (this.power != newPower) {
             this.power = newPower;
         }
+    }
+
+    public void giveEffects(Player player) {
+        Iterator<ActiveBuff> iterator = activeBuffs.iterator();
+        while (iterator.hasNext()) {
+            ActiveBuff buff = iterator.next();
+            if (buff.isActive()) {
+                buff.giveEffectToPlayer(player);
+            } else {
+                iterator.remove();
+            }
+        }
+    }
+
+    public ActiveBuff addBuff(Buff buff) {
+        ActiveBuff activeBuff = new ActiveBuff(buff, this);
+        activeBuffs.add(activeBuff);
+        return activeBuff;
+    }
+
+    public Collection<ActiveBuff> getBuffs() {
+        return activeBuffs;
     }
 }

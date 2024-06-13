@@ -119,6 +119,9 @@ public class FactionsCommand extends ModernCommand {
                 case "deinvite":
                     FactionsUninviteCommand.onCommand(player, args);
                     break;
+                case "buff":
+                    FactionsBuffCommand.onCommand(player, args);
+                    break;
                 default:
                     sender.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "usage"));
             }
