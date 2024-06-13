@@ -52,8 +52,7 @@ public class LeaderboardManager {
         Integer cachedPosition = cacheManagerByFaction.get(factionId);
 
         if (cachedPosition != null && newPosition != cachedPosition) {
-            cacheManagerByPosition.clear();
-            cacheManagerByFaction.clear();
+            clearCache();
         }
         updateCache(newPosition, factionId);
     }
@@ -67,8 +66,12 @@ public class LeaderboardManager {
         powerDAO.removeFaction(factionId);
         Integer position = cacheManagerByFaction.get(factionId);
         if (position != null) {
-            cacheManagerByPosition.remove(position);
-            cacheManagerByFaction.remove(factionId);
+            clearCache();
         }
+    }
+
+    private void clearCache() {
+        cacheManagerByPosition.clear();
+        cacheManagerByFaction.clear();
     }
 }
