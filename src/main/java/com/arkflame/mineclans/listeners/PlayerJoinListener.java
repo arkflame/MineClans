@@ -30,11 +30,13 @@ public class PlayerJoinListener implements Listener {
             factionPlayerManager.updateName(id, player.getName());
 
             Faction faction = MineClans.getInstance().getAPI().getFaction(player);
-            MineClans.runSync(() -> {
-                for (ActiveBuff activeBuff : faction.getBuffs()) {
-                    activeBuff.giveEffectToPlayer(player);
-                }
-            });
+            if (faction != null) {
+                MineClans.runSync(() -> {
+                    for (ActiveBuff activeBuff : faction.getBuffs()) {
+                        activeBuff.giveEffectToPlayer(player);
+                    }
+                });
+            }
         });
     }
 }

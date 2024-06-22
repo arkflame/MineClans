@@ -120,4 +120,30 @@ public class ActiveBuff {
             giveEffectToPlayer(player);
         }
     }
+
+    /**
+     * Removes the buff effect from an individual player.
+     *
+     * @param player the Player to remove the effect from
+     */
+    public void removeEffectFromPlayer(Player player) {
+        for (PotionEffectType effectType : buff.getEffects()) {
+            PotionEffect currentEffect = player.getActivePotionEffects().stream()
+                    .filter(effect -> effect.getType().equals(effectType))
+                    .findFirst()
+                    .orElse(null);
+
+            if (currentEffect != null) {
+                int currentDuration = currentEffect.getDuration();
+                int currentAmplifier = currentEffect.getAmplifier();
+                int buffAmplifier = 1; // This can be adjusted based on your buff logic
+                int buffDuration = (int) getRemainingTicks();
+
+                // Only remove the effect if the current effect has less or equal duration and equal amplifier
+                if (currentAmplifier == buffAmplifier && currentDuration <= buffDuration) {
+                    player.removePotionEffect(effectType);
+                }
+            }
+        }
+    }
 }

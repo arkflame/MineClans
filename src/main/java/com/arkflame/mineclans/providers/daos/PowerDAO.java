@@ -44,7 +44,6 @@ public class PowerDAO {
     }
 
     public int getFactionPosition(UUID factionId) {
-        System.out.println("touched MySQL getFactionPosition");
         final int[] position = {0};
         mySQLProvider.executeSelectQuery(
                 "SELECT (SELECT COUNT(*) FROM mineclans_power AS mp WHERE mp.power >= m.power) AS idx_power " +
@@ -61,7 +60,6 @@ public class PowerDAO {
     }
 
     public UUID getFactionIdByPosition(int position) {
-        System.out.println("touched MySQL getFactionIdByPosition");
         final UUID[] factionId = {null};
         mySQLProvider.executeSelectQuery(
                 "SELECT faction_id FROM (SELECT faction_id, RANK() OVER (ORDER BY power DESC) as rank FROM mineclans_power) ranked WHERE rank = ?",

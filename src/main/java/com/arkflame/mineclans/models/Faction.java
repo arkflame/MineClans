@@ -359,6 +359,18 @@ public class Faction implements InventoryHolder {
         }
     }
 
+    public void removeEffects(Player player) {
+        Iterator<ActiveBuff> iterator = activeBuffs.iterator();
+        while (iterator.hasNext()) {
+            ActiveBuff buff = iterator.next();
+            if (buff.isActive()) {
+                buff.removeEffectFromPlayer(player);
+            } else {
+                iterator.remove();
+            }
+        }
+    }
+
     public ActiveBuff addBuff(Buff buff) {
         ActiveBuff activeBuff = new ActiveBuff(buff, this);
         activeBuffs.add(activeBuff);
