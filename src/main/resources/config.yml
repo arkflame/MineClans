@@ -4,6 +4,68 @@ weights:
   member_count: 0.1
   events_won: 0.1
 
+buffs:
+  custom-buffs:
+    speed:
+      display_name: "&b&lSpeed Buff"
+      lore: 
+      - "&7Give speed to your faction members"
+      effects:
+      - "SPEED,0,60"
+      price: 10
+      slot: 10
+      material: SUGAR
+
+    mining_speed:
+      display_name: "&a&lMining Speed Buff"
+      lore: 
+      - "&7Increase mining speed for your faction members"
+      effects:
+      - "FAST_DIGGING,0,60"
+      price: 15
+      slot: 12
+      material: "IRON_PICKAXE"
+
+    increase_damage:
+      display_name: "&c&lIncrease Damage Buff"
+      lore: 
+      - "&7Increase damage for your faction members"
+      effects:
+      - "INCREASE_DAMAGE,0,60"
+      price: 20
+      slot: 14
+      material: IRON_SWORD
+
+    protection:
+      display_name: "&9&lProtection Buff"
+      lore: 
+      - "&7Increase protection for your faction members"
+      effects:
+      - "DAMAGE_RESISTANCE,0,60"
+      price: 25
+      slot: 16
+      material: IRON_CHESTPLATE
+
+    regeneration:
+      display_name: "&d&lRegeneration Buff"
+      lore: 
+      - "&7Regenerate health for your faction members"
+      effects:
+      - "REGENERATION,0,60"
+      price: 30
+      slot: 30
+      material: GOLDEN_APPLE
+
+    health_boost:
+      display_name: "&e&lHealth Boost Buff"
+      lore: 
+      - "&7Increase health for your faction members"
+      effects:
+      - "HEALTH_BOOST,0,60"
+      price: 35
+      slot: 32
+      material: REDSTONE_BLOCK
+
 events:
   interval: 25 # minutes
   custom-events:

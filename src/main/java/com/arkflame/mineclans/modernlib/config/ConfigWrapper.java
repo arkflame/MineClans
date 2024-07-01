@@ -220,4 +220,8 @@ public class ConfigWrapper {
     public double getDouble(String path) {
         return config.getDouble(path);
     }
+
+    public boolean contains(String string) {
+        return config.contains(string);
+    }
 }

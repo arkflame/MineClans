@@ -10,20 +10,24 @@ import org.bukkit.potion.PotionEffectType;
 import com.arkflame.mineclans.models.Faction;
 
 public class ActiveBuff {
-    private final Buff buff;
+    private final PotionEffectType potionEffect;
+    private final int amplifier;
+    private final int duration;
     private final Faction faction;
     private final long endTimeStamp;
 
     /**
      * Constructs an ActiveBuff instance.
      *
-     * @param buff     the Buff type
-     * @param duration the duration in milliseconds for which the buff is active
+     * @param potionEffect the Buff type
+     * @param faction the faction that has the buff
      */
-    public ActiveBuff(Buff buff, Faction faction) {
-        this.buff = buff;
+    public ActiveBuff(PotionEffectType potionEffect, int amplifier, int duration, Faction faction) {
+        this.potionEffect = potionEffect;
+        this.amplifier = amplifier;
+        this.duration = duration;
         this.faction = faction;
-        this.endTimeStamp = System.currentTimeMillis() + buff.getDuration();
+        this.endTimeStamp = System.currentTimeMillis() + duration;
     }
 
     /**
@@ -31,8 +35,21 @@ public class ActiveBuff {
      *
      * @return the Buff
      */
-    public Buff getBuff() {
-        return buff;
+    public PotionEffectType getPotionEffect() {
+        return potionEffect;
+    }
+
+    public int getAmplifier() {
+        return amplifier;
+    }
+
+    /**
+     * Gets the total duration.
+     *
+     * @return the duration
+     */
+    public int getDuration() {
+        return duration;
     }
 
     /**
@@ -86,12 +103,11 @@ public class ActiveBuff {
      * @param player the Player to give the effect to
      */
     public void giveEffectToPlayer(Player player) {
-        for (PotionEffectType effectType : buff.getEffects()) {
             int newDuration = (int) getRemainingTicks();
-            int newAmplifier = 1; // This can be adjusted based on your buff logic
+            int newAmplifier = getAmplifier(); // This can be adjusted based on your buff logic
 
             PotionEffect currentEffect = player.getActivePotionEffects().stream()
-                    .filter(effect -> effect.getType().equals(effectType))
+                    .filter(effect -> effect.getType().equals(potionEffect))
                     .findFirst()
                     .orElse(null);
 
@@ -101,14 +117,13 @@ public class ActiveBuff {
 
                 // Replace the current effect if the new one is stronger or lasts longer
                 if (newAmplifier > currentAmplifier || newDuration > currentDuration) {
-                    player.removePotionEffect(effectType);
-                    player.addPotionEffect(new PotionEffect(effectType, newDuration, newAmplifier));
+                    player.removePotionEffect(potionEffect);
+                    player.addPotionEffect(new PotionEffect(potionEffect, newDuration, newAmplifier));
                 }
             } else {
                 // If the player doesn't have the effect, just add it
-                player.addPotionEffect(new PotionEffect(effectType, newDuration, newAmplifier));
+                player.addPotionEffect(new PotionEffect(potionEffect, newDuration, newAmplifier));
             }
-        }
     }
 
     /**
@@ -127,9 +142,8 @@ public class ActiveBuff {
      * @param player the Player to remove the effect from
      */
     public void removeEffectFromPlayer(Player player) {
-        for (PotionEffectType effectType : buff.getEffects()) {
             PotionEffect currentEffect = player.getActivePotionEffects().stream()
-                    .filter(effect -> effect.getType().equals(effectType))
+                    .filter(effect -> effect.getType().equals(potionEffect))
                     .findFirst()
                     .orElse(null);
 
@@ -141,9 +155,8 @@ public class ActiveBuff {
 
                 // Only remove the effect if the current effect has less or equal duration and equal amplifier
                 if (currentAmplifier == buffAmplifier && currentDuration <= buffDuration) {
-                    player.removePotionEffect(effectType);
+                    player.removePotionEffect(potionEffect);
                 }
             }
-        }
     }
 }

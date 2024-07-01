@@ -11,6 +11,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.arkflame.mineclans.api.MineClansAPI;
+import com.arkflame.mineclans.buff.BuffManager;
 import com.arkflame.mineclans.commands.FactionsCommand;
 import com.arkflame.mineclans.events.ClanEventManager;
 import com.arkflame.mineclans.events.ClanEventScheduler;
@@ -64,6 +65,9 @@ public class MineClans extends JavaPlugin {
 
     // Power Manager
     private PowerManager powerManager;
+
+    // Buff Manager
+    private BuffManager buffManager;
 
     public ConfigWrapper getCfg() {
         return config;
@@ -127,6 +131,10 @@ public class MineClans extends JavaPlugin {
         return powerManager;
     }
 
+    public BuffManager getBuffManager() {
+        return buffManager;
+    }
+
     @Override
     public void onEnable() {
         // Set static instance
@@ -149,6 +157,7 @@ public class MineClans extends JavaPlugin {
         clanEventScheduler = new ClanEventScheduler(config.getInt("events.interval"));
         leaderboardManager = new LeaderboardManager(mySQLProvider.getPowerDAO());
         powerManager = new PowerManager(mySQLProvider.getPowerDAO(), leaderboardManager);
+        buffManager =  new BuffManager(config);
 
         // Initialize API
         api = new MineClansAPI(factionManager, factionPlayerManager);

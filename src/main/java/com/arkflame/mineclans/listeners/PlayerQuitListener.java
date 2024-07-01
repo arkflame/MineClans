@@ -8,7 +8,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.arkflame.mineclans.MineClans;
-import com.arkflame.mineclans.buff.Buff;
 import com.arkflame.mineclans.managers.FactionPlayerManager;
 import com.arkflame.mineclans.models.Faction;
 
@@ -26,7 +25,9 @@ public class PlayerQuitListener implements Listener {
         MineClans.runAsync(() -> {
             factionPlayerManager.updateLastActive(id);
             Faction faction = MineClans.getInstance().getAPI().getFaction(player);
-            faction.removeEffects(player);
+            if (faction != null) {
+                faction.removeEffects(player);
+            }
         });
     }
 }

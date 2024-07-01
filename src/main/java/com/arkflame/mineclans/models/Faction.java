@@ -13,7 +13,6 @@ import org.bukkit.inventory.InventoryHolder;
 
 import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.buff.ActiveBuff;
-import com.arkflame.mineclans.buff.Buff;
 import com.arkflame.mineclans.enums.Rank;
 import com.arkflame.mineclans.enums.RelationType;
 import com.arkflame.mineclans.modernlib.config.ConfigWrapper;
@@ -371,10 +370,9 @@ public class Faction implements InventoryHolder {
         }
     }
 
-    public ActiveBuff addBuff(Buff buff) {
-        ActiveBuff activeBuff = new ActiveBuff(buff, this);
-        activeBuffs.add(activeBuff);
-        return activeBuff;
+    public ActiveBuff addBuff(ActiveBuff buff) {
+        activeBuffs.add(buff);
+        return buff;
     }
 
     public Collection<ActiveBuff> getBuffs() {
