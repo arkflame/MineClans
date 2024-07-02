@@ -1,9 +1,11 @@
 package com.arkflame.mineclans.buff;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
@@ -16,6 +18,7 @@ import com.arkflame.mineclans.modernlib.menus.Menu;
 
 public class BuffManager {
     private Map<String, Buff> buffs = new HashMap<>();
+    private Collection<ActiveBuff> activeBuffs = ConcurrentHashMap.newKeySet();
     private ConfigWrapper config;
     private Menu menu;
 
@@ -71,5 +74,9 @@ public class BuffManager {
     public void openBuffMenu(Player player, Faction faction) {
         // Open the menu for the player
         menu.openInventory(player);
+    }
+
+    public Collection<ActiveBuff> getActiveBuffs() {
+        return activeBuffs;
     }
 }

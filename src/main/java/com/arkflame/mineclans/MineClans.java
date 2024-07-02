@@ -31,6 +31,7 @@ import com.arkflame.mineclans.modernlib.config.ConfigWrapper;
 import com.arkflame.mineclans.modernlib.menus.listeners.MenuListener;
 import com.arkflame.mineclans.placeholders.FactionsPlaceholder;
 import com.arkflame.mineclans.providers.MySQLProvider;
+import com.arkflame.mineclans.tasks.BuffExpireTask;
 import com.arkflame.mineclans.tasks.InventorySaveTask;
 
 import net.milkbowl.vault.economy.Economy;
@@ -185,6 +186,8 @@ public class MineClans extends JavaPlugin {
         // Register tasks
         inventorySaveTask = new InventorySaveTask();
         inventorySaveTask.register();
+        BuffExpireTask buffExpireTask = new BuffExpireTask();
+        buffExpireTask.register();
 
         // Attempt to hook Vault
         if (Bukkit.getPluginManager().getPlugin("Vault") != null) {

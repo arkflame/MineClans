@@ -375,6 +375,11 @@ public class Faction implements InventoryHolder {
         return buff;
     }
 
+    public ActiveBuff removeBuff(ActiveBuff buff) {
+        activeBuffs.remove(buff);
+        return buff;
+    }
+
     public Collection<ActiveBuff> getBuffs() {
         return activeBuffs;
     }

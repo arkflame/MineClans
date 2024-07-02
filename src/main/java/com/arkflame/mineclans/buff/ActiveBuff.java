@@ -10,6 +10,7 @@ import org.bukkit.potion.PotionEffectType;
 import com.arkflame.mineclans.models.Faction;
 
 public class ActiveBuff {
+    private final Buff buff;
     private final PotionEffectType potionEffect;
     private final int amplifier;
     private final int duration;
@@ -22,7 +23,8 @@ public class ActiveBuff {
      * @param potionEffect the Buff type
      * @param faction the faction that has the buff
      */
-    public ActiveBuff(PotionEffectType potionEffect, int amplifier, int duration, Faction faction) {
+    public ActiveBuff(Buff buff, PotionEffectType potionEffect, int amplifier, int duration, Faction faction) {
+        this.buff = buff;
         this.potionEffect = potionEffect;
         this.amplifier = amplifier;
         this.duration = duration;
@@ -158,5 +160,9 @@ public class ActiveBuff {
                     player.removePotionEffect(potionEffect);
                 }
             }
+    }
+
+    public String getDisplayName() {
+        return buff.getDisplayName();
     }
 }

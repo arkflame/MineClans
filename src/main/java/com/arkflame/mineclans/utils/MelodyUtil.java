@@ -27,6 +27,12 @@ public class MelodyUtil {
     }
 
     public enum Melody {
+        BUFF_ACTIVE(new ToneOctavePair[] {
+                new ToneOctavePair(Note.Tone.G, 0),
+                new ToneOctavePair(Note.Tone.B, 0),
+                new ToneOctavePair(Note.Tone.D, 1)
+        }, 4, Instrument.PIANO),
+
         EVENT_END_MELODY(new ToneOctavePair[] {
                 new ToneOctavePair(Note.Tone.C, 0),
                 new ToneOctavePair(Note.Tone.E, 0),

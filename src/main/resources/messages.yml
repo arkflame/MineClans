@@ -8,6 +8,19 @@ event:
     default_winner: "No Winner"
 
 factions:
+  buffs:
+    no_money: "&cYou do not have %price% to purchase %buff%&c."
+    activated: "&aYou activated&e %buff%&a%activated_price%&a."
+    activated_price: " for &6$%price%"
+    activated_other:
+      title: "&a&lBuff Active"
+      subtitle: "&7%player% activated &b%buff%&7."
+      msg: "&b%player%&a activated &e%buff%&a for all your Faction."
+    no_faction: "&cYou are in no faction."
+    expired:
+      title: "&c&lBuff Expired"
+      subtitle: "&b%buff%&7 has expired."
+      msg: "&e%buff%&c has expired."
   kill: 
     title: "&a&lKILL"
     subtitle: "You killed &b%killed%&r!"
