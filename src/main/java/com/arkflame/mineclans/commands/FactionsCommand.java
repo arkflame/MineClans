@@ -18,7 +18,7 @@ public class FactionsCommand extends ModernCommand {
         String basePath = "factions.";
 
         if (!args.hasArg(0)) {
-            sender.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "usage"));
+            FactionsHelpCommand.onCommand(sender, 1);
             return;
         }
 
@@ -122,8 +122,12 @@ public class FactionsCommand extends ModernCommand {
                 case "buff":
                     FactionsBuffCommand.onCommand(player, args);
                     break;
+                case "help":
+                    FactionsHelpCommand.onCommand(sender, args.getNumber(1));
+                    break;
                 default:
-                    sender.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "usage"));
+                    FactionsHelpCommand.onCommand(sender, 1);
+                    break;
             }
         });
     }

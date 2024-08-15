@@ -61,13 +61,28 @@ public class EventObjective {
         int score = getScore(faction);
         return Math.round((double) score / targetScore * 1000) / 10.0;
     }
+
+    private static String repeat(String str, int times) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < times; i++) {
+            sb.append(str);
+        }
+        return sb.toString();
+    }
+    
+    public static String generateProgressBar(int progressBars, int remainingBars) {
+        String progress = repeat("|", progressBars);
+        String remaining = repeat("|", remainingBars);
+    
+        return ChatColor.GREEN + progress + ChatColor.RED + remaining;
+    }    
     
     public String getProgressBar(Faction faction, int length) {
         double percentage = getProgressPercentage(faction);
         int progressBars = (int) (length * (percentage / 100));
         int remainingBars = length - progressBars;
         
-        return ChatColor.GREEN + "|".repeat(progressBars) + ChatColor.RED + "|".repeat(remainingBars);
+        return generateProgressBar(progressBars, remainingBars);
     }
     
     public String getProgress(Faction faction) {
