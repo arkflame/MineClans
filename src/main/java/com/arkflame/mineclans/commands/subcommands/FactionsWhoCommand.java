@@ -1,17 +1,25 @@
 package com.arkflame.mineclans.commands.subcommands;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.Map.Entry;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.MineClans;
-import com.arkflame.mineclans.enums.RelationType;
 import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.models.FactionPlayer;
 import com.arkflame.mineclans.modernlib.commands.ModernArguments;
 import com.arkflame.mineclans.modernlib.config.ConfigWrapper;
+import com.arkflame.mineclans.modernlib.utils.ChatColors;
 import com.arkflame.mineclans.utils.NumberUtil;
+
 import com.arkflame.mineclans.api.MineClansAPI;
+import com.arkflame.mineclans.enums.Rank;
 
 public class FactionsWhoCommand {
     public static void onCommand(Player player, ModernArguments args) {
@@ -46,58 +54,62 @@ public class FactionsWhoCommand {
             }
         }
 
+        // Faction name, online counts, hq
         String factionName = faction.getName();
-        String factionId = faction.getId().toString();
-        int factionMembersSize = faction.getMembers().size();
-        UUID factionOwner = faction.getOwner();
-        FactionPlayer owner = api.getFactionPlayer(factionOwner);
-        String ownerDisplay = (owner != null) ? owner.getName() : factionOwner.toString();
-        String membersTitleText = messages.getText(basePath + "members_title").replace("%faction_members%",
-                String.valueOf(factionMembersSize));
-        String informationTitleText = messages.getText(basePath + "information_title").replace("%faction_name%",
-                factionName);
-        String factionIdText = messages.getText(basePath + "id").replace("%id%", factionId);
-        String ownerText = messages.getText(basePath + "owner").replace("%owner%", ownerDisplay);
-        String memberEntry = messages.getText(basePath + "member_entry");
-        String memberEntryNoData = messages.getText(basePath + "member_entry_no_data");
-        String balanceText = messages.getText(basePath + "balance");
-        String killsText = messages.getText(basePath + "kills");
-        String powerText = messages.getText(basePath + "power");
-        String relationText = messages.getText(basePath + "relation");
+        int onlineCount = (int) faction.getMembers().stream().filter(uuid -> api.getFactionPlayer(uuid).isOnline()).count();
+        int memberCount = faction.getMembers().size();
+        Location hqLocation = faction.getHome();
+        String hqCoords = hqLocation != null ? hqLocation.getBlockX() + ", " + hqLocation.getBlockY() + ", " + hqLocation.getBlockZ() : "N/A";
+        String inviteStatus = faction.isOpen() ? "Open" : "Closed";
 
-        StringBuilder message = new StringBuilder(informationTitleText);
-        message.append("\n")
-                .append(factionIdText).append("\n")
-                .append(ownerText).append("\n")
-                .append(membersTitleText);
-
-        for (UUID memberId : faction.getMembers()) {
-            FactionPlayer member = api.getFactionPlayer(memberId);
-            if (member != null) {
-                message.append("\n")
-                        .append(memberEntry.replace("%faction_member%", member.getName())
-                                .replace("%faction_member_rank%", member.getRank().name()));
-            } else {
-                message.append("\n")
-                        .append(memberEntryNoData.replace("%faction_member_id%", memberId.toString()));
+        // Member List
+        Map<Rank, String> memberLists = new HashMap<>();
+        
+        for (UUID member : faction.getMembers()) {
+            Rank rank = faction.getRank(member);
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(member);
+            String memberList = memberLists.getOrDefault(rank, "");
+            FactionPlayer factionPlayer = mineClansInstance.getAPI().getFactionPlayer(member);
+            int kills = factionPlayer.getKills();
+            memberLists.put(rank, memberList + offlinePlayer.getName() + "[&f" + kills + "&7]"  + (memberList.isEmpty() ? "" : ", "));
+        }
+        
+        String memberList = "";
+        
+        for (Entry<Rank, String> entry : memberLists.entrySet()) {
+            String format = messages.getText(basePath + entry.getKey().name().toLowerCase());
+            if (format != null && !format.isEmpty()) {
+                format = format.replace("%members%", entry.getValue());
+                memberList = memberList + format + "\n";
             }
         }
 
-        Faction playerFaction = api.getFaction(player);
+        // Balance and Stats
+        String formattedBalance = NumberUtil.formatBalance(faction.getBalance());
+        String kills = String.valueOf(faction.getKills());
+        String power = String.valueOf(faction.getPower());
+        String foundedDate = faction.getCreationDate();
 
-        if (playerFaction != null && !playerFaction.equals(faction)) {
-            RelationType relation = api.getRelation(player, factionName);
-            message.append("\n")
-                    .append(relationText.replace("%relation%", relation.name()));
-        }
+        // Custom Texts
+        String announcement = faction.getAnnouncement() != null ? faction.getAnnouncement() : "No announcements.";
+        String discordLink = faction.getDiscord() != null ? faction.getDiscord() : "No Discord link.";
 
-        double factionBalance = faction.getBalance();
-        String formattedBalance = NumberUtil.formatBalance(factionBalance);
-        message.append("\n")
-                .append(balanceText.replace("%balance%", formattedBalance)).append("\n")
-                .append(killsText.replace("%kills%", String.valueOf(faction.getKills()))).append("\n")
-                .append(powerText.replace("%power%", String.valueOf(faction.getPower())));
+        // Format the message
+        String formattedMessage = messages.getText(basePath + "format")
+                .replace("%faction_name%", factionName)
+                .replace("%online_count%", String.valueOf(onlineCount))
+                .replace("%member_count%", String.valueOf(memberCount))
+                .replace("%hq_coords%", hqCoords)
+                .replace("%invite_status%", inviteStatus)
+                .replace("%members%", ChatColors.color(memberList))
+                .replace("%announcement%", messages.getText(basePath + "announcement").replace("%announcement%", announcement))
+                .replace("%discord%", messages.getText(basePath + "discord").replace("%link%", discordLink))
+                .replace("%balance%", formattedBalance)
+                .replace("%kills%", kills)
+                .replace("%power%", power)
+                .replace("%founded_date%", foundedDate);
 
-        player.sendMessage(message.toString());
+        // Send the message to the player
+        player.sendMessage(formattedMessage.trim());
     }
 }

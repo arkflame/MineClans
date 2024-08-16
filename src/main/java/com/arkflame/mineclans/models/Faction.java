@@ -2,11 +2,13 @@ package com.arkflame.mineclans.models;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -80,6 +82,14 @@ public class Faction implements InventoryHolder {
 
     // Active Buffs
     private Collection<ActiveBuff> activeBuffs = ConcurrentHashMap.newKeySet();
+
+    private boolean open = false;
+
+    private Date creationDate = new Date();
+
+    private String announcement = null;
+
+    private String discord = null;
 
     // Constructor
     public Faction(UUID id, UUID owner, String name, String displayName) {
@@ -382,5 +392,45 @@ public class Faction implements InventoryHolder {
 
     public Collection<ActiveBuff> getBuffs() {
         return activeBuffs;
+    }
+
+    public boolean isOpen() {
+        return open;
+    }
+
+    public String getCreationDate() {
+        return creationDate.toString();
+    }
+
+    public String getAnnouncement() {
+        return announcement;
+    }
+
+    public void setOpen(boolean open) {
+        this.open = open;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public void setAnnouncement(String announcement) {
+        this.announcement = announcement;
+    }
+
+    public void setDiscord(String discord) {
+        this.discord = discord;
+    }
+
+    public String getOwnerName() {
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(getOwner());
+        if (offlinePlayer == null) {
+            return "null";
+        }
+        return offlinePlayer.getName();
+    }
+
+    public String getDiscord() {
+        return discord;
     }
 }

@@ -143,4 +143,12 @@ public class FactionPlayer {
     public boolean isChatEnabled() {
         return chat;
     }
+
+    public boolean isOnline() {
+        Player player = getPlayer();
+        if (player == null) {
+            return false;
+        }
+        return player.isOnline();
+    }
 }

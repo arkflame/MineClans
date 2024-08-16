@@ -69,16 +69,21 @@ factions:
     invalid_amount: "&cInvalid amount entered: $%amount%"
     no_economy: "&cVault is not installed. No economy system present."
   who:
-    information_title: "&6Information of &e%faction_name%&6:"
-    id: "&bID: &7%id%"
-    owner: "&bOwner: &f%owner%"
-    members_title: "&bMembers (&7%faction_members%&b):"
-    member_entry: "&e - &f%faction_member%&7 (&f%faction_member_rank%&7)"
-    member_entry_no_data: "&e - &f%faction_member_id%"
-    relation: "&bRelation: &f%relation%"
-    balance: "&bBalance: &a$%balance%"
-    kills: "&bKills: &c%kills%"
-    power: "&bPower: &b%power%"
+    format: |-
+      &7&m-------------------------
+      &c %faction_name%&7 [%online_count%/%member_count%]&e HQ: &f%hq_coords%&8 [%invite_status%]
+      %members%
+      %announcement%
+      %discord%
+      &e  Balance:&a $%balance%&e Kills:&c %kills%&e Power:&b %power%
+      &e  Founded At:&f %founded_date%
+      &7&m-------------------------
+    leader: "&e  Leaders:&7 %members%"
+    coleader: "&e  Co-Leaders:&7 %members%"
+    moderator: "&e  Moderators:&7 %members%"
+    recruit: "&e  Recruits:&7 %members%"
+    announcement: "&7  %announcement%"
+    discord: "&e  Discord:&7 %link%"
     invalid_faction: "&cThe faction is not valid."
     not_in_faction: "&cYou are not in a faction."
   uninvite:
