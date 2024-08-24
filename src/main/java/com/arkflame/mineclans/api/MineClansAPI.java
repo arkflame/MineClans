@@ -1,6 +1,7 @@
 package com.arkflame.mineclans.api;
 
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -30,11 +31,13 @@ import com.arkflame.mineclans.api.results.TransferResult;
 import com.arkflame.mineclans.api.results.UninviteResult;
 import com.arkflame.mineclans.api.results.WithdrawResult;
 import com.arkflame.mineclans.api.results.AddKillResult.AddKillResultType;
+import com.arkflame.mineclans.api.results.AnnouncementResult;
 import com.arkflame.mineclans.api.results.WithdrawResult.WithdrawResultType;
 import com.arkflame.mineclans.api.results.CreateResult.CreateResultState;
 import com.arkflame.mineclans.api.results.DepositResult;
 import com.arkflame.mineclans.api.results.DepositResult.DepositResultType;
 import com.arkflame.mineclans.api.results.DisbandResult.DisbandResultState;
+import com.arkflame.mineclans.api.results.DiscordResult;
 import com.arkflame.mineclans.api.results.HomeResult.HomeResultState;
 import com.arkflame.mineclans.api.results.JoinResult.JoinResultState;
 import com.arkflame.mineclans.api.results.KickResult;
@@ -135,7 +138,7 @@ public class MineClansAPI {
             if (faction.getInvited().contains(player.getUniqueId())) {
                 factionPlayerManager.updateFaction(player.getUniqueId(), faction);
                 factionManager.addPlayerToFaction(factionName, player.getUniqueId());
-                factionPlayerManager.updateRank(player.getUniqueId(), Rank.MEMBER);
+                factionPlayerManager.updateRank(player.getUniqueId(), Rank.RECRUIT);
                 factionManager.uninvitePlayerFromFaction(factionName, player.getUniqueId());
                 return new JoinResult(JoinResultState.SUCCESS, faction, factionPlayer);
             } else {
@@ -253,7 +256,7 @@ public class MineClansAPI {
         factionPlayerManager.updateFaction(factionPlayer.getPlayerId(), null);
         for (UUID uuid : faction.getMembers()) {
             factionPlayerManager.updateFaction(uuid, null);
-            factionPlayerManager.updateRank(uuid, Rank.MEMBER);
+            factionPlayerManager.updateRank(uuid, Rank.RECRUIT);
         }
         factionManager.disbandFaction(faction.getName());
         return new DisbandResult(DisbandResultState.SUCCESS, faction);
@@ -287,7 +290,7 @@ public class MineClansAPI {
 
         factionManager.updateFactionOwner(faction.getName(), newOwnerId);
         factionPlayerManager.updateRank(newOwnerId, Rank.LEADER);
-        factionPlayerManager.updateRank(oldOwnerId, Rank.MEMBER);
+        factionPlayerManager.updateRank(oldOwnerId, Rank.RECRUIT);
 
         return new TransferResult(TransferResult.TransferResultState.SUCCESS, faction);
     }
@@ -314,8 +317,13 @@ public class MineClansAPI {
             return new RenameResult(playerFaction, RenameResultState.NO_PERMISSION);
         }
 
+        if (playerFaction.isRenameCooldown()) {
+            return new RenameResult(playerFaction, RenameResultState.COOLDOWN);
+        }
+
         try {
             factionManager.updateFactionName(playerFaction.getName(), newName);
+            playerFaction.setRenameCooldown();
         } catch (IllegalArgumentException ex) {
             return new RenameResult(playerFaction, RenameResultState.ERROR);
         }
@@ -482,7 +490,7 @@ public class MineClansAPI {
             return new RankChangeResult(RankChangeResultType.PLAYER_NOT_FOUND, null);
         }
 
-        if (!target.getFaction().equals(sender.getFaction())) {
+        if (!sender.getFaction().equals(target.getFaction())) {
             return new RankChangeResult(RankChangeResultType.NOT_IN_FACTION, null);
         }
 
@@ -511,15 +519,15 @@ public class MineClansAPI {
         return new RankChangeResult(RankChangeResultType.CANNOT_PROMOTE, null);
     }
 
-    public RankChangeResult demote(Player player, String playerName) {
-        FactionPlayer target = getFactionPlayer(playerName);
-        FactionPlayer sender = getFactionPlayer(player.getUniqueId());
+    public RankChangeResult demote(Player senderPlayer, String targetName) {
+        FactionPlayer target = getFactionPlayer(targetName);
+        FactionPlayer sender = getFactionPlayer(senderPlayer.getUniqueId());
 
         if (target == null || sender == null) {
             return new RankChangeResult(RankChangeResultType.PLAYER_NOT_FOUND, null);
         }
 
-        if (!target.getFaction().equals(sender.getFaction())) {
+        if (!sender.getFaction().equals(target.getFaction())) {
             return new RankChangeResult(RankChangeResultType.NOT_IN_FACTION, null);
         }
 
@@ -782,5 +790,69 @@ public class MineClansAPI {
 
     public ClanEvent getCurrentEvent() {
         return MineClans.getInstance().getClanEventScheduler().getEvent();
+    }
+
+    public DiscordResult setDiscord(Player player, String discordLink) {
+        FactionPlayer factionPlayer = factionPlayerManager.getOrLoad(player.getUniqueId());
+        Faction playerFaction = factionPlayer.getFaction();
+
+        if (playerFaction == null) {
+            return new DiscordResult(DiscordResult.DiscordResultState.NO_FACTION);
+        }
+
+        if (factionPlayer.getRank().isLowerThan(Rank.LEADER)) {
+            return new DiscordResult(DiscordResult.DiscordResultState.NO_PERMISSION);
+        }
+
+        // Updated Regex for a valid Discord invite link
+        String discordLinkPattern = "^(https?://)?(www\\.)?(discord\\.gg|discord\\.com/invite)/[a-zA-Z0-9]{1,16}$";
+        Pattern pattern = Pattern.compile(discordLinkPattern);
+
+        // Check if the discordLink is null, empty, or doesn't match the pattern
+        if (discordLink == null || discordLink.isEmpty() || !pattern.matcher(discordLink).matches()) {
+            if (playerFaction.setDiscord(null)) {
+                factionManager.saveFactionToDatabase(playerFaction);
+            }
+            return new DiscordResult(DiscordResult.DiscordResultState.INVALID_DISCORD_LINK);
+        }
+
+        try {
+            if (playerFaction.setDiscord(discordLink)) {
+                factionManager.saveFactionToDatabase(playerFaction);
+            }
+            return new DiscordResult(DiscordResult.DiscordResultState.SUCCESS, playerFaction);
+        } catch (IllegalArgumentException ex) {
+            return new DiscordResult(DiscordResult.DiscordResultState.ERROR, playerFaction);
+        }
+    }
+
+    public AnnouncementResult setAnnouncement(Player player, String announcement) {
+        FactionPlayer factionPlayer = factionPlayerManager.getOrLoad(player.getUniqueId());
+        Faction playerFaction = factionPlayer.getFaction();
+
+        if (playerFaction == null) {
+            return new AnnouncementResult(AnnouncementResult.AnnouncementResultState.NO_FACTION);
+        }
+
+        if (factionPlayer.getRank().isLowerThan(Rank.LEADER)) {
+            return new AnnouncementResult(AnnouncementResult.AnnouncementResultState.NO_PERMISSION);
+        }
+
+        // Check if the discordLink is null, empty, or doesn't match the pattern
+        if (announcement == null || announcement.isEmpty()) {
+            if (playerFaction.setAnnouncement(null)) {
+                factionManager.saveFactionToDatabase(playerFaction);
+            }
+            return new AnnouncementResult(AnnouncementResult.AnnouncementResultState.NO_ANNOUNCEMENT);
+        }
+
+        try {
+            if (playerFaction.setAnnouncement(announcement)) {
+                factionManager.saveFactionToDatabase(playerFaction);
+            }
+            return new AnnouncementResult(AnnouncementResult.AnnouncementResultState.SUCCESS, playerFaction);
+        } catch (IllegalArgumentException ex) {
+            return new AnnouncementResult(AnnouncementResult.AnnouncementResultState.ERROR, playerFaction);
+        }
     }
 }

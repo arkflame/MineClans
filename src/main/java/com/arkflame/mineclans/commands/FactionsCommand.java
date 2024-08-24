@@ -54,13 +54,14 @@ public class FactionsCommand extends ModernCommand {
                     FactionsTransferCommand.onCommand(player, args);
                     break;
                 case "rename":
+                case "tag":
                     FactionsRenameCommand.onCommand(player, args);
                     break;
                 case "displayname":
                     FactionsDisplaynameCommand.onCommand(player, args);
                     break;
                 case "list":
-                    FactionsListCommand.onCommand(player);
+                    FactionsListCommand.onCommand(player, args);
                     break;
                 case "chat":
                 case "c":
@@ -124,6 +125,18 @@ public class FactionsCommand extends ModernCommand {
                     break;
                 case "help":
                     FactionsHelpCommand.onCommand(sender, args.getNumber(1));
+                    break;
+                case "discord":
+                    FactionsDiscordCommand.onCommand(player, args);
+                    break;
+                case "announcement":
+                    FactionsAnnouncementCommand.onCommand(player, args);
+                    break;
+                case "invites":
+                    FactionsInvitesCommand.onCommand(player, args);
+                    break;
+                case "bank":
+                    FactionsBankCommand.onCommand(player, args);
                     break;
                 default:
                     FactionsHelpCommand.onCommand(sender, 1);

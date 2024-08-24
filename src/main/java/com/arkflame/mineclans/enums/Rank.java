@@ -1,11 +1,21 @@
 package com.arkflame.mineclans.enums;
 
 public enum Rank {
-    RECRUIT,
-    MEMBER,
-    MODERATOR,
-    COLEADER,
-    LEADER;
+    LEADER(5),
+    COLEADER(4),
+    MODERATOR(3),
+    MEMBER(2),
+    RECRUIT(1);
+
+    private final int power;
+
+    Rank(int power) {
+        this.power = power;
+    }
+
+    public int getPower() {
+        return power;
+    }
 
     public Rank getNext() {
         switch (this) {
@@ -38,10 +48,10 @@ public enum Rank {
     }
 
     public boolean isEqualOrHigherThan(Rank rank) {
-        return this.ordinal() >= rank.ordinal();
+        return this.power >= rank.power;
     }
 
     public boolean isLowerThan(Rank rank) {
-        return this.ordinal() < rank.ordinal();
+        return this.power < rank.power;
     }
 }

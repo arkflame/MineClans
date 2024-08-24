@@ -2,15 +2,16 @@ package com.arkflame.mineclans.commands.subcommands;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.Map.Entry;
-
+import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-
 import com.arkflame.mineclans.MineClans;
+import com.arkflame.mineclans.api.MineClansAPI;
+import com.arkflame.mineclans.enums.Rank;
 import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.models.FactionPlayer;
 import com.arkflame.mineclans.modernlib.commands.ModernArguments;
@@ -18,98 +19,109 @@ import com.arkflame.mineclans.modernlib.config.ConfigWrapper;
 import com.arkflame.mineclans.modernlib.utils.ChatColors;
 import com.arkflame.mineclans.utils.NumberUtil;
 
-import com.arkflame.mineclans.api.MineClansAPI;
-import com.arkflame.mineclans.enums.Rank;
-
 public class FactionsWhoCommand {
+
+    private static final String BASE_PATH = "factions.who.";
+
     public static void onCommand(Player player, ModernArguments args) {
         MineClans mineClansInstance = MineClans.getInstance();
         MineClansAPI api = mineClansInstance.getAPI();
         ConfigWrapper messages = mineClansInstance.getMessages();
 
-        String basePath = "factions.who.";
-        Faction faction = null;
-        String text = args.getText(1);
+        Faction faction = getFaction(api, player, args.getText(1));
+        if (faction == null) {
+            player.sendMessage(messages.getText(BASE_PATH + (args.getText(1) != null ? "invalid_faction" : "not_in_faction")));
+            return;
+        }
 
+        String formattedMessage = buildFactionInfoMessage(messages, faction, api);
+        player.sendMessage(formattedMessage.trim());
+    }
+
+    private static Faction getFaction(MineClansAPI api, Player player, String text) {
         if (text != null) {
-            faction = api.getFaction(text);
-
-            if (faction == null) {
-                FactionPlayer factionPlayer = api.getFactionPlayer(text);
-
-                if (factionPlayer != null) {
-                    faction = factionPlayer.getFaction();
-                }
-            }
-
-            if (faction == null) {
-                player.sendMessage(messages.getText(basePath + "invalid_faction"));
-                return;
-            }
-        } else {
-            faction = api.getFaction(player);
-            if (faction == null) {
-                player.sendMessage(messages.getText(basePath + "not_in_faction"));
-                return;
-            }
+            return Optional.ofNullable(api.getFaction(text))
+                    .orElseGet(() -> Optional.ofNullable(api.getFactionPlayer(text))
+                    .map(FactionPlayer::getFaction)
+                    .orElse(null));
         }
+        return api.getFaction(player);
+    }
 
-        // Faction name, online counts, hq
+    private static String buildFactionInfoMessage(ConfigWrapper messages, Faction faction, MineClansAPI api) {
         String factionName = faction.getName();
-        int onlineCount = (int) faction.getMembers().stream().filter(uuid -> api.getFactionPlayer(uuid).isOnline()).count();
+        int onlineCount = (int) faction.getMembers().stream()
+                .map(api::getFactionPlayer)
+                .filter(FactionPlayer::isOnline)
+                .count();
         int memberCount = faction.getMembers().size();
-        Location hqLocation = faction.getHome();
-        String hqCoords = hqLocation != null ? hqLocation.getBlockX() + ", " + hqLocation.getBlockY() + ", " + hqLocation.getBlockZ() : "N/A";
+        String hqCoords = Optional.ofNullable(faction.getHome())
+                .map(loc -> loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ())
+                .orElse("N/A");
         String inviteStatus = faction.isOpen() ? "Open" : "Closed";
+        String memberList = buildMemberList(messages, faction, api);
 
-        // Member List
-        Map<Rank, String> memberLists = new HashMap<>();
-        
-        for (UUID member : faction.getMembers()) {
-            Rank rank = faction.getRank(member);
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(member);
-            String memberList = memberLists.getOrDefault(rank, "");
-            FactionPlayer factionPlayer = mineClansInstance.getAPI().getFactionPlayer(member);
-            int kills = factionPlayer.getKills();
-            memberLists.put(rank, memberList + offlinePlayer.getName() + "[&f" + kills + "&7]"  + (memberList.isEmpty() ? "" : ", "));
-        }
-        
-        String memberList = "";
-        
-        for (Entry<Rank, String> entry : memberLists.entrySet()) {
-            String format = messages.getText(basePath + entry.getKey().name().toLowerCase());
-            if (format != null && !format.isEmpty()) {
-                format = format.replace("%members%", entry.getValue());
-                memberList = memberList + format + "\n";
-            }
-        }
-
-        // Balance and Stats
         String formattedBalance = NumberUtil.formatBalance(faction.getBalance());
         String kills = String.valueOf(faction.getKills());
         String power = String.valueOf(faction.getPower());
         String foundedDate = faction.getCreationDate();
+        String announcement = Optional.ofNullable(faction.getAnnouncement()).orElse("No announcements.");
+        String discordLink = Optional.ofNullable(faction.getDiscord()).orElse("No Discord link.");
 
-        // Custom Texts
-        String announcement = faction.getAnnouncement() != null ? faction.getAnnouncement() : "No announcements.";
-        String discordLink = faction.getDiscord() != null ? faction.getDiscord() : "No Discord link.";
-
-        // Format the message
-        String formattedMessage = messages.getText(basePath + "format")
+        return messages.getText(BASE_PATH + "format")
                 .replace("%faction_name%", factionName)
                 .replace("%online_count%", String.valueOf(onlineCount))
                 .replace("%member_count%", String.valueOf(memberCount))
                 .replace("%hq_coords%", hqCoords)
                 .replace("%invite_status%", inviteStatus)
                 .replace("%members%", ChatColors.color(memberList))
-                .replace("%announcement%", messages.getText(basePath + "announcement").replace("%announcement%", announcement))
-                .replace("%discord%", messages.getText(basePath + "discord").replace("%link%", discordLink))
+                .replace("%announcement%", messages.getText(BASE_PATH + "announcement").replace("%announcement%", announcement))
+                .replace("%discord%", messages.getText(BASE_PATH + "discord").replace("%link%", discordLink))
                 .replace("%balance%", formattedBalance)
                 .replace("%kills%", kills)
                 .replace("%power%", power)
                 .replace("%founded_date%", foundedDate);
-
-        // Send the message to the player
-        player.sendMessage(formattedMessage.trim());
     }
+    
+    private static String buildMemberList(ConfigWrapper messages, Faction faction, MineClansAPI api) {
+        Map<Rank, StringBuilder> memberLists = new HashMap<>();
+    
+        // Iterate through faction members and organize by rank
+        for (UUID memberUUID : faction.getMembers()) {
+            Rank rank = faction.getRank(memberUUID);
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(memberUUID);
+            FactionPlayer factionPlayer = api.getFactionPlayer(memberUUID);
+    
+            String playerInfo = offlinePlayer.getName() + "[&f" + factionPlayer.getKills() + "&7]";
+            memberLists.computeIfAbsent(rank, k -> new StringBuilder()).append(playerInfo).append(", ");
+        }
+    
+        // Order the ranks manually: Leaders first, Officers, then Members last (you can add more if needed)
+        StringBuilder orderedMemberList = new StringBuilder();
+        for (Rank rank : Rank.values()) {
+            if (memberLists.containsKey(rank)) {
+                String formattedList = memberLists.get(rank).toString();
+    
+                // Remove trailing comma and space, if present
+                if (formattedList.endsWith(", ")) {
+                    formattedList = formattedList.substring(0, formattedList.length() - 2);
+                }
+    
+                // Add the formatted member list by rank to the output
+                String formattedRankList = formatMemberList(messages, rank, new StringBuilder(formattedList));
+                if (formattedRankList != null) {
+                    orderedMemberList.append(formattedRankList).append("\n");
+                }
+            }
+        }
+    
+        return orderedMemberList.toString().trim();  // Trim any trailing newlines
+    }
+    
+    private static String formatMemberList(ConfigWrapper messages, Rank rank, StringBuilder members) {
+        String format = messages.getText(BASE_PATH + rank.name().toLowerCase());
+    
+        return format != null && !format.isEmpty() ? format.replace("%members%", members.toString()) : null;
+    }
+      
 }

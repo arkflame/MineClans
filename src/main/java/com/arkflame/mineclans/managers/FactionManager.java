@@ -201,6 +201,7 @@ public class FactionManager {
             if (existingFaction == null) {
                 faction.setName(newName);
                 faction.setDisplayName(newName);
+                faction.setRenameCooldown();
                 factionCacheByName.remove(factionName);
                 factionCacheByName.put(newName, faction);
                 saveFactionToDatabase(faction);

@@ -25,6 +25,7 @@ public class RenameResult {
         ALREADY_EXISTS, 
         NULL_NAME, 
         ERROR, 
-        NO_PERMISSION
+        NO_PERMISSION,
+        COOLDOWN
     }
 }

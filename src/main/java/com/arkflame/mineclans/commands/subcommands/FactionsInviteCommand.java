@@ -6,6 +6,7 @@ import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.api.results.InviteResult;
 import com.arkflame.mineclans.api.results.InviteResult.InviteResultState;
 import com.arkflame.mineclans.models.Faction;
+import com.arkflame.mineclans.models.FactionPlayer;
 import com.arkflame.mineclans.modernlib.commands.ModernArguments;
 import com.arkflame.mineclans.modernlib.config.ConfigWrapper;
 import com.arkflame.mineclans.modernlib.utils.Titles;
@@ -44,7 +45,11 @@ public class FactionsInviteCommand {
                                 targetPlayerName),
                         10, 20, 10);
                 player.sendMessage(messages.getText(basePath + "success"));
-                inviteResult.getPlayer().getPlayer().sendMessage(messages.getText(basePath + "invite_message").replace("%faction%", faction.getName()));
+                FactionPlayer factionPlayer = inviteResult.getPlayer();
+                if (factionPlayer != null) {
+                    factionPlayer.sendMessage(
+                            messages.getText(basePath + "invite_message").replace("%faction%", faction.getName()));
+                }
                 break;
             case PLAYER_NOT_FOUND:
                 player.sendMessage(messages.getText(basePath + "player_not_found"));

@@ -8,6 +8,33 @@ event:
     default_winner: "No Winner"
 
 factions:
+  invites:
+    # Message shown when there are no invites received by the player
+    received:
+      none: "&cNo factions have invited you."
+      # Message for listing received invites with placeholders for the invites list
+      list: "&6Invites (%inviteCount%): &e%invites%"
+
+    # Message shown when the player's faction hasn't sent any invites
+    sent:
+      none: "&cYour faction has not sent any invites."
+      # Message for listing sent invites with placeholders for faction name and invite list
+      list: "&6Sent by &e%faction% &7(%inviteCount%): &e%invites%"
+  announcement:
+    join: "&7Faction Announcement: %announcement%"
+    title: "&aAnnouncement Updated"
+    subtitle: "&7New: %announcement%"
+    success: "&aThe announcement for your faction has been updated successfully!"
+    no_permission: "&cYou do not have permission to update the announcement."
+    no_faction: "&cYou are not part of any faction."
+    invalid_announcement: "&cThe announcement provided is invalid or empty. The announcement was now cleared."
+  discord:
+    invalid_discord: "&cThe Discord link you provided is invalid. Please try again with a valid link. Discord link was just resetted to be empty."
+    no_permission: "&cYou do not have permission to set the Discord link for your faction."
+    no_faction: "&cYou are not part of a faction."
+    title: "&aFaction Discord Set"
+    subtitle: "&7The Discord link has been updated."
+    success: "&aSuccessfully updated the Discord link for your faction."
   help:
     header: "&7&m-------------------------\n&c&lFaction Help &7(Page {page}/{maxPages})\n "
     line: "&f{command} &7> {description}"
@@ -36,6 +63,19 @@ factions:
       rename: "Rename your faction"
       setdiscord: "Change your faction discord"
       disband: "Disband your faction"
+      displayname: "Set a custom display name for your faction"
+      chat: "Toggle faction chat mode"
+      tl: "Share your current location with your faction"
+      friendlyfire: "Toggle friendly fire in your faction"
+      chest: "Access your faction’s chest"
+      enemy: "Declare another faction as enemy"
+      neutral: "Set relation to another faction as neutral"
+      ally: "Form an alliance with another faction"
+      melody: "Play a melody within the faction"
+      buff: "Activate faction buffs"
+      events: "View or participate in faction events"
+      list: "List all factions on the server"
+      transfer: "Transfer leadership of the faction to another player"
   buffs:
     no_money: "&cYou do not have %price% to purchase %buff%&c."
     activated: "&aYou activated&e %buff%&a%activated_price%&a."
@@ -82,6 +122,7 @@ factions:
     coleader: "&e  Co-Leaders:&7 %members%"
     moderator: "&e  Moderators:&7 %members%"
     recruit: "&e  Recruits:&7 %members%"
+    member: "&e  Members:&7 %members%"
     announcement: "&7  %announcement%"
     discord: "&e  Discord:&7 %link%"
     invalid_faction: "&cThe faction is not valid."
@@ -115,14 +156,17 @@ factions:
     not_in_faction: "&cYou are not in any faction."
   rename:
     already_exists: "&cThe faction name already exists."
+    cooldown: "&cWait 60 seconds before changing the name again."
     not_in_faction: "&cYou are not in a faction."
     no_permission: "&cYou are not LEADER of this faction."
     success: "&aFaction name successfully changed."
     null_name: "&cYou have to enter a name."
     error: "&cThe name is not valid."
   list:
-    header: "&6Factions Online:\n"
-    entry: "&e%faction% &f- &a%members% members\n"
+    header: "&6Faction List:"
+    entry: "&e%faction% &7(%members%/%max_members%) [Level %faction_level%]"
+    footer: "&6You are currently on Page &e%current_page%&6/&e%total_pages%&6."
+    invalid_page: "&cInvalid page number. Please try again."
   melody:
     usage: "&cUsage: /f melody <melody>"
     available: "&cAvailable melodies: %melodies%"

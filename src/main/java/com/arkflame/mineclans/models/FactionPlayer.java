@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.enums.Rank;
+import com.arkflame.mineclans.menus.EnteringType;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -22,6 +23,8 @@ public class FactionPlayer {
     private int deaths;
     private boolean chat;
     private Collection<UUID> killedPlayers = new HashSet<>();
+    private EnteringType enteringType = EnteringType.DEPOSIT;
+    private long enteringTime = 0;
 
     public FactionPlayer(UUID playerId) {
         this.playerId = playerId;
@@ -71,7 +74,7 @@ public class FactionPlayer {
     public Rank getRank() {
         Faction faction = getFaction();
         if (faction == null) {
-            return Rank.MEMBER;
+            return Rank.RECRUIT;
         }
         return faction.getRank(playerId);
     }
@@ -151,4 +154,27 @@ public class FactionPlayer {
         }
         return player.isOnline();
     }
+
+    public void sendMessage(String msg) {
+        Player player = getPlayer();
+        if (player != null) {
+            player.sendMessage(msg);
+        }
+    }
+
+    public void setEnteringAmount(EnteringType type) {
+        this.enteringType = type;
+        this.enteringTime = System.currentTimeMillis();
+    }
+
+    public EnteringType getEnteringTypeIfValid() {
+        long currentTime = System.currentTimeMillis();
+        
+        // Check if less than 30 seconds (30,000 milliseconds) have passed
+        if (currentTime - enteringTime <= 30_000) {
+            return enteringType;
+        } else {
+            return null; // Timeout, returning null
+        }
+    }    
 }

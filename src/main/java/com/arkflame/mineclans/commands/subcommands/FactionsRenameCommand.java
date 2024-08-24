@@ -13,6 +13,9 @@ public class FactionsRenameCommand {
         String basePath = "factions.rename.";
 
         switch (result.getState()) {
+            case COOLDOWN:
+                player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "cooldown"));
+                break;
             case ALREADY_EXISTS:
                 player.sendMessage(MineClans.getInstance().getMessages().getText(basePath + "already_exists"));
                 break;

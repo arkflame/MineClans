@@ -37,6 +37,20 @@ public class FactionsHelpCommand {
         helpCommands.add(new HelpCommand("rename", "/f rename <newName>"));
         helpCommands.add(new HelpCommand("setdiscord", "/f setdiscord <discord>"));
         helpCommands.add(new HelpCommand("disband", "/f disband"));
+        helpCommands.add(new HelpCommand("displayname", "/f displayname <name>"));
+
+        helpCommands.add(new HelpCommand("chat", "/f chat"));
+        helpCommands.add(new HelpCommand("tl", "/f tl"));
+        helpCommands.add(new HelpCommand("friendlyfire", "/f friendlyfire"));
+        helpCommands.add(new HelpCommand("chest", "/f chest"));
+        helpCommands.add(new HelpCommand("enemy", "/f enemy <faction>"));
+        helpCommands.add(new HelpCommand("neutral", "/f neutral <faction>"));
+        helpCommands.add(new HelpCommand("ally", "/f ally <faction>"));
+        helpCommands.add(new HelpCommand("melody", "/f melody <arguments>"));
+        helpCommands.add(new HelpCommand("buff", "/f buff"));
+        helpCommands.add(new HelpCommand("events", "/f events"));
+        helpCommands.add(new HelpCommand("list", "/f list"));
+        helpCommands.add(new HelpCommand("transfer", "/f transfer <player>"));
     }
 
     public static void onCommand(CommandSender sender, int page) {

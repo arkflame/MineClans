@@ -1,5 +1,6 @@
 package com.arkflame.mineclans.models;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -90,6 +91,9 @@ public class Faction implements InventoryHolder {
     private String announcement = null;
 
     private String discord = null;
+
+    private long lastRename = 0; // Time of the last rename in milliseconds
+    private static final long RENAME_COOLDOWN = 60 * 1000; // Cooldown duration in milliseconds (e.g., 1 minute)
 
     // Constructor
     public Faction(UUID id, UUID owner, String name, String displayName) {
@@ -206,7 +210,7 @@ public class Faction implements InventoryHolder {
     }
 
     public Rank getRank(UUID playerId) {
-        return ranks.getOrDefault(playerId, Rank.MEMBER);
+        return ranks.getOrDefault(playerId, Rank.RECRUIT);
     }
 
     public void setRank(UUID member, Rank rank) {
@@ -399,7 +403,8 @@ public class Faction implements InventoryHolder {
     }
 
     public String getCreationDate() {
-        return creationDate.toString();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sdf.format(creationDate);
     }
 
     public String getAnnouncement() {
@@ -414,12 +419,22 @@ public class Faction implements InventoryHolder {
         this.creationDate = creationDate;
     }
 
-    public void setAnnouncement(String announcement) {
-        this.announcement = announcement;
+    public boolean setAnnouncement(String announcement) {
+    // Check if the new discord link is different from the current one
+    if (this.announcement == null ? announcement != null : !this.announcement.equals(announcement)) {
+        this.announcement = announcement; // Update
+        return true; // Indicate that the value has changed
     }
+    return false; // Indicate that the value has not changed
+}
 
-    public void setDiscord(String discord) {
-        this.discord = discord;
+    public boolean setDiscord(String discord) {
+        // Check if the new discord link is different from the current one
+        if (this.discord == null ? discord != null : !this.discord.equals(discord)) {
+            this.discord = discord; // Update
+            return true; // Indicate that the value has changed
+        }
+        return false; // Indicate that the value has not changed
     }
 
     public String getOwnerName() {
@@ -432,5 +447,16 @@ public class Faction implements InventoryHolder {
 
     public String getDiscord() {
         return discord;
+    }
+    
+    public boolean isRenameCooldown() {
+        // Check if enough time has passed since the last rename
+        long currentTime = System.currentTimeMillis();
+        return (currentTime - lastRename) < RENAME_COOLDOWN;
+    }
+    
+    public void setRenameCooldown() {
+        // Set the time for the last rename to the current time
+        lastRename = System.currentTimeMillis();
     }
 }

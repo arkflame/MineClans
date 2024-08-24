@@ -66,4 +66,22 @@ public class InvitedDAO {
         String query = "DELETE FROM mineclans_invited WHERE faction_id = ?";
         mySQLProvider.executeUpdateQuery(query, factionId.toString());
     }
+
+    public Collection<UUID> getInvitingFactions(UUID memberId) {
+        Collection<UUID> invitingFactions = ConcurrentHashMap.newKeySet();
+        String query = "SELECT faction_id FROM mineclans_invited WHERE member_id = ?";
+        
+        mySQLProvider.executeSelectQuery(query, new ResultSetProcessor() {
+            @Override
+            public void run(ResultSet resultSet) throws SQLException {
+                if (resultSet != null) {
+                    while (resultSet.next()) {
+                        invitingFactions.add(UUID.fromString(resultSet.getString("faction_id")));
+                    }
+                }
+            }
+        }, memberId);
+        
+        return invitingFactions;
+    }    
 }

@@ -11,6 +11,7 @@ import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.buff.ActiveBuff;
 import com.arkflame.mineclans.managers.FactionPlayerManager;
 import com.arkflame.mineclans.models.Faction;
+import com.arkflame.mineclans.modernlib.config.ConfigWrapper;
 
 public class PlayerJoinListener implements Listener {
     private FactionPlayerManager factionPlayerManager;
@@ -29,12 +30,16 @@ public class PlayerJoinListener implements Listener {
             factionPlayerManager.updateLastActive(id);
             factionPlayerManager.updateName(id, player.getName());
 
-            Faction faction = MineClans.getInstance().getAPI().getFaction(player);
+            MineClans mineClans = MineClans.getInstance();
+            Faction faction = mineClans.getAPI().getFaction(player);
             if (faction != null) {
                 MineClans.runSync(() -> {
                     for (ActiveBuff activeBuff : faction.getBuffs()) {
                         activeBuff.giveEffectToPlayer(player);
                     }
+                    ConfigWrapper messages = mineClans.getMessages();
+                    player.sendMessage(messages.getText("factions.announcement.join").replace("%announcement%",
+                            faction.getAnnouncement()));
                 });
             }
         });
