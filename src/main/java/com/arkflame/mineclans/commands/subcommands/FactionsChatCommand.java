@@ -15,8 +15,11 @@ public class FactionsChatCommand {
         ToggleChatState state = result.getState();
 
         switch (state) {
-            case ENABLED:
-                player.sendMessage(mineClans.getMessages().getText(basePath + "enabled"));
+            case FACTION:
+                player.sendMessage(mineClans.getMessages().getText(basePath + "faction"));
+                break;
+            case ALLIANCE:
+                player.sendMessage(mineClans.getMessages().getText(basePath + "alliance"));
                 break;
             case DISABLED:
                 player.sendMessage(mineClans.getMessages().getText(basePath + "disabled"));

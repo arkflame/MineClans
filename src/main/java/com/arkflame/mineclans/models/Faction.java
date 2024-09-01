@@ -459,4 +459,8 @@ public class Faction implements InventoryHolder {
         // Set the time for the last rename to the current time
         lastRename = System.currentTimeMillis();
     }
+
+    public boolean hasOnlineMembers() {
+        return getOnlineMembers().size() > 0;
+    }
 }

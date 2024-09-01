@@ -7,6 +7,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.MineClans;
+import com.arkflame.mineclans.api.results.ToggleChatResult;
+import com.arkflame.mineclans.api.results.ToggleChatResult.ToggleChatState;
 import com.arkflame.mineclans.enums.Rank;
 import com.arkflame.mineclans.menus.EnteringType;
 
@@ -21,7 +23,7 @@ public class FactionPlayer {
     private Date lastActive;
     private int kills;
     private int deaths;
-    private boolean chat;
+    private ToggleChatResult.ToggleChatState chat = ToggleChatState.DISABLED;
     private Collection<UUID> killedPlayers = new HashSet<>();
     private EnteringType enteringType = EnteringType.DEPOSIT;
     private long enteringTime = 0;
@@ -140,11 +142,11 @@ public class FactionPlayer {
     }
 
     public void toggleChat() {
-        this.chat = !chat;
+        this.chat = getChatMode().getNext();
     }
 
-    public boolean isChatEnabled() {
-        return chat;
+    public ToggleChatResult.ToggleChatState getChatMode() {
+        return getFactionId() != null ? (chat == ToggleChatResult.ToggleChatState.NOT_IN_FACTION ? ToggleChatResult.ToggleChatState.DISABLED : chat) : ToggleChatResult.ToggleChatState.NOT_IN_FACTION;
     }
 
     public boolean isOnline() {

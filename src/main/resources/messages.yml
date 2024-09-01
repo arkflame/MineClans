@@ -140,9 +140,11 @@ factions:
     no_reward_subtitle: "&cNo rewards for kill."
   chat:
     prefix: "&e[Faction] %player%: "
-    enabled: "&aFaction chat enabled."
-    disabled: "&cFaction chat disabled."
-    not_in_faction: "&cYou are not in a faction."
+    prefix_alliance: "&d[Alliance] [%faction%] %player%: "
+    faction: "&aFaction chat is currently on &l&2ENABLED&a."
+    alliance: "&aFaction chat is currently on &l&dALLIANCE&a."
+    disabled: "&aFaction chat is currently on &l&cDISABLED&a."
+    not_in_faction: "&cYou’re not in a faction. Join one to enable chat features."
     unknown_error: "&cAn unknown error occurred."
   withdraw:
     success_menu: "&aYou have withdrawn %amount% (%percentage%%) from your faction's balance."

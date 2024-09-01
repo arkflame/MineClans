@@ -9,6 +9,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.api.results.DepositResult;
 import com.arkflame.mineclans.api.results.FactionChatResult.FactionChatState;
+import com.arkflame.mineclans.api.results.ToggleChatResult.ToggleChatState;
 import com.arkflame.mineclans.api.results.WithdrawResult;
 import com.arkflame.mineclans.menus.EnteringType;
 import com.arkflame.mineclans.models.FactionPlayer;
@@ -26,9 +27,14 @@ public class ChatListener implements Listener {
 
         if (factionPlayer != null) {
             // Check if the player has chat enabled for faction communication
-            if (factionPlayer.isChatEnabled()) {
+            if (factionPlayer.getChatMode() == ToggleChatState.FACTION) {
                 if (MineClans.getInstance().getAPI().sendFactionMessage(player, message)
                         .getState() == FactionChatState.SUCCESS) {
+                    event.setCancelled(true); // Cancel the default chat event
+                    return;
+                }
+            } else if (factionPlayer.getChatMode() == ToggleChatState.ALLIANCE) {
+                if (MineClans.getInstance().getAPI().sendAllianceMessage(player, message).getState() == FactionChatState.SUCCESS) {
                     event.setCancelled(true); // Cancel the default chat event
                     return;
                 }

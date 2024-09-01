@@ -1,5 +1,6 @@
 package com.arkflame.mineclans.api;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -56,6 +57,7 @@ import com.arkflame.mineclans.managers.FactionManager;
 import com.arkflame.mineclans.managers.FactionPlayerManager;
 import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.models.FactionPlayer;
+import com.arkflame.mineclans.models.Relation;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -358,11 +360,7 @@ public class MineClansAPI {
         }
 
         factionPlayer.toggleChat();
-        if (factionPlayer.isChatEnabled()) {
-            return new ToggleChatResult(ToggleChatResult.ToggleChatState.ENABLED);
-        } else {
-            return new ToggleChatResult(ToggleChatResult.ToggleChatState.DISABLED);
-        }
+        return new ToggleChatResult(factionPlayer.getChatMode());
     }
 
     public FactionChatResult sendFactionMessage(Player player, String message) {
@@ -385,6 +383,51 @@ public class MineClansAPI {
 
         return new FactionChatResult(FactionChatResult.FactionChatState.SUCCESS, message, faction, factionPlayer);
     }
+
+    public FactionChatResult sendAllianceMessage(Player player, String message) {
+        FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
+        if (factionPlayer == null || factionPlayer.getFaction() == null) {
+            return new FactionChatResult(FactionChatResult.FactionChatState.NOT_IN_FACTION, message, null, factionPlayer);
+        }
+    
+        Faction faction = factionPlayer.getFaction();
+        Map<UUID, Relation> relations = faction.getRelations();
+        
+        String chatPrefix = MineClans.getInstance().getMessages().getText("factions.chat.prefix_alliance");
+        String playerName = player.getName();
+        String formattedMessage = chatPrefix.replace("%player%", playerName).replace("%faction%", faction.getName()) + message;
+
+        // Faction
+        faction.getMembers().forEach(memberId -> {
+            Player member = MineClans.getInstance().getServer().getPlayer(memberId);
+            if (member != null && member.isOnline()) {
+                member.sendMessage(formattedMessage);
+            }
+        });
+    
+        // Iterate allies
+        for (Map.Entry<UUID, Relation> entry : relations.entrySet()) {
+            UUID relatedFactionId = entry.getKey();
+            Relation relation = entry.getValue();
+    
+            // Check if the relation is an alliance
+            if (relation.getRelationType() == RelationType.ALLY) {
+                Faction relatedFaction = MineClans.getInstance().getFactionManager().getFaction(relatedFactionId);
+                
+                // Only proceed if the faction exists and has online members
+                if (relatedFaction != null && relatedFaction.hasOnlineMembers()) {
+                    relatedFaction.getMembers().forEach(memberId -> {
+                        Player member = MineClans.getInstance().getServer().getPlayer(memberId);
+                        if (member != null && member.isOnline()) {
+                            member.sendMessage(formattedMessage);
+                        }
+                    });
+                }
+            }
+        }
+    
+        return new FactionChatResult(FactionChatResult.FactionChatState.SUCCESS, message, faction, factionPlayer);
+    }    
 
     public FriendlyFireResult toggleFriendlyFire(Player player) {
         FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
