@@ -10,6 +10,7 @@ import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.models.FactionPlayer;
 import com.arkflame.mineclans.modernlib.menus.Menu;
 import com.arkflame.mineclans.modernlib.menus.items.MenuItem;
+import com.arkflame.mineclans.modernlib.utils.Sounds;
 import com.arkflame.mineclans.utils.NumberUtil;
 
 import net.milkbowl.vault.economy.Economy;
@@ -24,6 +25,7 @@ public class PersonalBankMenu extends Menu {
             @Override
             public void onClick(Player player, int slot) {
                 new DepositWithdrawMenu(player, EnteringType.DEPOSIT, menu).openInventory(player);
+                Sounds.play(player, 1.0F, 1.0F, "CLICK", "UI_BUTTON_CLICK");
             }
         });
 
@@ -32,6 +34,7 @@ public class PersonalBankMenu extends Menu {
             @Override
             public void onClick(Player player, int slot) {
                 new DepositWithdrawMenu(player, EnteringType.WITHDRAWAL, menu).openInventory(player);
+                Sounds.play(player, 1.0F, 1.0F, "CLICK", "UI_BUTTON_CLICK");
             }
         });
 
@@ -41,6 +44,7 @@ public class PersonalBankMenu extends Menu {
             @Override
             public void onClick(Player player, int slot) {
                 player.closeInventory();
+                Sounds.play(player, 1.0F, 1.0F, "CLICK", "UI_BUTTON_CLICK");
             }
         });
 
@@ -78,6 +82,7 @@ class DepositWithdrawMenu extends Menu {
             @Override
             public void onClick(Player player, int slot) {
                 oldMenu.openInventory(player);
+                Sounds.play(player, 1.0F, 1.0F, "CLICK", "UI_BUTTON_CLICK");
             }
         });
 
@@ -98,6 +103,7 @@ class DepositWithdrawMenu extends Menu {
                     @Override
                     public void onClick(Player player, int slot) {
                         handleSpecificAmount();
+                        Sounds.play(player, 1.0F, 1.0F, "CLICK", "UI_BUTTON_CLICK");
                     }
                 });
     }
@@ -115,6 +121,7 @@ class DepositWithdrawMenu extends Menu {
                     @Override
                     public void onClick(Player player, int slot) {
                         handleSpecificAmount();
+                        Sounds.play(player, 1.0F, 1.0F, "CLICK", "UI_BUTTON_CLICK");
                     }
                 });
     }
@@ -170,6 +177,7 @@ class DepositWithdrawMenu extends Menu {
                         .replace("%amount%", NumberUtil.formatBalance(amount))
                         .replace("%percentage%", String.valueOf(percentage)));
             }
+            Sounds.play(player, 1.0F, 1.0F, "CLICK", "UI_BUTTON_CLICK");
         }
     }
 }
