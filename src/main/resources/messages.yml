@@ -7,6 +7,50 @@ event:
     subtitle: "&eWinner: %winnerName%"
     default_winner: "No Winner"
 
+menus:
+  personal_bank:
+    title: "&aPersonal Bank"
+    deposit:
+      name: "&aDeposit"
+      lore: "&7Click to deposit money"
+    withdraw:
+      name: "&cWithdraw"
+      lore: "&7Click to withdraw money"
+    close:
+      name: "&cClose"
+      lore: "&7Click to close the menu"
+  deposit_withdraw:
+    deposit:
+      title: "&aDeposit Money"
+      percentages:
+        25:
+          name: "&aDeposit 25%"
+          lore: "&7Click to deposit 25% of your balance"
+        50:
+          name: "&aDeposit 50%"
+          lore: "&7Click to deposit 50% of your balance"
+        100:
+          name: "&aDeposit 100%"
+          lore: "&7Click to deposit 100% of your balance"
+      specific:
+        name: "&eSpecific Amount"
+        lore: "&7Enter specific amount to deposit"
+    withdraw:
+      title: "&cWithdraw Money"
+      percentages:
+        25:
+          name: "&cWithdraw 25%"
+          lore: "&7Click to withdraw 25% of your balance"
+        50:
+          name: "&cWithdraw 50%"
+          lore: "&7Click to withdraw 50% of your balance"
+        100:
+          name: "&cWithdraw 100%"
+          lore: "&7Click to withdraw 100% of your balance"
+      specific:
+        name: "&eSpecific Amount"
+        lore: "&7Enter specific amount to withdraw"
+
 factions:
   invites:
     # Message shown when there are no invites received by the player
@@ -101,6 +145,7 @@ factions:
     not_in_faction: "&cYou are not in a faction."
     unknown_error: "&cAn unknown error occurred."
   withdraw:
+    success_menu: "&aYou have withdrawn %amount% (%percentage%%) from your faction's balance."
     success: "&aWithdrawal of $%amount% successful!"
     not_in_faction: "&cYou are not in a faction."
     no_permission: "&cYou have to be COLEADER to withdraw funds."
@@ -271,6 +316,7 @@ factions:
     cannot_demote: "&cCannot demote player."
     success: "&aPlayer demoted successfully."
   deposit:
+    success_menu: "&aYou have deposited %amount% (%percentage%%) to your faction's balance."
     success: "&aDeposit of $%amount% successful!"
     not_in_faction: "&cYou are not in a faction."
     no_permission: "&cYou do not have permission to deposit funds."
