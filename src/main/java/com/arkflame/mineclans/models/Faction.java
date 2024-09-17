@@ -463,4 +463,17 @@ public class Faction implements InventoryHolder {
     public boolean hasOnlineMembers() {
         return getOnlineMembers().size() > 0;
     }
+
+    public void sendMessage(String msg) {
+        for (UUID uuid : getOnlineMembers()) {
+            Player player1 = Bukkit.getPlayer(uuid);
+            if (player1 != null) {
+                player1.sendMessage(msg);
+            }
+        }
+    }
+
+    public boolean isInvited(Player player) {
+        return getInvited().contains(player.getUniqueId());
+    }
 }

@@ -52,6 +52,11 @@ menus:
         lore: "&7Enter specific amount to withdraw"
 
 factions:
+  open:
+    no_faction: "&cYou are not in a faction"
+    o_permission: "&cYou have no permission to open/close your faction"
+    faction_opened: "&b%player%&7 has set the faction status to &a&lOPEN"
+    faction_closed: "&b%player%&7 has set the faction status to &c&lCLOSED"
   invites:
     # Message shown when there are no invites received by the player
     received:

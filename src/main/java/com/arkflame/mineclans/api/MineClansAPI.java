@@ -46,6 +46,7 @@ import com.arkflame.mineclans.api.results.KickResult.KickResultType;
 import com.arkflame.mineclans.api.results.LeaveResult.LeaveResultState;
 import com.arkflame.mineclans.api.results.OpenChestResult;
 import com.arkflame.mineclans.api.results.OpenChestResult.OpenChestResultType;
+import com.arkflame.mineclans.api.results.OpenResult;
 import com.arkflame.mineclans.api.results.RankChangeResult.RankChangeResultType;
 import com.arkflame.mineclans.api.results.RenameDisplayResult.RenameDisplayResultState;
 import com.arkflame.mineclans.api.results.RenameResult.RenameResultState;
@@ -137,7 +138,7 @@ public class MineClansAPI {
         faction = factionManager.getFaction(factionName);
 
         if (faction != null) {
-            if (faction.getInvited().contains(player.getUniqueId())) {
+            if (faction.isOpen() || faction.isInvited(player)) {
                 factionPlayerManager.updateFaction(player.getUniqueId(), faction);
                 factionManager.addPlayerToFaction(factionName, player.getUniqueId());
                 factionPlayerManager.updateRank(player.getUniqueId(), Rank.RECRUIT);
@@ -898,4 +899,35 @@ public class MineClansAPI {
             return new AnnouncementResult(AnnouncementResult.AnnouncementResultState.ERROR, playerFaction);
         }
     }
+
+    public OpenResult toggleOpen(Player player) {
+        // Retrieve the FactionPlayer instance for the given player
+        FactionPlayer factionPlayer = factionPlayerManager.getOrLoad(player.getUniqueId());
+    
+        // Retrieve the Faction instance for the player's faction
+        Faction faction = factionPlayer.getFaction();
+    
+        // Check if the player is part of a faction
+        if (faction == null) {
+            return new OpenResult(OpenResult.OpenResultState.NO_FACTION);
+        }
+    
+        // Check if the player has sufficient rank to toggle the open state
+        if (factionPlayer.getRank().isLowerThan(Rank.MODERATOR)) {
+            return new OpenResult(OpenResult.OpenResultState.NO_PERMISSION);
+        }
+    
+        // Retrieve the current open state of the faction
+        boolean currentlyOpen = faction.isOpen();
+    
+        // Toggle the open state
+        boolean newOpenState = !currentlyOpen;
+        faction.setOpen(newOpenState);
+    
+        // Save changes to the faction
+        factionManager.saveFactionToDatabase(faction);
+    
+        // Return the result indicating the new state of the faction
+        return new OpenResult(OpenResult.OpenResultState.SUCCESS, faction, newOpenState);
+    }    
 }

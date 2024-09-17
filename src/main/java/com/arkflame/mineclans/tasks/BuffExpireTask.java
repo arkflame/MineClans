@@ -28,18 +28,23 @@ public class BuffExpireTask extends ModernTask {
                 Faction faction = activeBuff.getFaction();
                 if (faction != null) {
                     faction.removeBuff(activeBuff);
-                    String title = MineClans.getInstance().getMessages().getString("factions.buffs.expired.title").replace("%buff%", activeBuff.getDisplayName());
+                    String title = MineClans.getInstance().getMessages().getString("factions.buffs.expired.title")
+                            .replace("%buff%", activeBuff.getDisplayName());
                     String subtitle = MineClans.getInstance().getMessages()
-                            .getString("factions.buffs.expired.subtitle").replace("%buff%", activeBuff.getDisplayName());
+                            .getString("factions.buffs.expired.subtitle")
+                            .replace("%buff%", activeBuff.getDisplayName());
                     String msg = ChatColors
-                            .color(MineClans.getInstance().getMessages().getString("factions.buffs.expired.msg").replace("%buff%", activeBuff.getDisplayName()));
+                            .color(MineClans.getInstance().getMessages().getString("factions.buffs.expired.msg")
+                                    .replace("%buff%", activeBuff.getDisplayName()));
                     for (UUID uuid : faction.getOnlineMembers()) {
                         Player player = Bukkit.getPlayer(uuid);
-                        Titles.sendTitle(
-                                title,
-                                subtitle, 0,
-                                0, 0);
-                        player.sendMessage(msg);
+                        if (player != null) {
+                            Titles.sendTitle(player,
+                                    title,
+                                    subtitle, 0,
+                                    0, 0);
+                            player.sendMessage(msg);
+                        }
                     }
                 }
             }
