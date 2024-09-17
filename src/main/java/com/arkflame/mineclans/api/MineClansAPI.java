@@ -913,7 +913,7 @@ public class MineClansAPI {
         }
     
         // Check if the player has sufficient rank to toggle the open state
-        if (factionPlayer.getRank().isLowerThan(Rank.MODERATOR)) {
+        if (factionPlayer.getRank().isLowerThan(Rank.COLEADER)) {
             return new OpenResult(OpenResult.OpenResultState.NO_PERMISSION);
         }
     
