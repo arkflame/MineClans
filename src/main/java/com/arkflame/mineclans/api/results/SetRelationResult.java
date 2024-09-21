@@ -8,19 +8,23 @@ public class SetRelationResult {
         SUCCESS,
         INVALID_RELATION_TYPE,
         NO_FACTION,
-        OTHER_FACTION_NOT_FOUND, SAME_FACTION
+        OTHER_FACTION_NOT_FOUND,
+        SAME_FACTION,
+        ALREADY_RELATION
     }
 
     private final SetRelationResultState state;
     private final Faction faction;
     private final Faction otherFaction;
     private final RelationType relation;
+    private final RelationType otherRelation;
 
-    public SetRelationResult(SetRelationResultState state, Faction faction, Faction otherFaction, RelationType relation) {
+    public SetRelationResult(SetRelationResultState state, Faction faction, Faction otherFaction, RelationType relation, RelationType otherRelation) {
         this.state = state;
         this.faction = faction;
         this.otherFaction = otherFaction;
         this.relation = relation;
+        this.otherRelation = otherRelation;
     }
 
     public SetRelationResultState getState() {
@@ -37,5 +41,9 @@ public class SetRelationResult {
 
     public RelationType getRelation() {
         return relation;
+    }
+
+    public RelationType getOtherRelation() {
+        return otherRelation;
     }
 }

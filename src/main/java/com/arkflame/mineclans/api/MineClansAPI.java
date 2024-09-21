@@ -485,28 +485,35 @@ public class MineClansAPI {
             relationType = RelationType.valueOf(relationName);
         } catch (IllegalArgumentException e) {
             return new SetRelationResult(SetRelationResult.SetRelationResultState.INVALID_RELATION_TYPE, null, null,
-                    null);
+                    null, null);
         }
 
         Faction faction = getFaction(player);
         if (faction == null) {
-            return new SetRelationResult(SetRelationResult.SetRelationResultState.NO_FACTION, null, null, null);
+            return new SetRelationResult(SetRelationResult.SetRelationResultState.NO_FACTION, null, null, null, null);
         }
 
         Faction otherFaction = getFaction(otherFactionName);
         if (otherFaction == null) {
             return new SetRelationResult(SetRelationResult.SetRelationResultState.OTHER_FACTION_NOT_FOUND, faction,
-                    null, null);
+                    null, null, null);
         }
 
         if (faction == otherFaction) {
             return new SetRelationResult(SetRelationResult.SetRelationResultState.SAME_FACTION, faction,
-                    otherFaction, null);
+                    otherFaction, null, null);
+        }
+
+        RelationType otherRelation = otherFaction.getRelationType(faction.getId());
+
+        if (faction.getRelation(otherFaction.getId()).getRelationType() == relationType) {
+            return new SetRelationResult(SetRelationResult.SetRelationResultState.ALREADY_RELATION, faction,
+                    otherFaction, relationType, otherRelation);
         }
 
         factionManager.updateFactionRelation(faction.getName(), otherFaction.getId(), relationName);
         return new SetRelationResult(SetRelationResult.SetRelationResultState.SUCCESS, faction, otherFaction,
-                relationType);
+                relationType, otherRelation);
     }
 
     public RelationType getRelation(Player player, String otherFactionName) {
