@@ -46,8 +46,9 @@ public class PowerDAO {
     public int getFactionPosition(UUID factionId) {
         final int[] position = {0};
         mySQLProvider.executeSelectQuery(
-                "SELECT (SELECT COUNT(*) FROM mineclans_power AS mp WHERE mp.power >= m.power) AS idx_power " +
-                        "FROM mineclans_power AS m WHERE m.faction_id = ? ORDER BY power DESC",
+                "SELECT (SELECT COUNT(*) FROM mineclans_power AS mp WHERE mp.power > m.power " +
+                        "OR (mp.power = m.power AND mp.faction_id < m.faction_id)) AS idx_power " +
+                        "FROM mineclans_power AS m WHERE m.faction_id = ?",
                 new ResultSetProcessor() {
                     @Override
                     public void run(ResultSet resultSet) throws SQLException {
@@ -56,13 +57,13 @@ public class PowerDAO {
                         }
                     }
                 }, factionId.toString());
-        return position[0];
-    }
+        return position[0] + 1; // Adjusting for 1-based index
+    }    
 
     public UUID getFactionIdByPosition(int position) {
         final UUID[] factionId = {null};
         mySQLProvider.executeSelectQuery(
-                "SELECT faction_id FROM (SELECT faction_id, RANK() OVER (ORDER BY power DESC) as rank FROM mineclans_power) ranked WHERE rank = ?",
+                "SELECT faction_id FROM (SELECT faction_id, RANK() OVER (ORDER BY power DESC, faction_id ASC) as rank FROM mineclans_power) ranked WHERE rank = ?",
                 new ResultSetProcessor() {
                     @Override
                     public void run(ResultSet resultSet) throws SQLException {
@@ -73,7 +74,6 @@ public class PowerDAO {
                 }, position);
         return factionId[0];
     }
-
 
     public void removeFaction(UUID factionId) {
         mySQLProvider.executeUpdateQuery(
