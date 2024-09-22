@@ -19,8 +19,8 @@ public class InvitedDAO {
 
     public void createTable() {
         mySQLProvider.executeUpdateQuery("CREATE TABLE IF NOT EXISTS mineclans_invited (" +
-                "faction_id UUID PRIMARY KEY," +
-                "member_id UUID NOT NULL)");
+                "faction_id CHAR(36) PRIMARY KEY," +
+                "member_id CHAR(36) NOT NULL)");
     }
 
     public void addInvitedMember(UUID factionId, UUID memberId) {

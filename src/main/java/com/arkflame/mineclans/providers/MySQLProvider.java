@@ -70,12 +70,14 @@ public class MySQLProvider {
     private RelationsDAO relationsDAO;
     private PowerDAO powerDAO;
 
+    private boolean connected = false;
+
     public MySQLProvider(boolean enabled, String url, String username, String password) {
         if (!enabled || url == null || username == null || password == null) {
-            MineClans.getInstance().getLogger().info("No database information provided. Using local configuration.");
+            MineClans.getInstance().getLogger().severe("No database information provided.");
             return;
         } else {
-            MineClans.getInstance().getLogger().info("Using external database for protections.");
+            MineClans.getInstance().getLogger().info("Using MySQL database for factions.");
         }
 
         chestDAO = new ChestDAO(this);
@@ -146,6 +148,10 @@ public class MySQLProvider {
         return factionPlayerDAO;
     }
 
+    public boolean isConnected() {
+        return connected;
+    }
+
     public void createTables() {
         chestDAO.createTable();
         memberDAO.createTable();
@@ -161,6 +167,7 @@ public class MySQLProvider {
         try {
             this.dataSource = new HikariDataSource(config);
             createTables();
+            this.connected = true;
         } catch (Exception e) {
             MineClans.getInstance().getLogger().info("Failed to initialize database connection: " + e.getMessage());
             this.dataSource = null; // Ensure dataSource is null to avoid any further usage attempts

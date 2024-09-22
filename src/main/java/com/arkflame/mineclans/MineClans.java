@@ -151,6 +151,24 @@ public class MineClans extends JavaPlugin {
                 config.getString("mysql.username"),
                 config.getString("mysql.password"));
 
+        if (!mySQLProvider.isConnected()) {
+            getLogger().severe("=============== DATABASE CONNECTION ERROR ================");
+            getLogger().severe("MineClans is unable to connect to the database.");
+            getLogger().severe("To fix this, please configure the database settings in the 'config.yml' file.");
+            getLogger().severe("You need a MySQL database for the plugin to work properly.");
+            getLogger().severe("Make sure you have the following settings in the 'config.yml':");
+            getLogger().severe("mysql:");
+            getLogger().severe("  enabled: true");
+            getLogger().severe(
+                    "  url: jdbc:mysql://localhost:3306/database  # Replace 'database' with your database name");
+            getLogger().severe("  username: root  # Change if your username is different");
+            getLogger().severe("  password: password  # Use your actual database password");
+            getLogger().severe("After making these changes, save the file and restart your server.");
+            getLogger().severe("=============== DATABASE CONNECTION ERROR ================");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
         // Managers
         factionManager = new FactionManager();
         factionPlayerManager = new FactionPlayerManager();
@@ -158,7 +176,7 @@ public class MineClans extends JavaPlugin {
         clanEventScheduler = new ClanEventScheduler(config.getInt("events.interval"));
         leaderboardManager = new LeaderboardManager(mySQLProvider.getPowerDAO());
         powerManager = new PowerManager(mySQLProvider.getPowerDAO(), leaderboardManager);
-        buffManager =  new BuffManager(config);
+        buffManager = new BuffManager(config);
 
         // Initialize API
         api = new MineClansAPI(factionManager, factionPlayerManager);
@@ -203,9 +221,13 @@ public class MineClans extends JavaPlugin {
     public void onDisable() {
         HandlerList.unregisterAll(this);
 
-        factionsCommand.unregisterBukkitCommand();
+        if (factionsCommand != null) {
+            factionsCommand.unregisterBukkitCommand();
+        }
 
-        mySQLProvider.close();
+        if (mySQLProvider != null) {
+            mySQLProvider.close();
+        }
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             InventoryView view = player.getOpenInventory();

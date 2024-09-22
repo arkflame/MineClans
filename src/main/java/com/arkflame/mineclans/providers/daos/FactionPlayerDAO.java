@@ -18,8 +18,8 @@ public class FactionPlayerDAO {
 
     public void createTable() {
         mySQLProvider.executeUpdateQuery("CREATE TABLE IF NOT EXISTS mineclans_players ("
-                + "player_id UUID NOT NULL PRIMARY KEY,"
-                + "faction_id UUID,"
+                + "player_id CHAR(36) NOT NULL PRIMARY KEY,"
+                + "faction_id CHAR(36),"
                 + "join_date TIMESTAMP,"
                 + "last_active TIMESTAMP,"
                 + "kills INT DEFAULT 0,"

@@ -20,8 +20,8 @@ public class MemberDAO {
 
     public void createTable() {
         mySQLProvider.executeUpdateQuery("CREATE TABLE IF NOT EXISTS mineclans_members (" +
-                "faction_id UUID NOT NULL," +
-                "member_id UUID NOT NULL," +
+                "faction_id CHAR(36) NOT NULL," +
+                "member_id CHAR(36) NOT NULL," +
                 "PRIMARY KEY (faction_id, member_id))");
     }
 

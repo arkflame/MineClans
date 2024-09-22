@@ -505,8 +505,9 @@ public class MineClansAPI {
         }
 
         RelationType otherRelation = otherFaction.getRelationType(faction.getId());
+        Relation currentRelation = faction.getRelation(otherFaction.getId());
 
-        if (faction.getRelation(otherFaction.getId()).getRelationType() == relationType) {
+        if (currentRelation != null && currentRelation.getRelationType() == relationType) {
             return new SetRelationResult(SetRelationResult.SetRelationResultState.ALREADY_RELATION, faction,
                     otherFaction, relationType, otherRelation);
         }

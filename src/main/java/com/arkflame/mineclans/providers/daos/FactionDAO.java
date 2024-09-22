@@ -22,8 +22,8 @@ public class FactionDAO {
 
     public void createTable() {
         mySQLProvider.executeUpdateQuery("CREATE TABLE IF NOT EXISTS mineclans_factions (" +
-                "faction_id UUID PRIMARY KEY," +
-                "owner_id UUID NOT NULL," +
+                "faction_id CHAR(36) PRIMARY KEY," +
+                "owner_id CHAR(36) NOT NULL," +
                 "display_name VARCHAR(64) NOT NULL," +
                 "home VARCHAR(255)," +
                 "name VARCHAR(16) UNIQUE," +

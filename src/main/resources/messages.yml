@@ -237,9 +237,9 @@ factions:
     same_faction: "&cYou cannot set relation towards your own faction."
     other_faction_not_found: "&cFaction %other_faction% not found."
     already_relation: "&cYou are already &b%relation_type%&c towards &b%other_faction%"
-    success: "&aYour faction is now &b%relation_type%&c with &b%other_faction%&c."
+    success: "&aYour faction is now &b%relation_type%&a towards &b%other_faction%&a."
     success_other: "&b%other_faction%&c is now &b%relation_type%&c towards you."
-    now_enemies: "&cYou are still enemies."
+    now_enemies: "&cYou are enemies."
     now_allies: "&aYou are now allies."
     unexpected_error: "&cAn unexpected error occurred."
   invite:

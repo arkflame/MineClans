@@ -22,7 +22,7 @@ public class ChestDAO {
 
     public void createTable() {
         mySQLProvider.executeUpdateQuery("CREATE TABLE IF NOT EXISTS mineclans_chests ("
-                + "faction_id UUID NOT NULL PRIMARY KEY, "
+                + "faction_id CHAR(36) NOT NULL PRIMARY KEY, "
                 + "chest_contents TEXT"
                 + ")");
     }

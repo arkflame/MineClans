@@ -48,14 +48,16 @@ public class FactionsRelationSetCommand {
                         .replace("%other_faction%", result.getFaction().getName())
                         .replace("%relation_type%", relationType));
 
-            RelationType relationType1 = result.getRelation();
-            RelationType relationType2 = result.getOtherRelation();
+                RelationType relationType1 = result.getRelation();
+                RelationType relationType2 = result.getOtherRelation();
 
-                        if (relationType1 == relationType2 && relationType1 == RelationType.ALLY) {
-                            result.getOtherFaction().sendMessage(messages.getText(basePath + "now_allies"));
-                        } else {
-                            result.getOtherFaction().sendMessage(messages.getText(basePath + "now_enemies"));
-                        }
+                if (relationType1 == relationType2 && relationType1 == RelationType.ALLY) {
+                    result.getFaction().sendMessage(messages.getText(basePath + "now_allies"));
+                    result.getOtherFaction().sendMessage(messages.getText(basePath + "now_allies"));
+                } else {
+                    result.getFaction().sendMessage(messages.getText(basePath + "now_enemies"));
+                    result.getOtherFaction().sendMessage(messages.getText(basePath + "now_enemies"));
+                }
                 break;
             default:
                 player.sendMessage(messages.getText(basePath + "unexpected_error"));

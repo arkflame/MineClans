@@ -19,8 +19,8 @@ public class RelationsDAO {
 
     public void createTable() {
         mySQLProvider.executeUpdateQuery("CREATE TABLE IF NOT EXISTS mineclans_relations (" +
-                "faction_id UUID NOT NULL," +
-                "target_faction_id UUID NOT NULL," +
+                "faction_id CHAR(36) NOT NULL," +
+                "target_faction_id CHAR(36) NOT NULL," +
                 "relation_type VARCHAR(64) NOT NULL," +
                 "PRIMARY KEY (faction_id, target_faction_id))");
     }
