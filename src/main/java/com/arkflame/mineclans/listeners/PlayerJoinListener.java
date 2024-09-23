@@ -38,8 +38,12 @@ public class PlayerJoinListener implements Listener {
                         activeBuff.giveEffectToPlayer(player);
                     }
                     ConfigWrapper messages = mineClans.getMessages();
-                    player.sendMessage(messages.getText("factions.announcement.join").replace("%announcement%",
-                            faction.getAnnouncement()));
+                    String announcement = faction.getAnnouncement();
+                    if (announcement != null) {
+                        String joinAnnouncementMessage = messages.getText("factions.announcement.join");
+                        player.sendMessage(
+                                joinAnnouncementMessage.replace("%announcement%", announcement));
+                    }
                 });
             }
         });
