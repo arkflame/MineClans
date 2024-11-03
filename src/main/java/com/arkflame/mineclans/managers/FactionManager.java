@@ -80,12 +80,14 @@ public class FactionManager {
     }
 
     // Create a new faction
-    public Faction createFaction(Player player, String factionName) {
-        UUID playerId = player.getUniqueId();
-        Faction newFaction = new Faction(UUID.randomUUID(), playerId, factionName, factionName);
+    public Faction createFaction(UUID playerId, String factionName) {
+        return createFaction(playerId, factionName, UUID.randomUUID());
+    }
+
+    // Create a new faction
+    public Faction createFaction(UUID playerId, String factionName, UUID uuid) {
+        Faction newFaction = new Faction(uuid, playerId, factionName, factionName);
         factionCacheByName.put(factionName, newFaction);
-        saveFactionToDatabase(newFaction); // Save the new faction to the database
-        addPlayerToFaction(factionName, playerId);
         return newFaction;
     }
 
@@ -95,22 +97,18 @@ public class FactionManager {
     }
 
     // Add a player to a faction
-    public void addPlayerToFaction(String factionName, UUID playerId) {
+    public void addPlayer(String factionName, UUID playerId) {
         Faction faction = getFaction(factionName);
         if (faction != null) {
             faction.addMember(playerId);
-            MineClans.getInstance().getMySQLProvider().getMemberDAO().addMember(faction.getId(), playerId);
-            saveFactionToDatabase(faction);
         }
     }
 
     // Remove a player from a faction
-    public void removePlayerFromFaction(String factionName, UUID playerId) {
+    public void removePlayer(String factionName, UUID playerId) {
         Faction faction = getFaction(factionName);
         if (faction != null) {
             faction.removeMember(playerId);
-            MineClans.getInstance().getMySQLProvider().getMemberDAO().removeMember(faction.getId(), playerId);
-            saveFactionToDatabase(faction);
         }
     }
 
@@ -120,17 +118,6 @@ public class FactionManager {
         if (faction != null) {
             faction.disbandFaction();
             factionCacheByName.remove(factionName);
-            removeFactionFromDatabase(faction);
-            MineClans.getInstance().getLeaderboardManager().removeFaction(faction.getId());
-        }
-    }
-
-    // Set a faction home
-    public void setFactionHome(String factionName, Location home) {
-        Faction faction = getFaction(factionName);
-        if (faction != null) {
-            faction.setHome(home);
-            saveFactionToDatabase(faction);
         }
     }
 
@@ -145,7 +132,6 @@ public class FactionManager {
         Faction faction = getFaction(factionName);
         if (faction != null) {
             faction.setBalance(balance);
-            saveFactionToDatabase(faction);
         }
     }
 
@@ -154,8 +140,6 @@ public class FactionManager {
         Faction faction = getFaction(factionName);
         if (faction != null) {
             faction.setRelation(targetFactionId, new Relation(faction.getId(), targetFactionId, relation));
-            MineClans.getInstance().getMySQLProvider().getRelationsDAO().insertOrUpdateRelation(faction.getId(),
-                    targetFactionId, relation);
         }
     }
 
@@ -164,7 +148,6 @@ public class FactionManager {
         Faction faction = getFaction(factionName);
         if (faction != null) {
             faction.setChestPermission(role, permission);
-            saveFactionToDatabase(faction); // Save changes to the database
         }
     }
 
@@ -173,7 +156,6 @@ public class FactionManager {
         Faction faction = getFaction(factionName);
         if (faction != null) {
             faction.invitePlayer(playerId);
-            MineClans.getInstance().getMySQLProvider().getInvitedDAO().addInvitedMember(faction.getId(), playerId);
         }
     }
 
@@ -182,7 +164,6 @@ public class FactionManager {
         Faction faction = getFaction(factionName);
         if (faction != null) {
             faction.uninvitePlayer(playerId);
-            MineClans.getInstance().getMySQLProvider().getInvitedDAO().removeInvitedMember(faction.getId(), playerId);
         }
     }
 
@@ -190,7 +171,6 @@ public class FactionManager {
         Faction faction = getFaction(factionName);
         if (faction != null) {
             faction.setOwner(ownerId);
-            saveFactionToDatabase(faction);
         }
     }
 
@@ -204,7 +184,6 @@ public class FactionManager {
                 faction.setRenameCooldown();
                 factionCacheByName.remove(factionName);
                 factionCacheByName.put(newName, faction);
-                saveFactionToDatabase(faction);
             }
         }
     }
@@ -213,7 +192,6 @@ public class FactionManager {
         Faction faction = getFaction(factionName);
         if (faction != null) {
             faction.setDisplayName(displayName);
-            saveFactionToDatabase(faction);
         }
     }
 
@@ -221,7 +199,6 @@ public class FactionManager {
         Faction faction = getFaction(factionName);
         if (faction != null) {
             faction.setFriendlyFire(friendlyFire);
-            saveFactionToDatabase(faction);
         }
     }
 
@@ -229,7 +206,6 @@ public class FactionManager {
         Faction faction = getFaction(factionName);
         if (faction != null) {
             faction.setHome(homeLocation);
-            saveFactionToDatabase(faction);
         }
     }
 
@@ -259,7 +235,6 @@ public class FactionManager {
             double currentBalance = faction.getBalance();
             double newBalance = currentBalance + amount;
             faction.setBalance(newBalance);
-            saveFactionToDatabase(faction);
             return true;
         }
         return false;
@@ -271,9 +246,40 @@ public class FactionManager {
             double currentBalance = faction.getBalance();
             double newBalance = currentBalance - amount;
             faction.setBalance(newBalance);
-            saveFactionToDatabase(faction);
             return true;
         }
         return false;
+    }
+
+    public void sendFactionMessage(Faction faction, String message) {
+        faction.getMembers().forEach(memberId -> {
+            Player member = MineClans.getInstance().getServer().getPlayer(memberId);
+            if (member != null && member.isOnline()) {
+                member.sendMessage(message);
+            }
+        });
+    }
+
+    public void sendAllianceMessage(Faction faction, String message) {
+        Map<UUID, Relation> relations = faction.getRelations();
+        for (Map.Entry<UUID, Relation> entry : relations.entrySet()) {
+            UUID relatedFactionId = entry.getKey();
+            Relation relation = entry.getValue();
+
+            // Check if the relation is an alliance
+            if (relation.getRelationType() == RelationType.ALLY) {
+                Faction relatedFaction = MineClans.getInstance().getFactionManager().getFaction(relatedFactionId);
+
+                // Only proceed if the faction exists and has online members
+                if (relatedFaction != null && relatedFaction.hasOnlineMembers()) {
+                    relatedFaction.getMembers().forEach(memberId -> {
+                        Player member = MineClans.getInstance().getServer().getPlayer(memberId);
+                        if (member != null && member.isOnline()) {
+                            member.sendMessage(message);
+                        }
+                    });
+                }
+            }
+        }
     }
 }

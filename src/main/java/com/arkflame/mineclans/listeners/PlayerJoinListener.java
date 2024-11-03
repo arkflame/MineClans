@@ -29,6 +29,7 @@ public class PlayerJoinListener implements Listener {
             factionPlayerManager.updateJoinDate(id);
             factionPlayerManager.updateLastActive(id);
             factionPlayerManager.updateName(id, player.getName());
+            factionPlayerManager.save(id);
 
             MineClans mineClans = MineClans.getInstance();
             Faction faction = mineClans.getAPI().getFaction(player);

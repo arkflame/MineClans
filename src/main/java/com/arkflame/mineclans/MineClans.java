@@ -31,8 +31,8 @@ import com.arkflame.mineclans.modernlib.config.ConfigWrapper;
 import com.arkflame.mineclans.modernlib.menus.listeners.MenuListener;
 import com.arkflame.mineclans.placeholders.FactionsPlaceholder;
 import com.arkflame.mineclans.providers.MySQLProvider;
+import com.arkflame.mineclans.providers.RedisProvider;
 import com.arkflame.mineclans.tasks.BuffExpireTask;
-import com.arkflame.mineclans.tasks.InventorySaveTask;
 
 import net.milkbowl.vault.economy.Economy;
 
@@ -46,8 +46,7 @@ public class MineClans extends JavaPlugin {
     // Managers
     private FactionManager factionManager;
     private FactionPlayerManager factionPlayerManager;
-
-    private InventorySaveTask inventorySaveTask;
+    private RedisProvider redisProvider;
 
     // API
     private MineClansAPI api;
@@ -94,10 +93,6 @@ public class MineClans extends JavaPlugin {
         return api;
     }
 
-    public InventorySaveTask getInventorySaveTask() {
-        return inventorySaveTask;
-    }
-
     private boolean setupEconomy() {
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
@@ -136,6 +131,10 @@ public class MineClans extends JavaPlugin {
         return buffManager;
     }
 
+    public RedisProvider getRedisProvider() {
+        return redisProvider;
+    }
+
     @Override
     public void onEnable() {
         // Set static instance
@@ -172,6 +171,7 @@ public class MineClans extends JavaPlugin {
         // Managers
         factionManager = new FactionManager();
         factionPlayerManager = new FactionPlayerManager();
+        redisProvider = new RedisProvider(factionManager, factionPlayerManager, getConfig(), getLogger());
         clanEventManager = new ClanEventManager(this);
         clanEventScheduler = new ClanEventScheduler(config.getInt("events.interval"));
         leaderboardManager = new LeaderboardManager(mySQLProvider.getPowerDAO());
@@ -179,7 +179,7 @@ public class MineClans extends JavaPlugin {
         buffManager = new BuffManager(config);
 
         // Initialize API
-        api = new MineClansAPI(factionManager, factionPlayerManager);
+        api = new MineClansAPI(factionManager, factionPlayerManager, mySQLProvider, redisProvider);
 
         // Register Listeners
         PluginManager pluginManager = getServer().getPluginManager();
@@ -202,8 +202,6 @@ public class MineClans extends JavaPlugin {
         }
 
         // Register tasks
-        inventorySaveTask = new InventorySaveTask();
-        inventorySaveTask.register();
         BuffExpireTask buffExpireTask = new BuffExpireTask();
         buffExpireTask.register();
 
@@ -227,6 +225,10 @@ public class MineClans extends JavaPlugin {
 
         if (mySQLProvider != null) {
             mySQLProvider.close();
+        }
+
+        if (redisProvider != null) {
+            redisProvider.shutdown();
         }
 
         for (Player player : Bukkit.getOnlinePlayers()) {

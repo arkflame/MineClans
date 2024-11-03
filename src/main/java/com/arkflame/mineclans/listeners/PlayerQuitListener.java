@@ -24,6 +24,7 @@ public class PlayerQuitListener implements Listener {
         UUID id = event.getPlayer().getUniqueId();
         MineClans.runAsync(() -> {
             factionPlayerManager.updateLastActive(id);
+            factionPlayerManager.save(id);
             Faction faction = MineClans.getInstance().getAPI().getFaction(player);
             if (faction != null) {
                 faction.removeEffects(player);

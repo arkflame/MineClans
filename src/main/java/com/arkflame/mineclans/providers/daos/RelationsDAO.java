@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.arkflame.mineclans.models.Relation;
 import com.arkflame.mineclans.providers.MySQLProvider;
-import com.arkflame.mineclans.providers.ResultSetProcessor;
+import com.arkflame.mineclans.providers.processors.ResultSetProcessor;
 
 public class RelationsDAO {
     private MySQLProvider mySQLProvider;

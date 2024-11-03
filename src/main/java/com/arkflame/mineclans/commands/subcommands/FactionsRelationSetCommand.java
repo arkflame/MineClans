@@ -11,13 +11,17 @@ import com.arkflame.mineclans.modernlib.config.ConfigWrapper;
 
 public class FactionsRelationSetCommand {
     public static void onCommand(Player player, ModernArguments args) {
+        ConfigWrapper messages = MineClans.getInstance().getMessages();
+        String basePath = "factions.relation_set.";
+        if (!args.hasArg(1)) {
+            player.sendMessage(messages.getText(basePath + "usage"));
+            return;
+        }
         String relationType = args.getText(0);
         String otherFactionName = args.getText(1);
-        String basePath = "factions.relation_set.";
 
         SetRelationResult result = MineClans.getInstance().getAPI().setRelation(player, otherFactionName, relationType);
         SetRelationResultState state = result.getState();
-        ConfigWrapper messages = MineClans.getInstance().getMessages();
 
         switch (state) {
             case INVALID_RELATION_TYPE:

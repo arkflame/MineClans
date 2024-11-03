@@ -3,7 +3,6 @@ package com.arkflame.mineclans.commands.subcommands;
 import org.bukkit.command.CommandSender;
 import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.modernlib.config.ConfigWrapper;
-import com.arkflame.mineclans.modernlib.utils.ChatColors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +15,7 @@ public class FactionsHelpCommand {
     static {
         // Populate the helpCommands list with command objects
         helpCommands.add(new HelpCommand("create", "/f create <factionName>"));
-        helpCommands.add(new HelpCommand("accept", "/f accept <factionName>"));
+        helpCommands.add(new HelpCommand("join", "/f join <factionName>"));
         helpCommands.add(new HelpCommand("leave", "/f leave"));
         helpCommands.add(new HelpCommand("home", "/f home"));
         helpCommands.add(new HelpCommand("sethome", "/f sethome"));
@@ -112,7 +111,7 @@ public class FactionsHelpCommand {
 
         public String getDescription() {
             ConfigWrapper messages = MineClans.getInstance().getMessages();
-            return messages.getText(basePath + "description." + getName());
+            return messages.getText(basePath + "usage." + getName());
         }
 
         public String getHelpLine() {

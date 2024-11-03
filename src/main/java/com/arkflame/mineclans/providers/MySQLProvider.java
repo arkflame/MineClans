@@ -54,6 +54,7 @@ import com.arkflame.mineclans.providers.daos.MemberDAO;
 import com.arkflame.mineclans.providers.daos.PowerDAO;
 import com.arkflame.mineclans.providers.daos.RanksDAO;
 import com.arkflame.mineclans.providers.daos.RelationsDAO;
+import com.arkflame.mineclans.providers.processors.ResultSetProcessor;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 

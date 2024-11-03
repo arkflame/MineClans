@@ -138,3 +138,15 @@ mysql:
   url: jdbc:mysql://localhost:3306/database
   username: root
   password: password
+
+# Redis Configuration
+redis:
+  enabled: true  # Set to false if Redis should not be used
+  host: "localhost"  # Redis server address
+  port: 6379  # Redis server port
+  channel: "mineclansUpdates"  # Redis channel for faction updates
+
+  # Redis authentication (optional)
+  auth:
+    enabled: false  # Set to true if authentication is required
+    password: ""  # Redis password if authentication is enabled

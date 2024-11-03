@@ -9,48 +9,47 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import com.arkflame.mineclans.MineClans;
+import com.arkflame.mineclans.api.results.AddDeathResult;
 import com.arkflame.mineclans.api.results.AddEventsWonResult;
 import com.arkflame.mineclans.api.results.AddEventsWonResult.AddEventsWonResultType;
 import com.arkflame.mineclans.api.results.AddKillResult;
+import com.arkflame.mineclans.api.results.AddKillResult.AddKillResultType;
+import com.arkflame.mineclans.api.results.AnnouncementResult;
 import com.arkflame.mineclans.api.results.CreateResult;
+import com.arkflame.mineclans.api.results.CreateResult.CreateResultState;
+import com.arkflame.mineclans.api.results.DepositResult;
+import com.arkflame.mineclans.api.results.DepositResult.DepositResultType;
 import com.arkflame.mineclans.api.results.DisbandResult;
+import com.arkflame.mineclans.api.results.DisbandResult.DisbandResultState;
+import com.arkflame.mineclans.api.results.DiscordResult;
 import com.arkflame.mineclans.api.results.FactionChatResult;
 import com.arkflame.mineclans.api.results.FocusResult;
 import com.arkflame.mineclans.api.results.FocusResult.FocusResultType;
 import com.arkflame.mineclans.api.results.FriendlyFireResult;
 import com.arkflame.mineclans.api.results.HomeResult;
+import com.arkflame.mineclans.api.results.HomeResult.HomeResultState;
 import com.arkflame.mineclans.api.results.InviteResult;
 import com.arkflame.mineclans.api.results.JoinResult;
-import com.arkflame.mineclans.api.results.LeaveResult;
+import com.arkflame.mineclans.api.results.JoinResult.JoinResultState;
+import com.arkflame.mineclans.api.results.KickResult;
+import com.arkflame.mineclans.api.results.KickResult.KickResultType;
+import com.arkflame.mineclans.api.results.OpenChestResult;
+import com.arkflame.mineclans.api.results.OpenChestResult.OpenChestResultType;
+import com.arkflame.mineclans.api.results.OpenResult;
 import com.arkflame.mineclans.api.results.RankChangeResult;
+import com.arkflame.mineclans.api.results.RankChangeResult.RankChangeResultType;
 import com.arkflame.mineclans.api.results.RenameDisplayResult;
+import com.arkflame.mineclans.api.results.RenameDisplayResult.RenameDisplayResultState;
 import com.arkflame.mineclans.api.results.RenameResult;
+import com.arkflame.mineclans.api.results.RenameResult.RenameResultState;
 import com.arkflame.mineclans.api.results.SetHomeResult;
+import com.arkflame.mineclans.api.results.SetHomeResult.SetHomeResultState;
 import com.arkflame.mineclans.api.results.SetRelationResult;
 import com.arkflame.mineclans.api.results.ToggleChatResult;
 import com.arkflame.mineclans.api.results.TransferResult;
 import com.arkflame.mineclans.api.results.UninviteResult;
 import com.arkflame.mineclans.api.results.WithdrawResult;
-import com.arkflame.mineclans.api.results.AddKillResult.AddKillResultType;
-import com.arkflame.mineclans.api.results.AnnouncementResult;
 import com.arkflame.mineclans.api.results.WithdrawResult.WithdrawResultType;
-import com.arkflame.mineclans.api.results.CreateResult.CreateResultState;
-import com.arkflame.mineclans.api.results.DepositResult;
-import com.arkflame.mineclans.api.results.DepositResult.DepositResultType;
-import com.arkflame.mineclans.api.results.DisbandResult.DisbandResultState;
-import com.arkflame.mineclans.api.results.DiscordResult;
-import com.arkflame.mineclans.api.results.HomeResult.HomeResultState;
-import com.arkflame.mineclans.api.results.JoinResult.JoinResultState;
-import com.arkflame.mineclans.api.results.KickResult;
-import com.arkflame.mineclans.api.results.KickResult.KickResultType;
-import com.arkflame.mineclans.api.results.LeaveResult.LeaveResultState;
-import com.arkflame.mineclans.api.results.OpenChestResult;
-import com.arkflame.mineclans.api.results.OpenChestResult.OpenChestResultType;
-import com.arkflame.mineclans.api.results.OpenResult;
-import com.arkflame.mineclans.api.results.RankChangeResult.RankChangeResultType;
-import com.arkflame.mineclans.api.results.RenameDisplayResult.RenameDisplayResultState;
-import com.arkflame.mineclans.api.results.RenameResult.RenameResultState;
-import com.arkflame.mineclans.api.results.SetHomeResult.SetHomeResultState;
 import com.arkflame.mineclans.enums.Rank;
 import com.arkflame.mineclans.enums.RelationType;
 import com.arkflame.mineclans.events.ClanEvent;
@@ -59,6 +58,8 @@ import com.arkflame.mineclans.managers.FactionPlayerManager;
 import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.models.FactionPlayer;
 import com.arkflame.mineclans.models.Relation;
+import com.arkflame.mineclans.providers.MySQLProvider;
+import com.arkflame.mineclans.providers.RedisProvider;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -72,10 +73,15 @@ import net.milkbowl.vault.economy.EconomyResponse;
 public class MineClansAPI {
     private final FactionManager factionManager;
     private final FactionPlayerManager factionPlayerManager;
+    private final MySQLProvider mySQLProvider;
+    private final RedisProvider redisProvider;
 
-    public MineClansAPI(FactionManager factionManager, FactionPlayerManager factionPlayerManager) {
+    public MineClansAPI(FactionManager factionManager, FactionPlayerManager factionPlayerManager,
+            MySQLProvider mySQLProvider, RedisProvider redisProvider) {
         this.factionManager = factionManager;
         this.factionPlayerManager = factionPlayerManager;
+        this.mySQLProvider = mySQLProvider;
+        this.redisProvider = redisProvider;
     }
 
     public Faction getFaction(Player player) {
@@ -104,52 +110,6 @@ public class MineClansAPI {
             return factionPlayerManager.getOrLoad(name);
         }
         return null;
-    }
-
-    public LeaveResult leave(Player player) {
-        FactionPlayer factionPlayer = factionPlayerManager.getOrLoad(player.getUniqueId());
-        Faction faction = factionPlayer.getFaction();
-
-        if (faction == null) {
-            return new LeaveResult(LeaveResultState.NO_FACTION, faction);
-        }
-
-        if (faction.getOwner().equals(factionPlayer.getPlayerId())) {
-            return new LeaveResult(LeaveResultState.FACTION_OWNER, faction);
-        }
-
-        factionManager.removePlayerFromFaction(faction.getName(), factionPlayer.getPlayerId());
-        factionPlayerManager.updateFaction(factionPlayer.getPlayerId(), null);
-        return new LeaveResult(LeaveResultState.SUCCESS, faction);
-    }
-
-    public JoinResult join(Player player, String factionName) {
-        if (factionName == null) {
-            return new JoinResult(JoinResultState.NULL_NAME, null, null);
-        }
-
-        FactionPlayer factionPlayer = MineClans.getInstance().getFactionPlayerManager().getOrLoad(player.getUniqueId());
-        Faction faction = factionPlayer.getFaction();
-
-        if (faction != null) {
-            return new JoinResult(JoinResultState.ALREADY_HAVE_FACTION, faction, factionPlayer);
-        }
-
-        faction = factionManager.getFaction(factionName);
-
-        if (faction != null) {
-            if (faction.isOpen() || faction.isInvited(player)) {
-                factionPlayerManager.updateFaction(player.getUniqueId(), faction);
-                factionManager.addPlayerToFaction(factionName, player.getUniqueId());
-                factionPlayerManager.updateRank(player.getUniqueId(), Rank.RECRUIT);
-                factionManager.uninvitePlayerFromFaction(factionName, player.getUniqueId());
-                return new JoinResult(JoinResultState.SUCCESS, faction, factionPlayer);
-            } else {
-                return new JoinResult(JoinResultState.NOT_INVITED, faction, factionPlayer);
-            }
-        } else {
-            return new JoinResult(JoinResultState.NO_FACTION, faction, factionPlayer);
-        }
     }
 
     public InviteResult invite(Player player, String toInvite) {
@@ -181,6 +141,8 @@ public class MineClansAPI {
         }
 
         factionManager.invitePlayerToFaction(faction.getName(), targetPlayerId);
+        mySQLProvider.getInvitedDAO().addInvitedMember(faction.getId(), targetPlayerId);
+        redisProvider.invite(faction.getId(), player.getUniqueId());
         return new InviteResult(InviteResult.InviteResultState.SUCCESS, targetPlayer, faction);
     }
 
@@ -213,6 +175,8 @@ public class MineClansAPI {
         }
 
         factionManager.uninvitePlayerFromFaction(faction.getName(), targetPlayerId);
+        mySQLProvider.getInvitedDAO().removeInvitedMember(faction.getId(), targetPlayerId);
+        redisProvider.uninvite(faction.getId(), player.getUniqueId());
         return new UninviteResult(UninviteResult.UninviteResultState.SUCCESS);
     }
 
@@ -233,13 +197,28 @@ public class MineClansAPI {
 
         try {
             // Create the faction
-            faction = factionManager.createFaction(player, factionName);
+            faction = factionManager.createFaction(player.getUniqueId(), factionName);
+            redisProvider.createFaction(faction.getId(), player.getUniqueId(), factionName);
+
+            // Add player to faction
+            factionManager.addPlayer(factionName, player.getUniqueId());
+            redisProvider.addPlayer(faction.getId(), player.getName());
+
+            // Save to database
+            factionManager.saveFactionToDatabase(faction);
+
+            // Save member to database
+            mySQLProvider.getMemberDAO().addMember(faction.getId(), player.getUniqueId());
 
             // Update player's faction
             factionPlayerManager.updateFaction(factionPlayer.getPlayerId(), faction);
+            redisProvider.updateFaction(factionPlayer.getPlayerId(), faction.getName());
 
             // Update Rank
             factionPlayerManager.updateRank(factionPlayer.getPlayerId(), Rank.LEADER);
+            factionPlayerManager.save(factionPlayer);
+            mySQLProvider.getRanksDAO().setRank(factionPlayer.getPlayerId(), Rank.LEADER);
+            redisProvider.updateRank(factionPlayer.getPlayerId(), Rank.LEADER);
         } catch (IllegalArgumentException ex) {
             return new CreateResult(CreateResultState.ERROR, faction);
         }
@@ -257,11 +236,19 @@ public class MineClansAPI {
             return new DisbandResult(DisbandResultState.NO_PERMISSION);
         }
         factionPlayerManager.updateFaction(factionPlayer.getPlayerId(), null);
+        factionPlayerManager.save(factionPlayer);
         for (UUID uuid : faction.getMembers()) {
             factionPlayerManager.updateFaction(uuid, null);
             factionPlayerManager.updateRank(uuid, Rank.RECRUIT);
+            factionPlayerManager.save(uuid);
+            mySQLProvider.getRanksDAO().setRank(uuid, Rank.RECRUIT);
+            redisProvider.updateRank(uuid, Rank.RECRUIT);
+            redisProvider.updateFaction(uuid, null);
         }
         factionManager.disbandFaction(faction.getName());
+        factionManager.removeFactionFromDatabase(faction);
+        MineClans.getInstance().getLeaderboardManager().removeFaction(faction.getId());
+        redisProvider.removeFaction(faction.getId());
         return new DisbandResult(DisbandResultState.SUCCESS, faction);
     }
 
@@ -292,8 +279,16 @@ public class MineClansAPI {
         UUID newOwnerId = newOwnerPlayer.getPlayerId();
 
         factionManager.updateFactionOwner(faction.getName(), newOwnerId);
+        factionManager.saveFactionToDatabase(faction);
+        redisProvider.updateFactionOwner(faction.getId(), newOwnerId);
         factionPlayerManager.updateRank(newOwnerId, Rank.LEADER);
+        factionPlayerManager.save(newOwnerId);
+        mySQLProvider.getRanksDAO().setRank(newOwnerId, Rank.LEADER);
+        redisProvider.updateRank(newOwnerId, Rank.LEADER);
         factionPlayerManager.updateRank(oldOwnerId, Rank.RECRUIT);
+        factionPlayerManager.save(oldOwnerId);
+        mySQLProvider.getRanksDAO().setRank(oldOwnerId, Rank.RECRUIT);
+        redisProvider.updateRank(oldOwnerId, Rank.RECRUIT);
 
         return new TransferResult(TransferResult.TransferResultState.SUCCESS, faction);
     }
@@ -308,7 +303,7 @@ public class MineClansAPI {
             return new RenameResult(null, RenameResultState.ALREADY_EXISTS);
         }
 
-        FactionPlayer factionPlayer = MineClans.getInstance().getFactionPlayerManager()
+        FactionPlayer factionPlayer = factionPlayerManager
                 .getOrLoad(player.getUniqueId());
         Faction playerFaction = factionPlayer.getFaction();
 
@@ -327,6 +322,8 @@ public class MineClansAPI {
         try {
             factionManager.updateFactionName(playerFaction.getName(), newName);
             playerFaction.setRenameCooldown();
+            factionManager.saveFactionToDatabase(faction);
+            redisProvider.updateName(playerFaction.getId(), newName);
         } catch (IllegalArgumentException ex) {
             return new RenameResult(playerFaction, RenameResultState.ERROR);
         }
@@ -336,12 +333,14 @@ public class MineClansAPI {
 
     public RenameDisplayResult renameDisplay(Player player, String displayName) {
         if (displayName != null) {
-            FactionPlayer factionPlayer = MineClans.getInstance().getFactionPlayerManager()
+            FactionPlayer factionPlayer = factionPlayerManager
                     .getOrLoad(player.getUniqueId());
             Faction playerFaction = factionPlayer.getFaction();
             if (playerFaction != null) {
                 try {
                     factionManager.updateFactionDisplayName(playerFaction.getName(), displayName);
+                    factionManager.saveFactionToDatabase(playerFaction);
+                    redisProvider.updateDisplayName(playerFaction.getId(), displayName);
                 } catch (IllegalArgumentException ex) {
                     return new RenameDisplayResult(playerFaction, RenameDisplayResultState.ERROR);
                 }
@@ -375,12 +374,12 @@ public class MineClansAPI {
         String chatPrefix = MineClans.getInstance().getMessages().getText("factions.chat.prefix");
         String playerName = player.getName();
         String formattedMessage = chatPrefix.replace("%player%", playerName) + message;
-        faction.getMembers().forEach(memberId -> {
-            Player member = MineClans.getInstance().getServer().getPlayer(memberId);
-            if (member != null && member.isOnline()) {
-                member.sendMessage(formattedMessage);
-            }
-        });
+
+        // Send faction message
+        factionManager.sendFactionMessage(faction, formattedMessage);
+
+        // Send by redis
+        redisProvider.sendFactionMessage(faction.getId(), formattedMessage);
 
         return new FactionChatResult(FactionChatResult.FactionChatState.SUCCESS, message, faction, factionPlayer);
     }
@@ -388,47 +387,27 @@ public class MineClansAPI {
     public FactionChatResult sendAllianceMessage(Player player, String message) {
         FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
         if (factionPlayer == null || factionPlayer.getFaction() == null) {
-            return new FactionChatResult(FactionChatResult.FactionChatState.NOT_IN_FACTION, message, null, factionPlayer);
+            return new FactionChatResult(FactionChatResult.FactionChatState.NOT_IN_FACTION, message, null,
+                    factionPlayer);
         }
-    
+
         Faction faction = factionPlayer.getFaction();
-        Map<UUID, Relation> relations = faction.getRelations();
-        
         String chatPrefix = MineClans.getInstance().getMessages().getText("factions.chat.prefix_alliance");
         String playerName = player.getName();
         String formattedMessage = chatPrefix.replace("%player%", playerName).replace("%faction%", faction.getName()) + message;
 
-        // Faction
-        faction.getMembers().forEach(memberId -> {
-            Player member = MineClans.getInstance().getServer().getPlayer(memberId);
-            if (member != null && member.isOnline()) {
-                member.sendMessage(formattedMessage);
-            }
-        });
-    
-        // Iterate allies
-        for (Map.Entry<UUID, Relation> entry : relations.entrySet()) {
-            UUID relatedFactionId = entry.getKey();
-            Relation relation = entry.getValue();
-    
-            // Check if the relation is an alliance
-            if (relation.getRelationType() == RelationType.ALLY) {
-                Faction relatedFaction = MineClans.getInstance().getFactionManager().getFaction(relatedFactionId);
-                
-                // Only proceed if the faction exists and has online members
-                if (relatedFaction != null && relatedFaction.hasOnlineMembers()) {
-                    relatedFaction.getMembers().forEach(memberId -> {
-                        Player member = MineClans.getInstance().getServer().getPlayer(memberId);
-                        if (member != null && member.isOnline()) {
-                            member.sendMessage(formattedMessage);
-                        }
-                    });
-                }
-            }
-        }
-    
+        // Send faction message
+        factionManager.sendFactionMessage(faction, formattedMessage);
+
+        // Send alliance message
+        factionManager.sendAllianceMessage(faction, formattedMessage);
+
+        // Send by redis
+        redisProvider.sendFactionMessage(faction.getId(), formattedMessage);
+        redisProvider.sendAllianceMessage(faction.getId(), formattedMessage);
+
         return new FactionChatResult(FactionChatResult.FactionChatState.SUCCESS, message, faction, factionPlayer);
-    }    
+    }
 
     public FriendlyFireResult toggleFriendlyFire(Player player) {
         FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
@@ -443,6 +422,10 @@ public class MineClansAPI {
         Faction faction = factionPlayer.getFaction();
         boolean friendlyFire = !faction.isFriendlyFire();
         factionManager.updateFriendlyFire(faction.getName(), friendlyFire);
+        factionManager.saveFactionToDatabase(faction);
+
+        // Send redis update
+        redisProvider.updateFriendlyFire(faction.getId(), friendlyFire);
 
         return new FriendlyFireResult(friendlyFire ? FriendlyFireResult.FriendlyFireResultState.ENABLED
                 : FriendlyFireResult.FriendlyFireResultState.DISABLED);
@@ -458,8 +441,14 @@ public class MineClansAPI {
             return new SetHomeResult(SetHomeResultState.NO_PERMISSION);
         }
 
-        String factionName = factionPlayer.getFaction().getName();
+        Faction faction = factionPlayer.getFaction();
+        String factionName = faction.getName();
         factionManager.updateHome(factionName, homeLocation);
+        redisProvider.updateHome(faction.getId(), homeLocation);
+
+        // Save changes to the faction
+        factionManager.saveFactionToDatabase(faction);
+
         return new SetHomeResult(SetHomeResultState.SUCCESS);
     }
 
@@ -504,15 +493,21 @@ public class MineClansAPI {
                     otherFaction, null, null);
         }
 
-        RelationType otherRelation = otherFaction.getRelationType(faction.getId());
-        Relation currentRelation = faction.getRelation(otherFaction.getId());
+        UUID factionId = faction.getId();
+        UUID otherFactionId = otherFaction.getId();
+        RelationType otherRelation = otherFaction.getRelationType(factionId);
+        Relation currentRelation = faction.getRelation(otherFactionId);
 
         if (currentRelation != null && currentRelation.getRelationType() == relationType) {
             return new SetRelationResult(SetRelationResult.SetRelationResultState.ALREADY_RELATION, faction,
                     otherFaction, relationType, otherRelation);
         }
 
-        factionManager.updateFactionRelation(faction.getName(), otherFaction.getId(), relationName);
+        factionManager.updateFactionRelation(faction.getName(), otherFactionId, relationName);
+        mySQLProvider.getRelationsDAO().insertOrUpdateRelation(factionId, otherFactionId, relationName);
+
+        // Send update to redis
+        redisProvider.updateRelation(factionId, otherFactionId, relationType);
         return new SetRelationResult(SetRelationResult.SetRelationResultState.SUCCESS, faction, otherFaction,
                 relationType, otherRelation);
     }
@@ -564,7 +559,14 @@ public class MineClansAPI {
                 return new RankChangeResult(RankChangeResultType.CANNOT_PROMOTE, null);
             }
 
-            factionPlayerManager.updateRank(target.getPlayerId(), nextRank);
+            UUID targetPlayerId = target.getPlayerId();
+
+            factionPlayerManager.updateRank(targetPlayerId, nextRank);
+            factionPlayerManager.save(target);
+            mySQLProvider.getRanksDAO().setRank(targetPlayerId, nextRank);
+
+            // Send update to redis
+            redisProvider.updateRank(targetPlayerId, nextRank);
             return new RankChangeResult(RankChangeResultType.SUCCESS, nextRank);
         }
 
@@ -593,44 +595,134 @@ public class MineClansAPI {
 
         Rank previousRank = target.getRank().getPrevious();
         if (previousRank != null) {
-            factionPlayerManager.updateRank(target.getPlayerId(), previousRank);
+            UUID targetPlayerId = target.getPlayerId();
+
+            factionPlayerManager.updateRank(targetPlayerId, previousRank);
+            factionPlayerManager.save(target);
+            mySQLProvider.getRanksDAO().setRank(targetPlayerId, previousRank);
+
+            // Send update to redis
+            redisProvider.updateRank(targetPlayerId, previousRank);
             return new RankChangeResult(RankChangeResultType.SUCCESS, previousRank);
         }
 
         return new RankChangeResult(RankChangeResultType.CANNOT_DEMOTE, null);
     }
 
+    public JoinResult join(Player player, String factionName) {
+        if (factionName == null) {
+            return new JoinResult(JoinResultState.NULL_NAME, null, null);
+        }
+
+        UUID playerId = player.getUniqueId();
+        FactionPlayer factionPlayer = factionPlayerManager.getOrLoad(playerId);
+        Faction faction = factionPlayer.getFaction();
+
+        if (faction != null) {
+            return new JoinResult(JoinResultState.ALREADY_HAVE_FACTION, faction, factionPlayer);
+        }
+
+        faction = factionManager.getFaction(factionName);
+
+        if (faction != null) {
+            UUID factionId = faction.getId();
+            if (faction.isOpen() || faction.isInvited(player)) {
+                // Update Faction
+                factionPlayerManager.updateFaction(playerId, faction);
+                factionPlayerManager.updateRank(playerId, Rank.RECRUIT);
+                factionPlayerManager.save(factionPlayer);
+
+                // Update Player
+                factionManager.addPlayer(factionName, playerId);
+                factionManager.uninvitePlayerFromFaction(factionName, playerId);
+                factionManager.saveFactionToDatabase(faction);
+
+                // Update Rank/Members
+                mySQLProvider.getRanksDAO().setRank(playerId, Rank.RECRUIT);
+                mySQLProvider.getMemberDAO().addMember(factionId,
+                        playerId);
+
+                // Send update to redis
+                redisProvider.updateFaction(playerId, faction.getName());
+                redisProvider.updateRank(playerId, Rank.RECRUIT);
+                redisProvider.addPlayer(factionId, player.getName());
+                redisProvider.uninvite(factionId, playerId);
+                return new JoinResult(JoinResultState.SUCCESS, faction, factionPlayer);
+            } else {
+                return new JoinResult(JoinResultState.NOT_INVITED, faction, factionPlayer);
+            }
+        } else {
+            return new JoinResult(JoinResultState.NO_FACTION, faction, factionPlayer);
+        }
+    }
+
+    public KickResult kick(String playerName) {
+        return kick(null, playerName);
+    }
+
     public KickResult kick(Player kicker, String playerName) {
-        // Check if the kicker is in a faction
-        FactionPlayer kickerFactionPlayer = factionPlayerManager.getOrLoad(kicker.getUniqueId());
-        if (kickerFactionPlayer == null || kickerFactionPlayer.getFaction() == null) {
-            return new KickResult(KickResultType.NOT_IN_FACTION, null, null);
+        // Check if kicker is provided, otherwise skip faction and rank checks
+        Faction faction = null;
+        FactionPlayer kickerFactionPlayer = null;
+
+        if (kicker != null) {
+            kickerFactionPlayer = factionPlayerManager.getOrLoad(kicker.getUniqueId());
+            if (kickerFactionPlayer == null || kickerFactionPlayer.getFaction() == null) {
+                return new KickResult(KickResultType.NOT_IN_FACTION, null, null);
+            }
+            faction = kickerFactionPlayer.getFaction();
+
+            // Check if the kicker has the required rank to kick (MODERATOR or higher)
+            if (kickerFactionPlayer.getRank().isLowerThan(Rank.MODERATOR)) {
+                return new KickResult(KickResultType.NOT_MODERATOR, faction, null);
+            }
         }
 
-        // Check if the kicker is the owner of the faction
-        Faction faction = kickerFactionPlayer.getFaction();
-        if (kickerFactionPlayer.getRank().isLowerThan(Rank.MODERATOR)) {
-            return new KickResult(KickResultType.NOT_MODERATOR, faction, null);
-        }
-
-        // Check if the player to be kicked is a member of the faction
+        // Retrieve the player to kick
         FactionPlayer playerToKick = factionPlayerManager.getOrLoad(playerName);
-        if (playerToKick == null || !faction.getMembers().contains(playerToKick.getPlayerId())) {
+
+        // Check if player to kick exists and has a faction
+        if (playerToKick == null) {
+            return new KickResult(KickResultType.PLAYER_NOT_FOUND, faction, null);
+        }
+        if (playerToKick.getFaction() == null) {
+            return new KickResult(KickResultType.NO_FACTION, faction, playerToKick);
+        }
+
+        // Ensure the faction of kicker (if present) and player to kick are the same
+        if (kicker != null && (faction == null || !faction.equals(playerToKick.getFaction()))) {
             return new KickResult(KickResultType.PLAYER_NOT_FOUND, faction, playerToKick);
         }
 
-        if (kickerFactionPlayer == playerToKick) {
+        faction = playerToKick.getFaction();
+
+        // Check if the player to be kicked is the leader of the faction
+        if (playerToKick.getRank().isEqualOrHigherThan(Rank.LEADER)) {
+            return new KickResult(KickResultType.FACTION_OWNER, faction, playerToKick);
+        }
+
+        // Check if kicker is trying to kick themselves
+        if (kickerFactionPlayer != null && kickerFactionPlayer.equals(playerToKick)) {
             return new KickResult(KickResultType.NOT_YOURSELF, faction, playerToKick);
         }
 
-        // Check if the player to be kicked is the owner of the faction
-        if (playerToKick.getRank().isEqualOrHigherThan(kickerFactionPlayer.getRank())) {
+        // Check if the player to be kicked has a rank equal or higher than the kicker
+        if (kickerFactionPlayer != null && playerToKick.getRank().isEqualOrHigherThan(kickerFactionPlayer.getRank())) {
             return new KickResult(KickResultType.SUPERIOR_RANK, faction, playerToKick);
         }
 
-        // Kick the player from the faction
-        factionManager.removePlayerFromFaction(faction.getName(), playerToKick.getPlayerId());
-        factionPlayerManager.updateFaction(playerToKick.getPlayerId(), null);
+        String factionName = faction.getName();
+        UUID playerToKickId = playerToKick.getPlayerId();
+        // Remove player from faction
+        factionManager.removePlayer(factionName, playerToKickId);
+        factionManager.saveFactionToDatabase(faction);
+        // Remove faction from player
+        factionPlayerManager.updateFaction(playerToKickId, null);
+        factionPlayerManager.save(playerToKick);
+        mySQLProvider.getMemberDAO().removeMember(faction.getId(), playerToKickId);
+        // Send update to redis
+        redisProvider.removePlayer(faction.getId(), playerToKick.getName());
+        redisProvider.updateFaction(playerToKick.getPlayerId(), null);
 
         return new KickResult(KickResultType.SUCCESS, faction, playerToKick);
     }
@@ -656,7 +748,7 @@ public class MineClansAPI {
     }
 
     public FocusResult focus(Player player, String factionName) {
-        FactionPlayer factionPlayer = MineClans.getInstance().getFactionPlayerManager().getOrLoad(player.getUniqueId());
+        FactionPlayer factionPlayer = factionPlayerManager.getOrLoad(player.getUniqueId());
         Faction faction = factionPlayer.getFaction();
         if (faction == null) {
             return new FocusResult(FocusResultType.NOT_IN_FACTION);
@@ -677,6 +769,7 @@ public class MineClansAPI {
         }
 
         faction.setFocusedFaction(targetFaction.getId());
+        redisProvider.focus(faction.getId(), targetFaction.getId());
 
         return new FocusResult(FocusResultType.SUCCESS);
     }
@@ -712,13 +805,18 @@ public class MineClansAPI {
         }
 
         // Assuming your FactionManager class has a method to withdraw currency
-        boolean success = factionManager.withdraw(faction.getName(), amount)
-                && economy.depositPlayer(player, amount).type == EconomyResponse.ResponseType.SUCCESS;
-        if (success) {
-            return new WithdrawResult(WithdrawResultType.SUCCESS, amount); // Withdrawal successful
-        } else {
-            return new WithdrawResult(WithdrawResultType.ERROR, 0); // Error occurred during withdrawal
+        boolean withdrawn = factionManager.withdraw(faction.getName(), amount);
+        if (!withdrawn)
+            return new WithdrawResult(WithdrawResultType.ERROR, 0);
+        boolean deposited = economy.depositPlayer(player, amount).type == EconomyResponse.ResponseType.SUCCESS;
+        if (!deposited) {
+            factionManager.deposit(faction.getName(), amount);
+            return new WithdrawResult(WithdrawResultType.ERROR, 0);
         }
+        // Save to database
+        factionManager.saveFactionToDatabase(faction);
+        redisProvider.withdraw(faction.getId(), amount);
+        return new WithdrawResult(WithdrawResultType.SUCCESS, amount); // Withdrawal successful
     }
 
     public DepositResult deposit(Player player, double amount) {
@@ -749,13 +847,18 @@ public class MineClansAPI {
         }
 
         // Assuming your FactionManager class has a method to deposit currency
-        boolean success = economy.withdrawPlayer(player, amount).type == EconomyResponse.ResponseType.SUCCESS
-                && factionManager.deposit(faction.getName(), amount);
-        if (success) {
-            return new DepositResult(DepositResultType.SUCCESS, amount); // Deposit successful
-        } else {
-            return new DepositResult(DepositResultType.ERROR, 0); // Error occurred during deposit
+        boolean withdrawn = economy.withdrawPlayer(player, amount).type == EconomyResponse.ResponseType.SUCCESS;
+        if (!withdrawn)
+            return new DepositResult(DepositResultType.ERROR, 0);
+        boolean deposited = factionManager.deposit(faction.getName(), amount);
+        if (!deposited) {
+            economy.depositPlayer(player, amount);
+            return new DepositResult(DepositResultType.ERROR, 0);
         }
+        // Save to database
+        factionManager.saveFactionToDatabase(faction);
+        redisProvider.deposit(faction.getId(), amount);
+        return new DepositResult(DepositResultType.SUCCESS, amount); // Deposit successful
     }
 
     public AddKillResult addKill(Player player, Player killed) {
@@ -894,6 +997,7 @@ public class MineClansAPI {
         if (announcement == null || announcement.isEmpty()) {
             if (playerFaction.setAnnouncement(null)) {
                 factionManager.saveFactionToDatabase(playerFaction);
+                redisProvider.setAnnouncement(playerFaction.getId(), null);
             }
             return new AnnouncementResult(AnnouncementResult.AnnouncementResultState.NO_ANNOUNCEMENT);
         }
@@ -901,6 +1005,7 @@ public class MineClansAPI {
         try {
             if (playerFaction.setAnnouncement(announcement)) {
                 factionManager.saveFactionToDatabase(playerFaction);
+                redisProvider.setAnnouncement(playerFaction.getId(), announcement);
             }
             return new AnnouncementResult(AnnouncementResult.AnnouncementResultState.SUCCESS, playerFaction);
         } catch (IllegalArgumentException ex) {
@@ -911,31 +1016,67 @@ public class MineClansAPI {
     public OpenResult toggleOpen(Player player) {
         // Retrieve the FactionPlayer instance for the given player
         FactionPlayer factionPlayer = factionPlayerManager.getOrLoad(player.getUniqueId());
-    
+
         // Retrieve the Faction instance for the player's faction
         Faction faction = factionPlayer.getFaction();
-    
+
         // Check if the player is part of a faction
         if (faction == null) {
             return new OpenResult(OpenResult.OpenResultState.NO_FACTION);
         }
-    
+
         // Check if the player has sufficient rank to toggle the open state
         if (factionPlayer.getRank().isLowerThan(Rank.COLEADER)) {
             return new OpenResult(OpenResult.OpenResultState.NO_PERMISSION);
         }
-    
+
         // Retrieve the current open state of the faction
         boolean currentlyOpen = faction.isOpen();
-    
+
         // Toggle the open state
         boolean newOpenState = !currentlyOpen;
         faction.setOpen(newOpenState);
-    
+
         // Save changes to the faction
         factionManager.saveFactionToDatabase(faction);
-    
+
         // Return the result indicating the new state of the faction
         return new OpenResult(OpenResult.OpenResultState.SUCCESS, faction, newOpenState);
-    }    
+    }
+
+    public AddDeathResult addDeath(Player player) {
+        FactionPlayer factionPlayer = factionPlayerManager.getOrLoad(player.getUniqueId());
+
+        if (factionPlayer == null) {
+            return new AddDeathResult(AddDeathResult.AddDeathResultState.NO_PLAYER, factionPlayer);
+        }
+
+        try {
+            factionPlayer.setDeaths(factionPlayer.getDeaths() + 1);
+            factionPlayerManager.save(factionPlayer);
+            return new AddDeathResult(AddDeathResult.AddDeathResultState.SUCCESS, factionPlayer);
+        } catch (Exception e) {
+            return new AddDeathResult(AddDeathResult.AddDeathResultState.ERROR, factionPlayer);
+        }
+    }
+
+    public boolean startChestUpdate(Faction faction) {
+        if (faction.isEditingChest())
+            return false;
+        faction.setEditingChest(true);
+        faction.setReceivedSubDuringUpdate(false);
+        redisProvider.startChestUpdate(faction);
+        if (faction.isReceivedSubDuringUpdate())
+            return false;
+        return true;
+    }
+
+    public void endChestUpdate(Faction faction, boolean updateChestContent) {
+        if (updateChestContent) {
+            // Save chest data
+            mySQLProvider.getChestDAO().saveFactionChest(faction.getId(), faction.getInventory());
+        }
+        redisProvider.endChestUpdate(faction, updateChestContent);
+        faction.setEditingChest(false);
+    }
 }

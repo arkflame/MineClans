@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import com.arkflame.mineclans.enums.Rank;
 import com.arkflame.mineclans.providers.MySQLProvider;
-import com.arkflame.mineclans.providers.ResultSetProcessor;
+import com.arkflame.mineclans.providers.processors.ResultSetProcessor;
 
 public class RanksDAO {
     private MySQLProvider mySQLProvider;

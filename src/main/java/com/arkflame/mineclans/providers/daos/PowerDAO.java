@@ -1,7 +1,7 @@
 package com.arkflame.mineclans.providers.daos;
 
 import com.arkflame.mineclans.providers.MySQLProvider;
-import com.arkflame.mineclans.providers.ResultSetProcessor;
+import com.arkflame.mineclans.providers.processors.ResultSetProcessor;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

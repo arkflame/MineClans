@@ -73,8 +73,13 @@ public class FactionPlayerManager {
         return factionPlayer;
     }
 
+    public void save(UUID uuid) {
+        save(getOrLoad(uuid));
+    }
+
     // Save a FactionPlayer to the database
     public void save(FactionPlayer factionPlayer) {
+        if (factionPlayer == null) return;
         MineClans.getInstance().getMySQLProvider().getFactionPlayerDAO().insertOrUpdatePlayer(factionPlayer);
     }
 
@@ -101,7 +106,6 @@ public class FactionPlayerManager {
         FactionPlayer factionPlayer = getOrLoad(playerId);
         if (factionPlayer != null && factionPlayer.getJoinDate() == null) {
             factionPlayer.setJoinDate(new Date());
-            save(factionPlayer); // Save to database after update
         }
     }
 
@@ -110,16 +114,6 @@ public class FactionPlayerManager {
         FactionPlayer factionPlayer = getOrLoad(playerId);
         if (factionPlayer != null) {
             factionPlayer.setLastActive(new Date());
-            save(factionPlayer); // Save to database after update
-        }
-    }
-
-    // Add a kill to a FactionPlayer
-    public void addKill(UUID playerId) {
-        FactionPlayer factionPlayer = getOrLoad(playerId);
-        if (factionPlayer != null) {
-            factionPlayer.setKills(factionPlayer.getKills() + 1);
-            save(factionPlayer); // Save to database after update
         }
     }
 
@@ -128,7 +122,6 @@ public class FactionPlayerManager {
         FactionPlayer factionPlayer = getOrLoad(playerId);
         if (factionPlayer != null) {
             factionPlayer.setDeaths(factionPlayer.getDeaths() + 1);
-            save(factionPlayer); // Save to database after update
         }
     }
 
@@ -137,7 +130,6 @@ public class FactionPlayerManager {
         FactionPlayer factionPlayer = getOrLoad(playerId);
         if (factionPlayer != null) {
             factionPlayer.setFaction(faction);
-            save(factionPlayer); // Save to database after update
         }
     }
 
@@ -145,7 +137,6 @@ public class FactionPlayerManager {
         FactionPlayer factionPlayer = getOrLoad(playerId);
         if (factionPlayer != null) {
             factionPlayer.setName(name);
-            save(factionPlayer);
         }
     }
 
@@ -157,7 +148,6 @@ public class FactionPlayerManager {
             if (faction != null) {
                 faction.setRank(playerId, rank);
             }
-            MineClans.getInstance().getMySQLProvider().getRanksDAO().setRank(playerId, rank);
         }
     }
 }

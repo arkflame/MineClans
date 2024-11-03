@@ -31,6 +31,9 @@ public class KickResult {
         NOT_IN_FACTION,
         NOT_MODERATOR,
         PLAYER_NOT_FOUND,
-        SUPERIOR_RANK, NOT_YOURSELF;
+        SUPERIOR_RANK, 
+        NOT_YOURSELF, 
+        FACTION_OWNER, 
+        NO_FACTION;
     }
 }

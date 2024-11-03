@@ -19,6 +19,9 @@ public class ClanEventListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
+        MineClans.runAsync(() -> {
+            MineClans.getInstance().getAPI().addDeath(player);
+        });
         Player killer = player.getKiller();
         if (killer != null) {
             FactionPlayer factionPlayer = MineClans.getInstance().getAPI().getFactionPlayer(player);

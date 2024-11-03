@@ -2,7 +2,7 @@ package com.arkflame.mineclans.providers.daos;
 
 import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.providers.MySQLProvider;
-import com.arkflame.mineclans.providers.ResultSetProcessor;
+import com.arkflame.mineclans.providers.processors.ResultSetProcessor;
 import com.arkflame.mineclans.utils.InventoryUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;

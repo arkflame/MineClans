@@ -47,6 +47,7 @@ public class FactionsCommand extends ModernCommand {
                 case "open":
                     FactionsOpenCommand.onCommand(player, args);
                     break;
+                case "accept":
                 case "join":
                     FactionsJoinCommand.onCommand(player, args);
                     break;

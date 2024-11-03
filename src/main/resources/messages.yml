@@ -91,7 +91,7 @@ factions:
     page: "&cInvalid page number. Showing page 1."
     usage:
       create: "Create a new faction"
-      accept: "Accept a pending invitation"
+      join: "Join a faction"
       leave: "Leave your current faction"
       home: "Teleport to your faction home"
       sethome: "Set your faction’s home at your location"
@@ -232,6 +232,7 @@ factions:
     cannot_promote_to_leader: "&cCannot promote player to leader."
     success: "&aPlayer promoted successfully."
   relation_set:
+    usage: "&cUsage: /f <ally/neutral/enemy> <faction>"
     invalid_relation_type: "&cInvalid relation type: %relation_type%"
     no_faction: "&cYou are not in a faction."
     same_faction: "&cYou cannot set relation towards your own faction."

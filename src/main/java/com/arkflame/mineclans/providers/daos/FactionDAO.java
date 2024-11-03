@@ -10,7 +10,7 @@ import org.bukkit.Location;
 
 import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.providers.MySQLProvider;
-import com.arkflame.mineclans.providers.ResultSetProcessor;
+import com.arkflame.mineclans.providers.processors.ResultSetProcessor;
 import com.arkflame.mineclans.utils.LocationUtil;
 
 public class FactionDAO {

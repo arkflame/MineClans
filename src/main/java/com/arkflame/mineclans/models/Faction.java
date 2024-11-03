@@ -10,9 +10,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 
 import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.buff.ActiveBuff;
@@ -27,6 +29,7 @@ import net.md_5.bungee.api.ChatColor;
 import java.util.Map;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 public class Faction implements InventoryHolder {
     // The ID
@@ -80,6 +83,9 @@ public class Faction implements InventoryHolder {
 
     // Power
     private double power = 0;
+
+    private boolean receivedSubDuringUpdate = false;
+    private boolean editingChest = false;
 
     // Active Buffs
     private Collection<ActiveBuff> activeBuffs = ConcurrentHashMap.newKeySet();
@@ -283,7 +289,15 @@ public class Faction implements InventoryHolder {
     }
 
     public void setChest(Inventory chestInventory) {
-        this.chestInventory = chestInventory;
+        if (this.chestInventory != null) {
+            this.chestInventory.clear();
+            ItemStack[] items = chestInventory.getContents();
+            for (int i = 0; i < items.length; i++) {
+                this.chestInventory.setItem(i, items[i]);
+            }
+        } else {
+            this.chestInventory = chestInventory;
+        }
     }
 
     public UUID getFocusedFaction() {
@@ -420,13 +434,13 @@ public class Faction implements InventoryHolder {
     }
 
     public boolean setAnnouncement(String announcement) {
-    // Check if the new discord link is different from the current one
-    if (this.announcement == null ? announcement != null : !this.announcement.equals(announcement)) {
-        this.announcement = announcement; // Update
-        return true; // Indicate that the value has changed
+        // Check if the new discord link is different from the current one
+        if (this.announcement == null ? announcement != null : !this.announcement.equals(announcement)) {
+            this.announcement = announcement; // Update
+            return true; // Indicate that the value has changed
+        }
+        return false; // Indicate that the value has not changed
     }
-    return false; // Indicate that the value has not changed
-}
 
     public boolean setDiscord(String discord) {
         // Check if the new discord link is different from the current one
@@ -448,13 +462,13 @@ public class Faction implements InventoryHolder {
     public String getDiscord() {
         return discord;
     }
-    
+
     public boolean isRenameCooldown() {
         // Check if enough time has passed since the last rename
         long currentTime = System.currentTimeMillis();
         return (currentTime - lastRename) < RENAME_COOLDOWN;
     }
-    
+
     public void setRenameCooldown() {
         // Set the time for the last rename to the current time
         lastRename = System.currentTimeMillis();
@@ -475,5 +489,21 @@ public class Faction implements InventoryHolder {
 
     public boolean isInvited(Player player) {
         return getInvited().contains(player.getUniqueId());
+    }
+
+    public boolean isEditingChest() {
+        return editingChest;
+    }
+
+    public void setEditingChest(boolean editingChest) {
+        this.editingChest = editingChest;
+    }
+
+    public void setReceivedSubDuringUpdate(boolean receivedSubDuringUpdate) {
+        this.receivedSubDuringUpdate = receivedSubDuringUpdate;
+    }
+
+    public boolean isReceivedSubDuringUpdate() {
+        return receivedSubDuringUpdate;
     }
 }
