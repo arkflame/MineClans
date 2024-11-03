@@ -329,12 +329,12 @@ public class RedisProvider {
         publishUpdate("faction", factionId, "uninvite", playerId.toString());
     }
 
-    public void removePlayer(UUID factionId, String playerName) {
-        publishUpdate("faction", factionId, "removePlayer", playerName);
+    public void removePlayer(UUID factionId, UUID playerId) {
+        publishUpdate("faction", factionId, "removePlayer", playerId.toString());
     }
 
-    public void addPlayer(UUID factionId, String playerName) {
-        publishUpdate("faction", factionId, "addPlayer", playerName);
+    public void addPlayer(UUID factionId, UUID playerId) {
+        publishUpdate("faction", factionId, "addPlayer", playerId.toString());
     }
 
     public void startChestUpdate(Faction faction) {

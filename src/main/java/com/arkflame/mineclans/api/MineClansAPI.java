@@ -202,7 +202,7 @@ public class MineClansAPI {
 
             // Add player to faction
             factionManager.addPlayer(factionName, player.getUniqueId());
-            redisProvider.addPlayer(faction.getId(), player.getName());
+            redisProvider.addPlayer(faction.getId(), player.getUniqueId());
 
             // Save to database
             factionManager.saveFactionToDatabase(faction);
@@ -645,7 +645,7 @@ public class MineClansAPI {
                 // Send update to redis
                 redisProvider.updateFaction(playerId, faction.getName());
                 redisProvider.updateRank(playerId, Rank.RECRUIT);
-                redisProvider.addPlayer(factionId, player.getName());
+                redisProvider.addPlayer(factionId, player.getUniqueId());
                 redisProvider.uninvite(factionId, playerId);
                 return new JoinResult(JoinResultState.SUCCESS, faction, factionPlayer);
             } else {
@@ -721,7 +721,7 @@ public class MineClansAPI {
         factionPlayerManager.save(playerToKick);
         mySQLProvider.getMemberDAO().removeMember(faction.getId(), playerToKickId);
         // Send update to redis
-        redisProvider.removePlayer(faction.getId(), playerToKick.getName());
+        redisProvider.removePlayer(faction.getId(), playerToKick.getPlayerId());
         redisProvider.updateFaction(playerToKick.getPlayerId(), null);
 
         return new KickResult(KickResultType.SUCCESS, faction, playerToKick);

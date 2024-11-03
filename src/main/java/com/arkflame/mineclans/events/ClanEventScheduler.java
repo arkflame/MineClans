@@ -17,7 +17,7 @@ public class ClanEventScheduler {
     private ClanEvent nextEvent = null;
 
     // Event start time
-    private long time = 0;
+    private long nextEventTime = 0;
 
     // Interval in minutes
     private final int interval;
@@ -32,7 +32,7 @@ public class ClanEventScheduler {
 
     // Update time to be set to next event time
     public void updateTime() {
-        time = System.currentTimeMillis() + (interval * 60 * 1000) + 1000;
+        nextEventTime = System.currentTimeMillis() + (interval * 60 * 1000) + 1000;
     }
 
     public void runTimer() {
@@ -47,14 +47,14 @@ public class ClanEventScheduler {
                 }
             } else {
                 // Check if next event is scheduled and it's time to start
-                if (nextEvent != null && currentTime >= time) {
+                if (nextEvent != null && currentTime >= nextEventTime) {
                     startEvent();
                 } else if (nextEvent == null) {
                     // Schedule the next event
                     scheduleNextEvent();
                 } else {
                     // Countdown
-                    long timeLeft = time - currentTime;
+                    long timeLeft = nextEventTime - currentTime;
                     handleCountdown(timeLeft);
                 }
             }
@@ -62,6 +62,9 @@ public class ClanEventScheduler {
     }
 
     private void handleCountdown(long timeLeft) {
+        if (nextEvent == null) {
+            return;
+        }
         int secondsLeft = (int) Math.ceil(timeLeft / 1000.0);
         ChatColor color;
 
@@ -90,14 +93,13 @@ public class ClanEventScheduler {
 
     private void scheduleNextEvent() {
         updateTime();
-        nextEvent = RandomEventFactory
-                .createRandomEvent(MineClans.getInstance().getClanEventManager().getEventConfigs());
+        nextEvent = RandomEventFactory.createRandomEvent(MineClans.getInstance().getClanEventManager().getEventConfigs());
     }
 
     public void finishEvent() {
         // Reset current event
         event = null;
-        time = 0;
+        nextEventTime = 0;
 
         // Schedule the next event
         scheduleNextEvent();
@@ -129,7 +131,7 @@ public class ClanEventScheduler {
     }
 
     public long getTimeLeft() {
-        return Math.max(0, time - System.currentTimeMillis());
+        return Math.max(0, nextEventTime - System.currentTimeMillis());
     }
 
     public String getTimeLeftFormatted() {
