@@ -1,10 +1,8 @@
 package com.arkflame.mineclans.api;
 
-import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
@@ -60,6 +58,7 @@ import com.arkflame.mineclans.models.FactionPlayer;
 import com.arkflame.mineclans.models.Relation;
 import com.arkflame.mineclans.providers.MySQLProvider;
 import com.arkflame.mineclans.providers.RedisProvider;
+import com.arkflame.mineclans.utils.LocationData;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -431,7 +430,7 @@ public class MineClansAPI {
                 : FriendlyFireResult.FriendlyFireResultState.DISABLED);
     }
 
-    public SetHomeResult setHome(Player player, Location homeLocation) {
+    public SetHomeResult setHome(Player player, LocationData homeLocation) {
         FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
         if (factionPlayer == null || factionPlayer.getFaction() == null) {
             return new SetHomeResult(SetHomeResultState.NOT_IN_FACTION);
@@ -458,7 +457,7 @@ public class MineClansAPI {
             return new HomeResult(HomeResultState.NOT_IN_FACTION);
         }
 
-        Location homeLocation = factionPlayer.getFaction().getHome();
+        LocationData homeLocation = factionPlayer.getFaction().getHome();
         if (homeLocation == null) {
             return new HomeResult(HomeResultState.NO_HOME_SET);
         }

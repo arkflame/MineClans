@@ -135,6 +135,10 @@ events:
           - "give {player} cooked_salmon 1"
         deposit: 5
 
+# Make homes work cross-server
+bungee: true
+
+# Store faction data in MySQL
 mysql:
   enabled: true
   url: jdbc:mysql://localhost:3306/database

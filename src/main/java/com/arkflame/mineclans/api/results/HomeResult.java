@@ -1,17 +1,17 @@
 package com.arkflame.mineclans.api.results;
 
-import org.bukkit.Location;
+import com.arkflame.mineclans.utils.LocationData;
 
 public class HomeResult {
     private final HomeResultState state;
-    private final Location homeLocation;
+    private final LocationData homeLocation;
 
     public HomeResult(HomeResultState state) {
         this.state = state;
         this.homeLocation = null;
     }
 
-    public HomeResult(HomeResultState state, Location homeLocation) {
+    public HomeResult(HomeResultState state, LocationData homeLocation) {
         this.state = state;
         this.homeLocation = homeLocation;
     }
@@ -20,7 +20,7 @@ public class HomeResult {
         return state;
     }
 
-    public Location getHomeLocation() {
+    public LocationData getHomeLocation() {
         return homeLocation;
     }
     

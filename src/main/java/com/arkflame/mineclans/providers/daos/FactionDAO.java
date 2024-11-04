@@ -6,11 +6,10 @@ import java.sql.Timestamp;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.bukkit.Location;
-
 import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.providers.MySQLProvider;
 import com.arkflame.mineclans.providers.processors.ResultSetProcessor;
+import com.arkflame.mineclans.utils.LocationData;
 import com.arkflame.mineclans.utils.LocationUtil;
 
 public class FactionDAO {
@@ -93,7 +92,7 @@ public class FactionDAO {
             UUID ownerId = UUID.fromString(resultSet.getString("owner_id"));
             String displayName = resultSet.getString("display_name");
             // Fetch additional faction properties
-            Location home = LocationUtil.parseLocation(resultSet.getString("home"));
+            LocationData home = LocationUtil.parseLocationData(resultSet.getString("home"));
             double balance = resultSet.getDouble("balance");
             int kills = resultSet.getInt("kills");
             boolean friendlyFire = resultSet.getBoolean("friendly_fire");

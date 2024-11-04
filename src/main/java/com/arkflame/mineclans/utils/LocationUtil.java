@@ -39,4 +39,60 @@ public class LocationUtil {
         builder.append(location.getPitch());
         return builder.toString();
     }
+
+    /**
+     * Parses a location string to a LocationData object.
+     * Supports old format "world,x,y,z,yaw,pitch" and new format "world,x,y,z,yaw,pitch,serverName".
+     *
+     * @param locationString The location string to parse.
+     * @return A LocationData object representing the location.
+     */
+    public static LocationData parseLocationData(String locationString) {
+        if (locationString == null) {
+            return null;
+        }
+        
+        String[] parts = locationString.split(",");
+        if (parts.length < 6 || parts.length > 7) {
+            throw new IllegalArgumentException("Invalid location string format");
+        }
+        
+        String worldName = parts[0];
+        double x = Double.parseDouble(parts[1]);
+        double y = Double.parseDouble(parts[2]);
+        double z = Double.parseDouble(parts[3]);
+        float yaw = Float.parseFloat(parts[4]);
+        float pitch = Float.parseFloat(parts[5]);
+        String serverName = (parts.length == 7) ? parts[6] : null;
+        
+        return new LocationData(worldName, x, y, z, pitch, yaw, serverName);
+    }
+
+    /**
+     * Converts a LocationData object to a string.
+     * Outputs format "world,x,y,z,yaw,pitch" if serverName is null,
+     * otherwise "world,x,y,z,yaw,pitch,serverName".
+     *
+     * @param locationData The LocationData object to convert.
+     * @return A string representation of the LocationData.
+     */
+    public static String locationDataToString(LocationData locationData) {
+        if (locationData == null) {
+            return null;
+        }
+        
+        StringBuilder builder = new StringBuilder();
+        builder.append(locationData.getWorldName()).append(",");
+        builder.append(locationData.getX()).append(",");
+        builder.append(locationData.getY()).append(",");
+        builder.append(locationData.getZ()).append(",");
+        builder.append(locationData.getYaw()).append(",");
+        builder.append(locationData.getPitch());
+        
+        if (locationData.getServerName() != null) {
+            builder.append(",").append(locationData.getServerName());
+        }
+        
+        return builder.toString();
+    }
 }

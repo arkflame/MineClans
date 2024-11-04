@@ -33,6 +33,7 @@ import com.arkflame.mineclans.placeholders.FactionsPlaceholder;
 import com.arkflame.mineclans.providers.MySQLProvider;
 import com.arkflame.mineclans.providers.RedisProvider;
 import com.arkflame.mineclans.tasks.BuffExpireTask;
+import com.arkflame.mineclans.utils.BungeeUtil;
 
 import net.milkbowl.vault.economy.Economy;
 
@@ -46,7 +47,6 @@ public class MineClans extends JavaPlugin {
     // Managers
     private FactionManager factionManager;
     private FactionPlayerManager factionPlayerManager;
-    private RedisProvider redisProvider;
 
     // API
     private MineClansAPI api;
@@ -68,6 +68,12 @@ public class MineClans extends JavaPlugin {
 
     // Buff Manager
     private BuffManager buffManager;
+
+    // Redis Provider
+    private RedisProvider redisProvider;
+
+    // Bungee Util
+    private BungeeUtil bungeeUtil;
 
     public ConfigWrapper getCfg() {
         return config;
@@ -135,6 +141,10 @@ public class MineClans extends JavaPlugin {
         return redisProvider;
     }
 
+    public BungeeUtil getBungeeUtil() {
+        return bungeeUtil;
+    }
+
     @Override
     public void onEnable() {
         // Set static instance
@@ -171,12 +181,13 @@ public class MineClans extends JavaPlugin {
         // Managers
         factionManager = new FactionManager();
         factionPlayerManager = new FactionPlayerManager();
-        redisProvider = new RedisProvider(factionManager, factionPlayerManager, getConfig(), getLogger());
         clanEventManager = new ClanEventManager(this);
         clanEventScheduler = new ClanEventScheduler(config.getInt("events.interval"), config.getInt("events.time-limit"));
         leaderboardManager = new LeaderboardManager(mySQLProvider.getPowerDAO());
         powerManager = new PowerManager(mySQLProvider.getPowerDAO(), leaderboardManager);
         buffManager = new BuffManager(config);
+        redisProvider = new RedisProvider(factionManager, factionPlayerManager, getConfig(), getLogger());
+        bungeeUtil = new BungeeUtil(this);
 
         // Initialize API
         api = new MineClansAPI(factionManager, factionPlayerManager, mySQLProvider, redisProvider);
@@ -231,7 +242,11 @@ public class MineClans extends JavaPlugin {
             redisProvider.shutdown();
         }
 
-        for (Player player : Bukkit.getOnlinePlayers()) {
+        if (bungeeUtil != null) {
+            bungeeUtil.shutdown();
+        }
+
+        for (Player player : getServer().getOnlinePlayers()) {
             InventoryView view = player.getOpenInventory();
 
             if (view != null) {

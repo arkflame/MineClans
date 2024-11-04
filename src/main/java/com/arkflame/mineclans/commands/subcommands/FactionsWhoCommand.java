@@ -2,10 +2,8 @@ package com.arkflame.mineclans.commands.subcommands;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -55,7 +53,7 @@ public class FactionsWhoCommand {
                 .filter(FactionPlayer::isOnline)
                 .count();
         int memberCount = faction.getMembers().size();
-        String hqCoords = Optional.ofNullable(faction.getHome())
+        String hqCoords = Optional.ofNullable(faction.getHome().getLocation())
                 .map(loc -> loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ())
                 .orElse("N/A");
         String inviteStatus = faction.isOpen() ? "Open" : "Closed";

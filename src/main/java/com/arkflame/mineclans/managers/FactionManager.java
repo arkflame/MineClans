@@ -4,13 +4,13 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.enums.RelationType;
 import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.models.Relation;
+import com.arkflame.mineclans.utils.LocationData;
 
 public class FactionManager {
     // Cache for factions by Name
@@ -202,10 +202,10 @@ public class FactionManager {
         }
     }
 
-    public void updateHome(String factionName, Location homeLocation) {
+    public void updateHome(String factionName, LocationData location) {
         Faction faction = getFaction(factionName);
         if (faction != null) {
-            faction.setHome(homeLocation);
+            faction.setHome(location);
         }
     }
 

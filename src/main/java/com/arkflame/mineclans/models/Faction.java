@@ -8,9 +8,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -22,6 +20,7 @@ import com.arkflame.mineclans.enums.Rank;
 import com.arkflame.mineclans.enums.RelationType;
 import com.arkflame.mineclans.modernlib.config.ConfigWrapper;
 import com.arkflame.mineclans.utils.FactionNamingUtil;
+import com.arkflame.mineclans.utils.LocationData;
 import com.arkflame.mineclans.utils.LocationUtil;
 
 import net.md_5.bungee.api.ChatColor;
@@ -29,7 +28,6 @@ import net.md_5.bungee.api.ChatColor;
 import java.util.Map;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 
 public class Faction implements InventoryHolder {
     // The ID
@@ -48,7 +46,7 @@ public class Faction implements InventoryHolder {
     private boolean friendlyFire = false;
 
     // Faction Home
-    private Location home;
+    private LocationData home;
 
     // Display name
     private String displayName;
@@ -133,11 +131,11 @@ public class Faction implements InventoryHolder {
         this.friendlyFire = friendlyFire;
     }
 
-    public Location getHome() {
+    public LocationData getHome() {
         return home;
     }
 
-    public void setHome(Location home) {
+    public void setHome(LocationData home) {
         this.home = home;
     }
 
@@ -262,7 +260,7 @@ public class Faction implements InventoryHolder {
     }
 
     public String getHomeString() {
-        return LocationUtil.locationToString(home);
+        return LocationUtil.locationDataToString(home);
     }
 
     public Collection<UUID> getOnlineMembers() {

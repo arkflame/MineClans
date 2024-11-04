@@ -1,15 +1,20 @@
 package com.arkflame.mineclans.providers;
 
 import com.arkflame.mineclans.MineClans;
+import com.arkflame.mineclans.api.results.HomeResult;
 import com.arkflame.mineclans.enums.Rank;
 import com.arkflame.mineclans.enums.RelationType;
 import com.arkflame.mineclans.managers.FactionManager;
 import com.arkflame.mineclans.managers.FactionPlayerManager;
 import com.arkflame.mineclans.models.Faction;
 import com.arkflame.mineclans.models.FactionPlayer;
+import com.arkflame.mineclans.utils.LocationData;
+import com.arkflame.mineclans.utils.LocationUtil;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.entity.Player;
+
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -152,7 +157,7 @@ public class RedisProvider {
                 updateFactionBalance(faction, amount, parts[0].equals("deposit"));
                 break;
             case "updateHome":
-                factionManager.updateHome(factionName, parseLocation(parts, 2));
+                factionManager.updateHome(factionName, LocationUtil.parseLocationData(parts[2]));
                 break;
             case "updateFriendlyFire":
                 factionManager.updateFriendlyFire(factionName, Boolean.parseBoolean(parts[2]));
@@ -241,6 +246,19 @@ public class RedisProvider {
             case "updateRank":
                 factionPlayerManager.updateRank(playerId, Rank.valueOf(parts[2]));
                 break;
+            case "requestHome":
+                Player bukkitPlayer = player.getPlayer();
+                if (bukkitPlayer != null) {
+                    HomeResult homeResult = MineClans.getInstance().getAPI().getHome(bukkitPlayer);
+                    LocationData homeLocation = homeResult.getHomeLocation();
+                    if (homeLocation != null) {
+                        Location location = homeLocation.getLocation();
+                        if (location != null) {
+                            bukkitPlayer.teleport(location);
+                        }
+                    }
+                }
+                break;
             default:
                 logger.warning("Unsupported player action: " + parts[0]);
                 break;
@@ -261,16 +279,6 @@ public class RedisProvider {
             return UUID.fromString(value);
         } catch (IllegalArgumentException e) {
             logger.log(Level.WARNING, "Failed to parse UUID: " + value, e);
-            return null;
-        }
-    }
-
-    private Location parseLocation(String[] parts, int startIndex) {
-        try {
-            return new Location(null, Double.parseDouble(parts[startIndex]), Double.parseDouble(parts[startIndex + 1]),
-                    Double.parseDouble(parts[startIndex + 2]));
-        } catch (Exception e) {
-            logger.log(Level.WARNING, "Failed to parse location", e);
             return null;
         }
     }
@@ -312,9 +320,8 @@ public class RedisProvider {
         publishUpdate("faction", factionId, "withdraw", String.valueOf(amount));
     }
 
-    public void updateHome(UUID factionId, Location home) {
-        publishUpdate("faction", factionId, "updateHome",
-                String.valueOf(home.getX()), String.valueOf(home.getY()), String.valueOf(home.getZ()));
+    public void updateHome(UUID factionId, LocationData home) {
+        publishUpdate("faction", factionId, "updateHome", LocationUtil.locationDataToString(home));
     }
 
     public void updateFriendlyFire(UUID factionId, boolean friendlyFire) {
@@ -383,5 +390,9 @@ public class RedisProvider {
 
     public void updateRank(UUID playerId, Rank rank) {
         publishUpdate("player", playerId, "updateRank", rank.name());
+    }
+
+    public void requestHome(UUID playerId) {
+        publishUpdate("player", playerId, "requestHome");
     }
 }
