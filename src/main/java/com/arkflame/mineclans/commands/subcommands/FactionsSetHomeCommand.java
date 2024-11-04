@@ -34,7 +34,7 @@ public class FactionsSetHomeCommand {
             }
         };
         
-        if (MineClans.getInstance().getConfig().getBoolean("")) {
+        if (MineClans.getInstance().getConfig().getBoolean("bungee")) {
             MineClans.getInstance().getBungeeUtil().getCurrentServer(player, callback);
         } else {
             callback.accept(null);

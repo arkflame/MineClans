@@ -27,6 +27,7 @@ public class FactionPlayer {
     private Collection<UUID> killedPlayers = new HashSet<>();
     private EnteringType enteringType = EnteringType.DEPOSIT;
     private long enteringTime = 0;
+    private long lastHomeRequest = 0;
 
     public FactionPlayer(UUID playerId) {
         this.playerId = playerId;
@@ -178,5 +179,13 @@ public class FactionPlayer {
         } else {
             return null; // Timeout, returning null
         }
+    }
+
+    public boolean shouldTeleportHome() {
+        return System.currentTimeMillis() - lastHomeRequest < 2000;
     }    
+
+    public void requestHome() {
+        this.lastHomeRequest = System.currentTimeMillis();
+    }
 }

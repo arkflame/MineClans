@@ -250,16 +250,15 @@ public class RedisProvider {
                 factionPlayerManager.updateRank(playerId, Rank.valueOf(parts[2]));
                 break;
             case "requestHome":
-                Player bukkitPlayer = player.getPlayer();
-                if (bukkitPlayer != null) {
+                if (player.isOnline()) {
+                    Player bukkitPlayer = player.getPlayer();
                     HomeResult homeResult = MineClans.getInstance().getAPI().getHome(bukkitPlayer);
                     LocationData homeLocation = homeResult.getHomeLocation();
                     if (homeLocation != null) {
-                        Location location = homeLocation.getLocation();
-                        if (location != null) {
-                            bukkitPlayer.teleport(location);
-                        }
+                        homeLocation.teleport(bukkitPlayer);
                     }
+                } else {
+                    player.requestHome();
                 }
                 break;
             default:

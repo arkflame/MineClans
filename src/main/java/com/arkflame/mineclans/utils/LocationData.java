@@ -1,7 +1,6 @@
 package com.arkflame.mineclans.utils;
 
 import com.arkflame.mineclans.MineClans;
-import com.arkflame.mineclans.utils.BungeeUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -14,9 +13,10 @@ public class LocationData {
     private final String serverName;
 
     public LocationData(Location location, String serverName) {
-        this(location.getWorld().getName(), location.getX(), location.getY(), location.getZ(), location.getPitch(), location.getYaw(), serverName);
+        this(location.getWorld().getName(), location.getX(), location.getY(), location.getZ(), location.getPitch(),
+                location.getYaw(), serverName);
     }
-    
+
     public LocationData(String worldName, double x, double y, double z, float pitch, float yaw, String serverName) {
         this.worldName = worldName;
         this.x = x;
@@ -93,8 +93,26 @@ public class LocationData {
     }
 
     /**
+     * Effectively teleport the player to the location
+     * in the current server world and location if present.
+     * 
+     * @param player
+     * @return
+     */
+    public boolean teleportNow(Player player) {
+        // Teleport locally if the world is valid
+        Location location = getLocation();
+        if (location != null) {
+            player.teleport(location);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Attempts to teleport the player to this LocationData.
-     * If serverName is specified, it will use BungeeUtil to teleport the player to the correct server.
+     * If serverName is specified, it will use BungeeUtil to teleport the player to
+     * the correct server.
      * If serverName is null, it teleports the player locally if the world exists.
      *
      * @param player The player to teleport.
@@ -104,20 +122,20 @@ public class LocationData {
         if (serverName != null) {
             // Use BungeeUtil to teleport across servers
             BungeeUtil bungeeUtil = MineClans.getInstance().getBungeeUtil();
-            bungeeUtil.sendPlayerToServer(player, serverName);
-            
-            // Send Redis request for cross-server handling
-            MineClans.getInstance().getRedisProvider().requestHome(player.getUniqueId());
+            bungeeUtil.getCurrentServer(player, (currentServer) -> {
+                if (currentServer == null || currentServer.equals(serverName)) {
+                    teleportNow(player);
+                } else {
+                    bungeeUtil.sendPlayerToServer(player, serverName);
+
+                    // Send Redis request for cross-server handling
+                    MineClans.getInstance().getRedisProvider().requestHome(player.getUniqueId());
+                }
+            });
             return true;
         } else {
-            // Teleport locally if the world is valid
-            Location location = getLocation();
-            if (location != null) {
-                player.teleport(location);
-                return true;
-            }
+            return teleportNow(player);
         }
-        return false;
     }
 
     /**
