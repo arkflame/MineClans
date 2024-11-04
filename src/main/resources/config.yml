@@ -67,7 +67,9 @@ buffs:
       material: REDSTONE_BLOCK
 
 events:
-  interval: 25 # minutes
+  # in minutes
+  interval: 25
+  time-limit: 5
   custom-events:
     diamond-mining-competition:
       name: "Diamond Rush"

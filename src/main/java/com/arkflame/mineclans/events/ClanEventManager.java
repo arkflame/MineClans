@@ -75,7 +75,7 @@ public class ClanEventManager {
 
         if (currentEvent != null) {
             clanEventScheduler.setEvent(null);
-            currentEvent.endEvent(null);
+            currentEvent.finish(null);
         }
     }
 }

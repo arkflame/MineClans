@@ -173,7 +173,7 @@ public class MineClans extends JavaPlugin {
         factionPlayerManager = new FactionPlayerManager();
         redisProvider = new RedisProvider(factionManager, factionPlayerManager, getConfig(), getLogger());
         clanEventManager = new ClanEventManager(this);
-        clanEventScheduler = new ClanEventScheduler(config.getInt("events.interval"));
+        clanEventScheduler = new ClanEventScheduler(config.getInt("events.interval"), config.getInt("events.time-limit"));
         leaderboardManager = new LeaderboardManager(mySQLProvider.getPowerDAO());
         powerManager = new PowerManager(mySQLProvider.getPowerDAO(), leaderboardManager);
         buffManager = new BuffManager(config);

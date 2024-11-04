@@ -77,7 +77,7 @@ public class ClanEvent {
     public void onObjectiveChange(EventObjective objective, Faction faction) {
         if (objective.isCompleted(faction)) {
             if (hasCompletedObjectives(faction)) {
-                endEvent(faction);
+                finish(faction);
             }
         }
     }
@@ -145,7 +145,7 @@ public class ClanEvent {
         MelodyUtil.playMelody(MineClans.getInstance(), Melody.EVENT_START_MELODY);
     }
 
-    public void endEvent(Faction winner) {
+    public void finish(Faction winner) {
         if (this.isActive) {
             this.isActive = false;
             String winnerName = MineClans.getInstance().getMessages().getText("event.end.default_winner");

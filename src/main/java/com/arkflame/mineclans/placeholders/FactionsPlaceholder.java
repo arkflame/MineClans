@@ -74,10 +74,8 @@ public class FactionsPlaceholder extends PlaceholderExpansion {
 
         switch (identifier) {
             case "event_name":
-                return currentEvent == null ? "" : currentEvent.getName();
-            case "next_event_name":
-                return nextEvent == null ? "" : nextEvent.getName();
-            case "next_event_time":
+                return currentEvent == null ? (nextEvent == null ? "" : nextEvent.getName()) : currentEvent.getName();
+            case "event_time_left":
                 return eventScheduler.getTimeLeftFormatted();
             default:
                 break;

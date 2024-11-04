@@ -16,34 +16,52 @@ public class ClanEventScheduler {
     // Next event
     private ClanEvent nextEvent = null;
 
+    // Current time updated by the timer each second
+    private long currentTime = 0;
+
     // Event start time
     private long nextEventTime = 0;
+
+    // Event finish time
+    private long eventFinishTime = 0;
 
     // Interval in minutes
     private final int interval;
 
+    // Time limit in minutes
+    private final int timeLimit;
+
     // Task reference for canceling if needed
     private BukkitTask eventTask;
 
-    public ClanEventScheduler(int interval) {
+    public ClanEventScheduler(int interval, int timeLimit) {
         this.interval = interval;
+        this.timeLimit = timeLimit;
         runTimer();
     }
 
-    // Update time to be set to next event time
-    public void updateTime() {
-        nextEventTime = System.currentTimeMillis() + (interval * 60 * 1000) + 1000;
+    public void updateNextEventTime() {
+        nextEventTime = currentTime + (interval * 60 * 1000) + 1000;
+    }
+
+    public void updateEventFinishTime() {
+        eventFinishTime = currentTime + (timeLimit * 60 * 1000) + 1000;
     }
 
     public void runTimer() {
         cancel();
         eventTask = Bukkit.getScheduler().runTaskTimerAsynchronously(MineClans.getInstance(), () -> {
-            long currentTime = System.currentTimeMillis();
+            currentTime = System.currentTimeMillis();
 
             if (event != null) {
                 // Check if event is active, if not, finish the event
                 if (!event.isActive()) {
                     finishEvent();
+                } else {
+                    // Check if time limit passed
+                    if (currentTime > eventFinishTime) {
+                        event.finish(null);
+                    }
                 }
             } else {
                 // Check if next event is scheduled and it's time to start
@@ -92,14 +110,13 @@ public class ClanEventScheduler {
     }
 
     private void scheduleNextEvent() {
-        updateTime();
+        updateNextEventTime();
         nextEvent = RandomEventFactory.createRandomEvent(MineClans.getInstance().getClanEventManager().getEventConfigs());
     }
 
     public void finishEvent() {
         // Reset current event
         event = null;
-        nextEventTime = 0;
 
         // Schedule the next event
         scheduleNextEvent();
@@ -108,12 +125,13 @@ public class ClanEventScheduler {
     public void startEvent() {
         event = nextEvent;
         nextEvent = null;
+        updateEventFinishTime();
 
         // Handle event starting logic here (e.g., announcements)
         event.startEvent();
 
         // Schedule the next event
-        scheduleNextEvent();
+        //scheduleNextEvent();
     }
 
     public void cancel() {
@@ -131,7 +149,15 @@ public class ClanEventScheduler {
     }
 
     public long getTimeLeft() {
-        return Math.max(0, nextEventTime - System.currentTimeMillis());
+        long timeLeft;
+        if (event != null) {
+            // Time left for current event
+            timeLeft = eventFinishTime - currentTime;
+        } else {
+            // Time left for next event
+            timeLeft = nextEventTime - currentTime;
+        }
+        return Math.max(0L, timeLeft);
     }
 
     public String getTimeLeftFormatted() {
