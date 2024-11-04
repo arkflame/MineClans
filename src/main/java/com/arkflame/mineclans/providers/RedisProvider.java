@@ -165,6 +165,9 @@ public class RedisProvider {
             case "invite":
                 factionManager.invitePlayerToFaction(factionName, parseUUID(parts[2]));
                 break;
+            case "uninvite":
+                factionManager.uninvitePlayerFromFaction(factionName, parseUUID(parts[2]));
+                break;
             case "focus":
                 faction.setFocusedFaction(parseUUID(parts[2]));
                 break;

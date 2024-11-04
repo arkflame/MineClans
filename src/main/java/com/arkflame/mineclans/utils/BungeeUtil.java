@@ -106,7 +106,7 @@ public class BungeeUtil implements PluginMessageListener {
      * Shuts down the BungeeUtil, cancelling the cleanup task.
      */
     public void shutdown() {
-        if (cleanupTask != null && !cleanupTask.isCancelled()) {
+        if (cleanupTask != null) {
             cleanupTask.cancel();
         }
     }

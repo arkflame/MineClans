@@ -15,6 +15,7 @@ import com.arkflame.mineclans.models.FactionPlayer;
 import com.arkflame.mineclans.modernlib.commands.ModernArguments;
 import com.arkflame.mineclans.modernlib.config.ConfigWrapper;
 import com.arkflame.mineclans.modernlib.utils.ChatColors;
+import com.arkflame.mineclans.utils.LocationData;
 import com.arkflame.mineclans.utils.NumberUtil;
 
 public class FactionsWhoCommand {
@@ -53,7 +54,8 @@ public class FactionsWhoCommand {
                 .filter(FactionPlayer::isOnline)
                 .count();
         int memberCount = faction.getMembers().size();
-        String hqCoords = Optional.ofNullable(faction.getHome().getLocation())
+        LocationData factionHome = faction.getHome();
+        String hqCoords = factionHome == null ? "N/A" : Optional.ofNullable(factionHome.getLocation())
                 .map(loc -> loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ())
                 .orElse("N/A");
         String inviteStatus = faction.isOpen() ? "Open" : "Closed";

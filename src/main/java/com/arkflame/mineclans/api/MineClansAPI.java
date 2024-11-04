@@ -141,7 +141,7 @@ public class MineClansAPI {
 
         factionManager.invitePlayerToFaction(faction.getName(), targetPlayerId);
         mySQLProvider.getInvitedDAO().addInvitedMember(faction.getId(), targetPlayerId);
-        redisProvider.invite(faction.getId(), player.getUniqueId());
+        redisProvider.invite(faction.getId(), targetPlayerId);
         return new InviteResult(InviteResult.InviteResultState.SUCCESS, targetPlayer, faction);
     }
 
@@ -644,7 +644,7 @@ public class MineClansAPI {
                 // Send update to redis
                 redisProvider.updateFaction(playerId, faction.getName());
                 redisProvider.updateRank(playerId, Rank.RECRUIT);
-                redisProvider.addPlayer(factionId, player.getUniqueId());
+                redisProvider.addPlayer(factionId, playerId);
                 redisProvider.uninvite(factionId, playerId);
                 return new JoinResult(JoinResultState.SUCCESS, faction, factionPlayer);
             } else {
