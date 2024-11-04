@@ -55,7 +55,7 @@ public class FactionsWhoCommand {
                 .count();
         int memberCount = faction.getMembers().size();
         LocationData factionHome = faction.getHome();
-        String hqCoords = factionHome == null ? "N/A" : Optional.ofNullable(factionHome.getLocation())
+        String hqCoords = Optional.ofNullable(factionHome)
                 .map(loc -> loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ())
                 .orElse("N/A");
         String inviteStatus = faction.isOpen() ? "Open" : "Closed";
