@@ -277,6 +277,7 @@ factions:
     no_faction: "&cYou are not in a faction."
     success: "&cYou left your faction."
   focus:
+    usage: "&c/f focus <faction>"
     success: "&aSuccessfully focused on faction: %faction%"
     not_in_faction: "&cYou are not in a faction."
     faction_not_found: "&cFaction '%faction%' not found. Cleared focus."

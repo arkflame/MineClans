@@ -10,12 +10,16 @@ import com.arkflame.mineclans.modernlib.config.ConfigWrapper;
 
 public class FactionsFocusCommand {
     public static void onCommand(Player player, ModernArguments args) {
-        String factionName = args.getText(1);
         MineClans mineClans = MineClans.getInstance();
+        ConfigWrapper messages = mineClans.getMessages();
+        String basePath = "factions.focus.";
+        if (!args.hasArg(1)) {
+            player.sendMessage(messages.getText(basePath + "usage"));
+            return;
+        }
+        String factionName = args.getText(1);
         FocusResult focusResult = mineClans.getAPI().focus(player, factionName);
         FocusResultType type = focusResult.getType();
-        String basePath = "factions.focus.";
-        ConfigWrapper messages = mineClans.getMessages();
 
         switch (type) {
             case SUCCESS:
