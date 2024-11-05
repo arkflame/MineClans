@@ -19,9 +19,12 @@ import com.arkflame.mineclans.buff.ActiveBuff;
 import com.arkflame.mineclans.enums.Rank;
 import com.arkflame.mineclans.enums.RelationType;
 import com.arkflame.mineclans.modernlib.config.ConfigWrapper;
+import com.arkflame.mineclans.modernlib.utils.Titles;
 import com.arkflame.mineclans.utils.FactionNamingUtil;
 import com.arkflame.mineclans.utils.LocationData;
 import com.arkflame.mineclans.utils.LocationUtil;
+import com.arkflame.mineclans.utils.MelodyUtil;
+import com.arkflame.mineclans.utils.MelodyUtil.Melody;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -503,5 +506,18 @@ public class Faction implements InventoryHolder {
 
     public boolean isReceivedSubDuringUpdate() {
         return receivedSubDuringUpdate;
+    }
+
+    // Send message, title, melody
+    public void sendMessageTitleMelody(String message, String title, String subtitle, int fadeIn, int stay, int fadeOut,
+            Melody melody) {
+            for (UUID uuid : getOnlineMembers()) {
+                Player otherPlayer = Bukkit.getPlayer(uuid);
+                if (otherPlayer != null) {
+                    otherPlayer.sendMessage(message);
+                    Titles.sendTitle(otherPlayer, title, subtitle, fadeIn, stay, fadeOut);
+                    MelodyUtil.playMelody(MineClans.getInstance(), otherPlayer, melody);
+                }
+            }
     }
 }

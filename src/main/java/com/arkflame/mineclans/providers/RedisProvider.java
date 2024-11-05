@@ -2,6 +2,7 @@ package com.arkflame.mineclans.providers;
 
 import com.arkflame.mineclans.MineClans;
 import com.arkflame.mineclans.api.results.HomeResult;
+import com.arkflame.mineclans.buff.Buff;
 import com.arkflame.mineclans.enums.Rank;
 import com.arkflame.mineclans.enums.RelationType;
 import com.arkflame.mineclans.managers.FactionManager;
@@ -11,7 +12,6 @@ import com.arkflame.mineclans.models.FactionPlayer;
 import com.arkflame.mineclans.utils.LocationData;
 import com.arkflame.mineclans.utils.LocationUtil;
 
-import org.bukkit.Location;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 
@@ -225,6 +225,15 @@ public class RedisProvider {
             case "sendAllianceMessage":
                 factionManager.sendAllianceMessage(faction, parts[2]);
                 break;
+            case "activateBuff":
+                String playerName = parts[2];
+                String buffName = parts[3];
+                Buff buff = MineClans.getInstance().getBuffManager().getBuff(buffName);
+                if (buff != null) {
+                    buff.giveEffects(faction);
+                    buff.notify(playerName, faction);
+                }
+                break;
             default:
                 logger.warning("Unsupported faction action: " + parts[0]);
         }
@@ -370,20 +379,24 @@ public class RedisProvider {
         publishUpdate("faction", factionId, "updateFactionOwner", newOwnerId.toString());
     }
 
-    public void removeFaction(UUID id) {
-        publishUpdate("faction", id, "removeFaction");
+    public void removeFaction(UUID factionId) {
+        publishUpdate("faction", factionId, "removeFaction");
     }
 
-    public void createFaction(UUID id, UUID playerId, String factionName) {
-        publishUpdate("faction", id, "createFaction", playerId.toString(), factionName);
+    public void createFaction(UUID factionId, UUID playerId, String factionName) {
+        publishUpdate("faction", factionId, "createFaction", playerId.toString(), factionName);
     }
 
-    public void sendFactionMessage(UUID id, String message) {
-        publishUpdate("faction", id, "sendFactionMessage", message);
+    public void sendFactionMessage(UUID factionId, String message) {
+        publishUpdate("faction", factionId, "sendFactionMessage", message);
     }
 
-    public void sendAllianceMessage(UUID id, String message) {
-        publishUpdate("faction", id, "sendAllianceMessage", message);
+    public void sendAllianceMessage(UUID factionId, String message) {
+        publishUpdate("faction", factionId, "sendAllianceMessage", message);
+    }
+
+    public void activateBuff(UUID factionId, String playerName, String buffName) {
+        publishUpdate("faction", factionId, "activateBuff", playerName, buffName);
     }
 
     public void updateFaction(UUID playerId, String factionName) {

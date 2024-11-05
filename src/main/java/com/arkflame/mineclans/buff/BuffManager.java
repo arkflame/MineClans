@@ -34,8 +34,8 @@ public class BuffManager {
     private void loadBuffs() {
         buffs.clear();
         if (config.contains("buffs.custom-buffs")) {
-            for (String buffKey : config.getConfigurationSection("buffs.custom-buffs").getKeys(false)) {
-                String path = "buffs.custom-buffs." + buffKey;
+            for (String buffName : config.getConfigurationSection("buffs.custom-buffs").getKeys(false)) {
+                String path = "buffs.custom-buffs." + buffName;
 
                 String displayName = config.getString(path + ".display_name");
                 List<String> lore = config.getStringList(path + ".lore");
@@ -56,8 +56,8 @@ public class BuffManager {
                 }
                 String material = config.getString(path + ".material");
 
-                Buff buff = new Buff(displayName, lore, effects, price, slot, material);
-                buffs.put(buffKey, buff);
+                Buff buff = new Buff(buffName, displayName, lore, effects, price, slot, material);
+                buffs.put(buffName, buff);
             }
         }
         menu = new BuffsMenu(buffs.values());
