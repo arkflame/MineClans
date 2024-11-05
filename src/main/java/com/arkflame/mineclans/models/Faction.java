@@ -280,7 +280,7 @@ public class Faction implements InventoryHolder {
 
     public Inventory getChest() {
         if (chestInventory == null) {
-            chestInventory = Bukkit.createInventory(this, 27, "Faction Chest NULL");
+            chestInventory = Bukkit.createInventory(this, 27, "Faction Chest");
         }
 
         return chestInventory;

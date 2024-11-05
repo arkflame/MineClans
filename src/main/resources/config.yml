@@ -1,9 +1,20 @@
+# How much power is earned from this actions
 weights:
   kill: 0.5
   money: 0.01
   member_count: 0.1
   events_won: 0.1
 
+# Configuration for faction home usage
+home:
+  # Time until the command is effectively executed
+  warmup: 10
+  # Cancel when moving or combat
+  cancel:
+    combat: true
+    movement: true
+
+# Factions can activate buffs for cash
 buffs:
   custom-buffs:
     speed:
@@ -66,6 +77,7 @@ buffs:
       slot: 32
       material: REDSTONE_BLOCK
 
+# First faction to win the event gets a reward
 events:
   # in minutes
   interval: 25

@@ -742,6 +742,7 @@ public class MineClansAPI {
             player.openInventory(chestInventory);
             return new OpenChestResult(OpenChestResultType.SUCCESS, faction, factionPlayer);
         } catch (Exception e) {
+            e.printStackTrace();
             return new OpenChestResult(OpenChestResultType.ERROR, faction, factionPlayer);
         }
     }
