@@ -2,6 +2,7 @@ package com.arkflame.mineclans.events;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -49,6 +50,10 @@ public class ClanEventScheduler {
     }
 
     public void runTimer() {
+        FileConfiguration cfg = MineClans.getInstance().getConfig();
+        if (!cfg.isBoolean("events.enabled")) {
+            return;
+        }
         cancel();
         eventTask = Bukkit.getScheduler().runTaskTimerAsynchronously(MineClans.getInstance(), () -> {
             currentTime = System.currentTimeMillis();

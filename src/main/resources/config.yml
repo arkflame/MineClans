@@ -79,6 +79,7 @@ buffs:
 
 # First faction to win the event gets a reward
 events:
+  enabled: true
   # in minutes
   interval: 25
   time-limit: 5

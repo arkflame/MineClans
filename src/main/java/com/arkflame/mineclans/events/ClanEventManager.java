@@ -20,8 +20,11 @@ public class ClanEventManager {
     }
 
     private void loadConfiguration() {
-        plugin.saveDefaultConfig();
         FileConfiguration config = plugin.getConfig();
+        if (!config.isBoolean("events.enabled")) {
+            return;
+        }
+        plugin.saveDefaultConfig();
 
         this.eventConfigs
                 .putAll(config.getConfigurationSection("events.custom-events").getValues(false).entrySet().stream()
@@ -61,6 +64,10 @@ public class ClanEventManager {
     }
 
     public void startEvent(String eventName) {
+        FileConfiguration cfg = plugin.getConfig();
+        if (!cfg.isBoolean("events.enabled")) {
+            return;
+        }
         EventConfig config = eventConfigs.get(eventName);
         if (config != null) {
             ClanEventScheduler clanEventScheduler = MineClans.getInstance().getClanEventScheduler();
@@ -70,6 +77,10 @@ public class ClanEventManager {
     }
 
     public void stopCurrentEvent() {
+        FileConfiguration cfg = plugin.getConfig();
+        if (!cfg.isBoolean("events.enabled")) {
+            return;
+        }
         ClanEventScheduler clanEventScheduler = MineClans.getInstance().getClanEventScheduler();
         ClanEvent currentEvent = clanEventScheduler.getEvent();
 

@@ -309,6 +309,7 @@ factions:
     null_name: "&cYou have to enter a name."
     error: "&cThe displayname is not valid."
   event:
+    disabled: "&cEvents are disabled."
     no_permission_start: "&cYou do not have permission to start events."
     no_permission_end: "&cYou do not have permission to end events."
     start_success: "&aThe event %event% has started!"

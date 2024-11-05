@@ -1,5 +1,6 @@
 package com.arkflame.mineclans.commands.subcommands;
 
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import com.arkflame.mineclans.MineClans;
@@ -13,8 +14,13 @@ public class FactionsEventCommand {
 
     public static void onCommand(Player player, ModernArguments args) {
         MineClans plugin = MineClans.getInstance();
-        ClanEventScheduler eventScheduler = plugin.getClanEventScheduler();
         String basePath = "factions.event.";
+        FileConfiguration config = plugin.getConfig();
+        if (!config.isBoolean("events.enabled")) {
+            player.sendMessage(plugin.getMessages().getText(basePath + "disabled"));
+            return;
+        }
+        ClanEventScheduler eventScheduler = plugin.getClanEventScheduler();
 
         if (args.hasArg(1)) {
             if (args.getText(1).equalsIgnoreCase("start")) {
