@@ -51,7 +51,7 @@ public class ClanEventScheduler {
 
     public void runTimer() {
         FileConfiguration cfg = MineClans.getInstance().getConfig();
-        if (!cfg.isBoolean("events.enabled")) {
+        if (!cfg.getBoolean("events.enabled")) {
             return;
         }
         cancel();

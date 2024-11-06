@@ -16,7 +16,7 @@ public class FactionsEventCommand {
         MineClans plugin = MineClans.getInstance();
         String basePath = "factions.event.";
         FileConfiguration config = plugin.getConfig();
-        if (!config.isBoolean("events.enabled")) {
+        if (!config.getBoolean("events.enabled")) {
             player.sendMessage(plugin.getMessages().getText(basePath + "disabled"));
             return;
         }
