@@ -21,6 +21,7 @@ import com.arkflame.mineclans.listeners.FactionFriendlyFireListener;
 import com.arkflame.mineclans.listeners.InventoryClickListener;
 import com.arkflame.mineclans.listeners.PlayerJoinListener;
 import com.arkflame.mineclans.listeners.PlayerKillListener;
+import com.arkflame.mineclans.listeners.PlayerMoveListener;
 import com.arkflame.mineclans.listeners.PlayerQuitListener;
 import com.arkflame.mineclans.managers.FactionManager;
 import com.arkflame.mineclans.managers.FactionPlayerManager;
@@ -33,6 +34,7 @@ import com.arkflame.mineclans.placeholders.FactionsPlaceholder;
 import com.arkflame.mineclans.providers.MySQLProvider;
 import com.arkflame.mineclans.providers.RedisProvider;
 import com.arkflame.mineclans.tasks.BuffExpireTask;
+import com.arkflame.mineclans.tasks.TeleportScheduler;
 import com.arkflame.mineclans.utils.BungeeUtil;
 
 import net.milkbowl.vault.economy.Economy;
@@ -74,6 +76,9 @@ public class MineClans extends JavaPlugin {
 
     // Bungee Util
     private BungeeUtil bungeeUtil;
+
+    // Teleport Scheduler
+    private TeleportScheduler teleportScheduler;
 
     public ConfigWrapper getCfg() {
         return config;
@@ -145,6 +150,10 @@ public class MineClans extends JavaPlugin {
         return bungeeUtil;
     }
 
+    public TeleportScheduler getTeleportScheduler() {
+        return teleportScheduler;
+    }
+
     @Override
     public void onEnable() {
         // Set static instance
@@ -188,6 +197,7 @@ public class MineClans extends JavaPlugin {
         buffManager = new BuffManager(config);
         redisProvider = new RedisProvider(factionManager, factionPlayerManager, getConfig(), getLogger());
         bungeeUtil = new BungeeUtil(this);
+        teleportScheduler = new TeleportScheduler(this);
 
         // Initialize API
         api = new MineClansAPI(factionManager, factionPlayerManager, mySQLProvider, redisProvider);
@@ -200,6 +210,7 @@ public class MineClans extends JavaPlugin {
         pluginManager.registerEvents(new InventoryClickListener(), this);
         pluginManager.registerEvents(new PlayerJoinListener(factionPlayerManager), this);
         pluginManager.registerEvents(new PlayerKillListener(), this);
+        pluginManager.registerEvents(new PlayerMoveListener(), this);
         pluginManager.registerEvents(new PlayerQuitListener(factionPlayerManager), this);
         pluginManager.registerEvents(new MenuListener(), this);
 

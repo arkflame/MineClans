@@ -295,8 +295,10 @@ factions:
   home:
     success: "&aTeleporting home..."
     no_home_set: "&cYou haven't set a home yet."
+    teleporting: "&aTeleporting. &7Please don't move for {time} seconds!"
     error: "&cAn error occurred while teleporting home."
     not_in_faction: "&cYou are not in a faction."
+    cancelled: "&cTeleport cancelled because of movement."
   disband:
     title: "&cDisbanded Faction"
     subtitle: "&fYou disbanded the faction %faction%."
