@@ -9,10 +9,6 @@ weights:
 home:
   # Time until the command is effectively executed
   warmup: 10
-  # Cancel when moving or combat
-  cancel:
-    combat: true
-    movement: true
 
 # Factions can activate buffs for cash
 buffs:
