@@ -10,8 +10,13 @@ import com.arkflame.mineclans.utils.NumberUtil;
 
 public class FactionsWithdrawCommand {
     public static void onCommand(Player player, ModernArguments args) {
-        String basePath = "factions.withdraw.";
         double amount = args.getDouble(1);
+
+        onCommand(player, amount);
+    }
+
+    public static void onCommand(Player player, double amount) {
+        String basePath = "factions.withdraw.";
         WithdrawResult withdrawResult = MineClans.getInstance().getAPI().withdraw(player, amount);
 
         switch (withdrawResult.getResultType()) {

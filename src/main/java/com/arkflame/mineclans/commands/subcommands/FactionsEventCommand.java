@@ -64,7 +64,7 @@ public class FactionsEventCommand {
             if (faction != null) {
                 message.append("\n").append(plugin.getMessages().getText(basePath + "faction_progress"));
                 for (EventObjective objective : currentEvent.getObjectives()) {
-                    String type = objective.getType().getAction();
+                    String type = plugin.getMessages().getText(basePath + "objective_types." + objective.getType().name());
                     String progressBar = objective.getProgressBar(faction, 20);
                     String progressPercentage = objective.getProgressPercentage(faction) + "%";
                     message.append(plugin.getMessages().getText(basePath + "event_objective")

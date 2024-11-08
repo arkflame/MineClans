@@ -325,6 +325,14 @@ factions:
     faction_progress: "&6Faction Progress:\n"
     event_objective: "&e%type%: &a%progress% &f%percentage%"
     next_event: "&6Next Event: &e%event%\n&6Starts In: &e%time%"
+    objective_types:
+      FACTION_KILL: "Kill enemy faction members"
+      BLOCK_MINE: "Mine blocks"
+      MOB_KILL: "Kill mobs"
+      DIAMOND_MINE: "Mine diamonds"
+      CROP_HARVEST: "Harvest crops"
+      WOOD_MINE: "Cut down trees"
+      FISHING: "Catch fish"
   demote:
     superior_rank: "&cThe player is higher or same rank than you."
     player_not_found: "&cPlayer not found."
@@ -332,6 +340,10 @@ factions:
     no_permission: "&cYou require LEADER to promote/demote players."
     cannot_demote: "&cCannot demote player."
     success: "&aPlayer demoted successfully."
+  bank:
+    type_amount: "&ePlease type the amount in the chat:"
+    expired: "&cTime expired. Please try again."
+    no_faction: "&cYou have no faction"
   deposit:
     success_menu: "&aYou have deposited %amount% (%percentage%%) to your faction's balance."
     success: "&aDeposit of $%amount% successful!"

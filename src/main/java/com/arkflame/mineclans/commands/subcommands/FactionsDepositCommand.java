@@ -10,9 +10,12 @@ import com.arkflame.mineclans.utils.NumberUtil;
 public class FactionsDepositCommand {
     public static void onCommand(Player player, ModernArguments args) {
         double amount = args.getDouble(1);
-        MineClans mineClans = MineClans.getInstance();
-        String basePath = "factions.deposit.";
+        onCommand(player, amount);
+    }
 
+    public static void onCommand(Player player, double amount) {
+        String basePath = "factions.deposit.";
+        MineClans mineClans = MineClans.getInstance();
         DepositResult depositResult = mineClans.getAPI().deposit(player, amount);
 
         switch (depositResult.getResultType()) {

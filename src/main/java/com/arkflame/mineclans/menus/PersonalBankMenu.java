@@ -1,7 +1,6 @@
 package com.arkflame.mineclans.menus;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -134,10 +133,10 @@ class DepositWithdrawMenu extends Menu {
         FactionPlayer factionPlayer = MineClans.getInstance().getAPI().getFactionPlayer(player.getUniqueId());
 
         player.closeInventory();
-        player.sendMessage(ChatColor.YELLOW + "Please enter the amount in the chat:");
+        player.sendMessage(MineClans.getInstance().getMessages().getText("factions.bank.type_amount"));
 
         Bukkit.getScheduler().runTaskLater(MineClans.getInstance(), () -> {
-            player.sendMessage(ChatColor.RED + "Time expired. Please try again.");
+            player.sendMessage(MineClans.getInstance().getMessages().getText("factions.bank.expired"));
         }, 20 * 30); // 30 seconds timeout
 
         factionPlayer.setEnteringAmount(enteringType); // Set deposit or withdraw based on user choice
@@ -160,7 +159,7 @@ class DepositWithdrawMenu extends Menu {
         public void onClick(Player player, int slot) {
             Faction faction = MineClans.getInstance().getAPI().getFaction(player);
             if (faction == null) {
-                player.sendMessage("You have no faction");
+                player.sendMessage(MineClans.getInstance().getMessages().getText("factions.bank.no_faction"));
             } else if (enteringType == EnteringType.DEPOSIT) {
                 Economy economy = MineClans.getInstance().getVaultEconomy();
                 double balance = economy.getBalance(player);
