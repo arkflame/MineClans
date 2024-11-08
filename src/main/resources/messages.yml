@@ -291,6 +291,7 @@ factions:
     not_in_faction: "&cYou are not in a faction."
     error: "&cAn error occurred while toggling friendly fire."
     unknown_error: "&cAn unknown error occurred."
+    cannot_attack: "&cYou cannot attack faction members. If you want to allow friendly fire, type /f ff."
   home:
     success: "&aTeleporting home..."
     no_home_set: "&cYou haven't set a home yet."

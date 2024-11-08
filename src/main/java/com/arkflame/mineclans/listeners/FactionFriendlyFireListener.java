@@ -33,6 +33,7 @@ public class FactionFriendlyFireListener implements Listener {
         // Check if both players are in the same faction and friendly fire is disabled
         if (attackerFaction.equals(victimFaction) && !attackerFaction.isFriendlyFire()) {
             event.setCancelled(true);
+            attacker.sendMessage(MineClans.getInstance().getMessages().getText("factions.friendly_fire.cannot_attack"));
         }
     }
 }
