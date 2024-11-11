@@ -67,7 +67,7 @@ public class Buff {
             if (economy.has(player, price)) {
                 economy.withdrawPlayer(player, price);
             } else {
-                player.sendMessage(MineClans.getInstance().getMessages().getText("factions.buffs.no_money"));
+                player.sendMessage(MineClans.getInstance().getMessages().getText("factions.buffs.no_money").replace("%price%", String.valueOf(price)).replace("%buff%", displayName));
                 return false;
             }
         }

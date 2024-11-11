@@ -126,7 +126,7 @@ factions:
       list: "List all factions on the server"
       transfer: "Transfer leadership of the faction to another player"
   buffs:
-    no_money: "&cYou do not have %price% to purchase %buff%&c."
+    no_money: "&cYou do not have $%price% to purchase %buff%&c."
     activated: "&aYou activated&e %buff%&a%activated_price%&a."
     activated_price: " for &6$%price%"
     activated_other:
